@@ -1,0 +1,2 @@
+nullmailer shared/mailname string localhost 
+nullmailer nullmailer/relayhost string localhost smtp --auth-login --user=root #--pass=YOUR_SMTP_PASS

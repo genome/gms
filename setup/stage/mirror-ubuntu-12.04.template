@@ -1,0 +1,32 @@
+############# config ##################
+set base_path DIR/apt-mirror-min-ubuntu-12.04-TIMESTAMP
+#set mirror_path  $base_path/mirror
+#set skel_path    $base_path/skel
+#set var_path     $base_path/var
+#set cleanscript $var_path/clean.sh
+#set defaultarch  &lt;running host architecture&gt;
+#set postmirror_script $var_path/postmirror.sh
+set run_postmirror 0
+set nthreads     10
+set _tilde 0
+
+#==> genome.list <==
+deb http://repo.gsc.wustl.edu/ubuntu lucid-genome-systems main
+deb http://repo.gsc.wustl.edu/ubuntu lucid-genome-development main
+deb http://repo.gsc.wustl.edu/ubuntu precise-genome-systems main
+deb http://repo.gsc.wustl.edu/ubuntu precise-genome-development main
+
+#==> git-core-ppa-precise.list <==
+#deb http://ppa.launchpad.net/git-core/ppa/ubuntu precise main
+
+#==> precise-backports.list <==
+#deb http://archive.ubuntu.com/ubuntu precise-backports main universe multiverse restricted
+
+#==> r-cran.list <==
+#deb http://cran.wustl.edu/bin/linux/ubuntu precise/
+#deb-src http://cran.wustl.edu/bin/linux/ubuntu precise/
+
+#==> r-bioconductor.list <==
+#deb http://bioinformatics.rri.sari.ac.uk/cran2deb/rep testing main
+#deb-src http://bioinformatics.rri.sari.ac.uk/cran2deb/rep testing main
+#

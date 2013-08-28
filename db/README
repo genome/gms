@@ -1,0 +1,3 @@
+This directory contains file-based data sets in the form $NAME/$VERSION when they are installed.
+It is pointed to by the GENOME_DB environment variable.
+

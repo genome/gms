@@ -1,0 +1,5 @@
+Large tgz files which are not part of the repository are downloaded to this location by the Makefile.
+Subsequent steps in the "make" process unzip these files to the fs/ db/ and sw/ directories.
+
+So share this data across repositories simply copy, symlink, or hard-link the files in this directory.
+

@@ -1,0 +1,13 @@
+[color]
+    status = auto
+    diff = auto 
+    branch = auto
+    interactive = auto
+[merge]
+    renameLimit = 10000
+[core]
+  preloadindex = 1
+[receive]
+  denyNonFastForwards = 0
+[push]
+    #default = simple

@@ -1,0 +1,386 @@
+# Queue definition profile. This file affects the scheduling behavior of the
+# Lava Batch system on jobs submitted to queues.  Each queue is defined in a
+# Queue section enclosed by Begin Queue and End Queue
+
+# Queues with higher PRIORITY (larger values) are searched first
+# during scheduling. Default values are provided.
+
+# QJOB_LIMIT is the max number of job slots that can be used by jobs
+# from this queue. The default is unlimited.
+
+# UJOB_LIMIT is the max number of job slots that can be used for
+# jobs from this queue for any one user. The default is unlimited.
+
+# PJOB_LIMIT is the max number of job slots that can be used for jobs
+# from this queue on any one processor. The default is unlimited.
+
+# HJOB_LIMIT specifies the number of jobs that can be dispatched
+# to a host regardless of the number of processors on the host.
+
+# DISPATCH_WINDOW describes the time window during which jobs are dispatched.
+# Time windows can be specified as up to 3 fields -- [day:]hour[:minute].
+# Note that day=[0-6]: 0 is Sunday, 1 is Monday and 6 is Saturday.  If only 
+# one field exists, it is assumed to be hour; if two fields exist, it is 
+# assumed to be hour[:minute]. Multiple windows can be specified.  The 
+# default is any time.
+
+# RUN_WINDOW has the same function as DISPATCH_WINDOW.  In addition, jobs
+# will be suspended when the windows are closed.
+
+# For each of the interested load indices, see lsf.h for definitions of
+# the available load indices. The load indices considered by Lava are:
+# r15s, r1m, r15m, ut, pg, it, ls, swp, tmp, mem, io. If any of these
+# are not specified here, then the default is to make the load index
+# have no effect on job scheduling.
+
+# CPULIMIT, FILELIMIT, DATALIMIT, STACKLIMIT, CORELIMIT, MEMLIMIT,
+# are limits for various resources (see setrlimit(2)) a job in
+# this queue may use.  These are the hard limits. The limits users specify
+# when submitting jobs are soft limits. If any of these is not defined, then
+# the limit is assumed to be infinity. All except CPULIMIT are in kilobytes.
+# CPULIMIT is in minutes.  The CPULIMIT is enforced on a job level basis
+# while the other limits are enforced on a per-process basis.  When the
+# CPULIMIT is reached, SIGXCPU is sent to the job, followed by SIGINT,
+# SIGTERM, and SIGKILL in sequence.
+
+# PROCLIMIT is the processor limit (parallelism limit) for a parallel job
+# which can be accepted by this queue.  If a submitted job requests more
+# processors than this limit, the job is rejected.  If this is not defined, 
+# the default value is infinity.
+
+# SWAPLIMIT specifies the maximum virtual memory of all processes in a job
+# and is specified in units of kbytes.  SIGQUIT is sent to the job when
+# this limit is reached, followed by SIGINT, SIGTERM, and SIGKILL in
+# sequence.
+
+# PROCESSLIMIT specifies the number of concurrent processes that can be part
+# of a job.  SIGINT, SIGTERM, and SIGKILL are sent to the job in sequence
+# when this limit is reached.
+   
+# USERS limits users that can submit jobs to this queue (default is all
+# users).
+
+# HOSTS limits the hosts on which jobs submitted to this queue may execute.
+
+# ADMINISTRATORS limits the users that can operate on jobs in this queue and 
+# on the queue itself.
+
+# PRE_EXEC is a command which is executed before a job dispatched from this
+# queue is run on an execution host. It is executed under the job's user ID
+# with standard input, output and error redirected to /dev/null.
+
+# POST_EXEC is a command which is executed after the job dispatched from this
+# queue has finished running on the execution host. It is also run if the 
+# PRE_EXEC command exited with a 0 exit status, but the job's execution 
+# environment failed to be setup. It is executed under the job's user ID
+# with standard input, output and error redirected to /dev/null.
+
+# REQUEUE_EXIT_VALUES are exit values used by Lava to requeue the jobs 
+# dispatched from this queue.  The keyword, EXCLUDE, specifies that the
+# job will never be re-dispatched to a host that it has failed on.  E.g.,
+#
+# 	REQUEUE_EXIT_VALUES = 30 EXCLUDE(2)
+#
+# specifies that jobs that exit with the value 30 will be requeued (and
+# possibly re-dispatched to one of the failed hosts), while jobs
+# that exit with the value 2 will be requeued but will not be re-dispatched
+# to one of the failed hosts.
+
+# RES_REQ is a resource requirement string specifying the condition for
+# dispatching a job to a host.  Resource reservation and locality can
+# also be specified in this string.
+
+# STOP_COND is a resource requirement string specifying the condition for
+# stopping a running job.  Only the 'select' section of the string
+# is considered when stopping a job.
+
+# RESUME_COND is a resource requirement string specifying the condition for
+# resuming a suspended job.  Only the 'select' section of the string
+# is considered when resuming a stopped job.
+
+# JOB_CONTROLS = SUSPEND[signal | CHKPNT | command ] |
+#                RESUME[signal | command ] |
+#                TERMINATE[signal | CHKPNT | command ]
+# specifies the action to be taken when a job is normally suspended or
+# resumed by a user or by the system.  TERMINATE is used in conjunction
+# with the TERMINATE_WHEN parameter (see below) to specify an action
+# to terminate a job rather then stopping a job when conditions are
+# stopping the job are satisfied.
+
+# TERMINATE_WHEN = [ WINDOW ] [ LOAD ]
+# Specifies that the TERMINATE action specified in the JOB_CONTROLS
+# parameter be invoked when the queue's run window closes or the load
+# exceeds thresholds.
+
+# NEW_JOB_SCHED_DELAY specifies when a scheduling session is triggered
+# when a new job is submitted.  The default value is 10s, meaning a
+# new scheduling session is started 10s after accepting a new job.
+# If this value is 0s, a new scheduling session is started as soon as a
+# job is submitted to this queue.  This allows faster response times,
+# but will generate additional load on the mbatchd host.
+
+# INTERACTIVE = Y | y | N | n | ONLY
+# INTERACTIVE specifies whether the queue should not accept Lava Batch
+# interactive jobs (INTERACTIVE = 'n' | 'N'), or should only accept 
+# interactive jobs (INTERACTIVE = ONLY).  An Lava Batch interactive job 
+# is submitted using the -I options of bsub.  By default, a queue
+# accepts both interactive and non-interactive jobs.
+
+# JOB_STARTER specifies a job starter command for jobs in the queue.
+# When starting a job, Lava runs the JOB_STARTER command, and passes
+# the shell script containing the job's commands as the argument to
+# the JOB_STARTER.  The JOB_STARTER is expected to do some processing
+# and then run the shell script containing the job's commands.
+# The command is run under /bin/sh -c and thus can contain any valid
+# Bourne shell syntax.
+
+# CHKPNT = chkpnt_diretory [chkpnt_period_in_minute]
+# Jobs submitted to the queue with this option will be checkpoint-ed 
+# automatically every chkpnt_period_in_minute's. The chkpnt_directory
+# should be created already. Otherwise, no chkpnt will be performed.
+# The chkpnt period is optional. If it is supplied, default value is
+# used.
+
+# RERUNNABLE   = Y | y | N | n
+# Jobs submitted to the queue with this option will be rerunnable.
+# The default value is 'n'. 
+
+# ROUND_ROBIN = Y | y
+# If defined the jobs in the queue are scheduled using a round robin
+# algorithm weighted on the number of users' jobs.
+#
+
+# PRE_POST_EXEC_USER = user
+# By default, both the pre- and post-execution commands are run as 
+# the job submission user. Use the PRE_POST_EXEC_USER parameter to 
+# specify a different user ID for queue-level pre- and post-execution 
+# commands.
+#
+
+Begin Queue
+QUEUE_NAME   = alignment 
+PRIORITY     = 30
+NICE         = 20
+#QJOB_LIMIT   = 60 		# job limit of the queue
+#UJOB_LIMIT   = 5               # job limit per user
+#PJOB_LIMIT   = 2               # job limit per processor
+#RUN_WINDOW   = 5:19:00-1:8:30 20:00-8:30
+#r1m	     = 0.7/2.0        # loadSched/loadStop
+#r15m	      = 1.0/2.5
+#pg	      = 4.0/8
+#ut           = 0.2
+#io	      = 50/240
+#CPULIMIT     = 180/apple      # 3 hours of host apple
+#FILELIMIT    = 20000
+#MEMLIMIT     = 5000           # jobs bigger than this (5M) will be niced
+#DATALIMIT    = 20000          # jobs data segment limit
+#STACKLIMIT   = 2048
+#CORELIMIT    = 20000
+#PROCLIMIT    = 5              # job processor limit
+#USERS        = all            # users who can submit jobs to this queue
+#HOSTS        = all            # hosts on which jobs in this queue can run
+#PRE_EXEC     = /usr/local/lsf/misc/testq_pre >> /tmp/pre.out
+#POST_EXEC    = /usr/local/lsf/misc/testq_post |grep -v "Hey"
+#REQUEUE_EXIT_VALUES = 55 34 78
+DESCRIPTION  = For normal low priority jobs, running only if hosts are \
+lightly loaded.
+End Queue
+
+Begin Queue
+QUEUE_NAME   = apipe
+PRIORITY     = 30
+NICE         = 20
+DESCRIPTION  = Default queue for analysis pipeline jobs. 
+End Queue
+
+Begin Queue
+QUEUE_NAME   = alignment
+PRIORITY     = 30
+NICE         = 20
+DESCRIPTION  = Default queue for analysis pipeline jobs. 
+End Queue
+
+Begin Queue
+QUEUE_NAME   = long 
+PRIORITY     = 30
+NICE         = 20
+#QJOB_LIMIT   = 60 		# job limit of the queue
+#UJOB_LIMIT   = 5               # job limit per user
+#PJOB_LIMIT   = 2               # job limit per processor
+#RUN_WINDOW   = 5:19:00-1:8:30 20:00-8:30
+#r1m	     = 0.7/2.0        # loadSched/loadStop
+#r15m	      = 1.0/2.5
+#pg	      = 4.0/8
+#ut           = 0.2
+#io	      = 50/240
+#CPULIMIT     = 180/apple      # 3 hours of host apple
+#FILELIMIT    = 20000
+#MEMLIMIT     = 5000           # jobs bigger than this (5M) will be niced
+#DATALIMIT    = 20000          # jobs data segment limit
+#STACKLIMIT   = 2048
+#CORELIMIT    = 20000
+#PROCLIMIT    = 5              # job processor limit
+#USERS        = all            # users who can submit jobs to this queue
+#HOSTS        = all            # hosts on which jobs in this queue can run
+#PRE_EXEC     = /usr/local/lsf/misc/testq_pre >> /tmp/pre.out
+#POST_EXEC    = /usr/local/lsf/misc/testq_post |grep -v "Hey"
+#REQUEUE_EXIT_VALUES = 55 34 78
+DESCRIPTION  = For normal low priority jobs, running only if hosts are \
+lightly loaded.
+End Queue
+
+Begin Queue
+QUEUE_NAME   = normal
+PRIORITY     = 30
+NICE         = 20
+#QJOB_LIMIT   = 60 		# job limit of the queue
+#UJOB_LIMIT   = 5               # job limit per user
+#PJOB_LIMIT   = 2               # job limit per processor
+#RUN_WINDOW   = 5:19:00-1:8:30 20:00-8:30
+#r1m	     = 0.7/2.0        # loadSched/loadStop
+#r15m	      = 1.0/2.5
+#pg	      = 4.0/8
+#ut           = 0.2
+#io	      = 50/240
+#CPULIMIT     = 180/apple      # 3 hours of host apple
+#FILELIMIT    = 20000
+#MEMLIMIT     = 5000           # jobs bigger than this (5M) will be niced
+#DATALIMIT    = 20000          # jobs data segment limit
+#STACKLIMIT   = 2048
+#CORELIMIT    = 20000
+#PROCLIMIT    = 5              # job processor limit
+#USERS        = all            # users who can submit jobs to this queue
+#HOSTS        = all            # hosts on which jobs in this queue can run
+#PRE_EXEC     = /usr/local/lsf/misc/testq_pre >> /tmp/pre.out
+#POST_EXEC    = /usr/local/lsf/misc/testq_post |grep -v "Hey"
+#REQUEUE_EXIT_VALUES = 55 34 78
+DESCRIPTION  = For normal low priority jobs, running only if hosts are \
+lightly loaded.
+End Queue
+
+#Begin Queue
+#QUEUE_NAME    = owners
+#PRIORITY      = 43
+#NICE          = 10
+#QJOB_LIMIT    = 10
+#UJOB_LIMIT    = 6
+#PJOB_LIMIT    = 1
+#RUN_WINDOW
+#r1m	      = 1.2/2.6
+#r15m	      = 1.0/2.6
+#r15s	      = 1.0/2.6
+#pg	      = 4/15
+#io	      = 30/200
+#swp	      = 4/1
+#tmp	      = 1/0
+#CPULIMIT      = 24:0/apple	 # 24 hours of host apple
+#MEMLIMIT      = 5000            # jobs bigger than this (5M) will be niced
+#FILELIMIT     = 20000
+#DATALIMIT     = 20000           # jobs data segment limit
+#STACKLIMIT    = 2048
+#CORELIMIT     = 20000
+#PROCLIMIT    = 5              # job processor limit
+#USERS         = chris alex
+#HOSTS         = apple orange
+#ADMINISTRATORS = chris alex
+#PRE_EXEC     = /usr/local/lsf/misc/testq_pre >> /tmp/pre.out
+#POST_EXEC    = /usr/local/lsf/misc/testq_post |grep -v "Hey"
+#REQUEUE_EXIT_VALUES = 55 34 78
+#DESCRIPTION   = For owners of some machines. Only users listed in the HOSTS\
+#section can submit jobs to this queue. 
+#End Queue
+
+
+#Begin Queue
+#QUEUE_NAME    = priority
+#PRIORITY      = 43
+#NICE          = 10
+#QJOB_LIMIT    = 10
+#UJOB_LIMIT    = 1
+#PJOB_LIMIT    = 1
+#RUN_WINDOW
+#CPULIMIT      = 8:0/SunIPC	# 8 hours of host model SunIPC
+#MEMLIMIT      = 5000           # jobs bigger than this (5M) will be niced
+#FILELIMIT     = 20000
+#DATALIMIT     = 20000          # jobs data segment limit
+#STACKLIMIT    = 2048
+#CORELIMIT     = 20000
+#PROCLIMIT    = 5              # job processor limit
+#USERS         = chris alex fred
+#HOSTS         = all
+#ADMINISTRATORS       = chris fred
+#PRE_EXEC     = /usr/local/lsf/misc/testq_pre >> /tmp/pre.out
+#POST_EXEC    = /usr/local/lsf/misc/testq_post |grep -v "Hey"
+#REQUEUE_EXIT_VALUES = 55 255 78
+#DESCRIPTION   =  Jobs submitted for this queue are scheduled as urgent\
+#jobs.
+#End Queue
+
+
+#Begin Queue
+#QUEUE_NAME    = short
+#PRIORITY      = 35
+#NICE          = 20
+#UJOB_LIMIT    = 4
+#PJOB_LIMIT    = 2
+#RUN_WINDOW
+#r15s	       = 0.7/2.3
+#r1m	       = 0.9/
+#r15m	       = 0.4/2.0
+#pg	       = 5/12
+#io	       = 140/400
+#CPULIMIT      = 15             # 15 minutes of the fastest host in the cluster
+#MEMLIMIT      = 5000           # jobs bigger than this (5M) will be niced
+#FILELIMIT     = 20000
+#DATALIMIT     = 20000          # jobs data segment limit
+#STACKLIMIT    = 2048
+#CORELIMIT     = 20000
+#PROCLIMIT    = 5              # job processor limit
+#USERS
+#HOSTS
+#ADMINISTRATORS
+#PRE_EXEC  
+#POST_EXEC 
+#DESCRIPTION   = For short jobs that would not take much CPU time. \
+#Scheduled with higher priority.
+#End Queue
+
+
+#Begin Queue
+#QUEUE_NAME   = idle
+#PRIORITY     = 20
+#NICE         = 20
+#UJOB_LIMIT
+#RUN_WINDOW
+#r15s	     = 0.3/1.5
+#r1m	     = 0.3/1.5
+#pg	     = 4.0/15
+#it	     = 10/1
+#CPULIMIT
+#MEMLIMIT     = 5000           # jobs bigger than this (5M) will be niced
+#FILELIMIT   = 20000
+#DATALIMIT    = 20000          # jobs data segment limit
+#STACKLIMIT   = 2048
+#CORELIMIT    = 20000
+#PROCLIMIT    = 5
+#USERS
+#HOSTS
+#ADMINISTRATORS
+#PRE_EXEC  
+#POST_EXEC  
+#REQUEUE_EXIT_VALUES
+#DESCRIPTION  = Running only if the machine is idle and very lightly loaded.
+#End Queue
+
+
+#Begin Queue
+#QUEUE_NAME   = chkpnt_rerun_queue
+#PRIORITY     = 40
+#NICE         = 10
+#r1m	     = 0.8/2.5
+##STACKLIMIT   = 2048
+#CHKPNT       = /tmp 10  # chkpnt period 10 minutes;
+#RERUNNABLE   = YES
+#DESCRIPTION  = Jobs submitted to this queue will be checkpointed\
+#automatically and also rerunnable.
+#End Queue

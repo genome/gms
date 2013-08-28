@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+my $label = shift;
+my $d = shift;
+my $n = 0; local $| = 1; 
+my $w = 100;
+print $label,"\n";
+while (<>) { 
+    $n++;
+    if ($d) {
+        my $pct = $n/$d;
+        my $chars = int($w * $pct);
+        print ("=" x $chars," ", int($pct*100), "% =>\r");
+    }
+    else {
+        print ("=" x $n,">\r");
+    }
+}
+print "\n";
+
