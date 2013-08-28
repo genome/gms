@@ -262,11 +262,11 @@ done-shared/git-checkouts:
 	# $@:
 	#
 	sudo -v
-	[ -e sw/ur/.git ] 			|| git clone http///github.com/genome/UR.git -b gms-pub sw/ur
-	[ -e sw/workflow/.git ] || git clone http///github.com/genome/tgi-workflow.git -b gms-pub sw/workflow
-	[ -e sw/rails/.git ] 		|| git clone http///github.com/genome/gms-webviews.git -b gms-pub sw/rails 
-	[ -e sw/genome/.git ] 	|| git clone http///github.com/genome/gms-core.git -b gms-pub  sw/genome	
-	[ -e sw/openlava/.git ] || git clone http///github.com/openlava/openlava.git -b 2.0-release sw/openlava
+	[ -e sw/ur/.git ] 			|| git clone http://github.com/genome/UR.git -b gms-pub sw/ur
+	[ -e sw/workflow/.git ] || git clone http://github.com/genome/tgi-workflow.git -b gms-pub sw/workflow
+	[ -e sw/rails/.git ] 		|| git clone http://github.com/genome/gms-webviews.git -b gms-pub sw/rails 
+	[ -e sw/genome/.git ] 	|| git clone http://github.com/genome/gms-core.git -b gms-pub  sw/genome	
+	[ -e sw/openlava/.git ] || git clone http://github.com/openlava/openlava.git -b 2.0-release sw/openlava
 	touch $@
 
 # downloading and unzipping are all done with generic targets
