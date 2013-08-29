@@ -64,6 +64,7 @@ endif
 
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2013-08-28
+JAVA_DUMP_VERSION=2013-08-27
 APT_DUMP_VERSION=20130611.100617
 
 # other config info
@@ -127,7 +128,7 @@ vars:
 
 ###### Core Steps
 
-stage-software: done-shared/git-checkouts done-shared/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-shared/unzip-sw-java-$(APPS_DUMP_VERSION).tgz done-shared/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
+stage-software: done-shared/git-checkouts done-shared/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-shared/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz done-shared/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
 
 setup_env: done-local/gms-home done-local/puppet 
 
