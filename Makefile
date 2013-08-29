@@ -63,7 +63,7 @@ ifeq ('$(FTP)', 'scp')
 endif
 
 # when tarballs of software and data are updated they are given new names
-APPS_DUMP_VERSION=2013-08-27
+APPS_DUMP_VERSION=2013-08-28
 APT_DUMP_VERSION=20130611.100617
 
 # other config info
