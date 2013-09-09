@@ -65,7 +65,7 @@ endif
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2013-08-28
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=20130611.100617
+APT_DUMP_VERSION=20130906.120901
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -369,6 +369,8 @@ done-local/gms-home: done-local/puppet
 	[ "`readlink $(GMS_HOME)/fs`" = "$(PWD)/fs" ] || (sudo rm "$(GMS_HOME)/fs" 2>/dev/null; sudo ln -s $(PWD)/fs "$(GMS_HOME)/fs")
 	[ "`readlink $(GMS_HOME)/db`" = "$(PWD)/db" ] || (sudo rm "$(GMS_HOME)/db" 2>/dev/null; sudo ln -s $(PWD)/db "$(GMS_HOME)/db")
 	[ -d "$(GMS_HOME)/export" ] || mkdir "$(GMS_HOME)/export"
+	[ -d "$(GMS_HOME)/known-systems" ] || mkdir "$(GMS_HOME)/known-systems"
+	cp known-systems/* "$(GMS_HOME)/known-systems"
 	touch $(GMS_HOME)/export/sanitize.csv
 	#sudo mkdir -p $(GMS_HOME)/fs/$(GMS_ID)
 	#sudo ln -s $(PWD)/fs/* "$(GMS_HOME)/fs/$(GMS_ID)"
@@ -565,4 +567,10 @@ db-rebuild:
 	sudo -u postgres psql -d genome -f setup/schema.psql	
 	setup/prime-allocations.pl
 	touch done-local/db-schema
+
+apt-rebuild:
+	# redo the apt configuration, which will download a new apt blob if necessary
+	([ -e done-local/apt-config ] && rm done-local/apt-config) || true 
+	make 'done-local/apt-config'
+
 
