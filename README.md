@@ -35,6 +35,16 @@ Assuming all went well you should now be able to log in as follows:
 
     vagrant ssh
 
+Try some basic sanity checks of your system once you are logged in
+
+    bjobs
+    bhosts
+    bqueues
+
+    genome disk group list
+
+    gene disk volume list
+
 
 Installation on Windows
 -------------
