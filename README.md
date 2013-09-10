@@ -51,45 +51,95 @@ Management of the cloud services can be done from any host that supports vagrant
 Usage
 -----
 
-Attach the primary GMS provided by TGI for referen sequences an examples:
+Attach the primary GMS provided by TGI for reference sequences, and example data:
 
-    genome sys peer attach GMS1
+    genome sys gateway attach GMS1
 
-To install the full set of example human cancer data:
+
+If you would prefer to copy the GMS1 data rather than mount it via FTP, use this:
+
+    genome sys gateway attach GMS1 --rsync
+
+
+To install the full set of example human cancer data, including reference sequences and annotation data sets:
     
-    genome model import metadata --source GMS1 --data-set examples/human-cancer.dat
-    genome model build start "name = 'TST1.clin_seq'" --recurse
+    # import metadata
+    genome model import metadata /opt/gms/GMS1/export/2891454740-2013.09.09-4.dat
+  
+    # list
+    genome mode list
+    
 
+To build the microarray models:
 
-To just install the reference data for human samples:
+    genome model build start "name = 'tst1-tumor-snparray'"
+    genome model build start "name = 'tst1-normal-snparray'"
 
-    genome model import metadata --source GMS1 --data-set refdata/human.dat
+To build the WGS tumor, WGS normal, exome tumor, and exome normal data, wait until the above finish, then run:
+    
+    genome model build start "name = 'tst1-tumor-wgs'"
+    genome model build start "name = 'tst1-normal-wgs'"
+    genome model build start "name = 'tst1-tumor-exome'"
+    genome model build start "name = 'tst1-tumor-exome'"
+
+While those are building, you can run the RNA-Seq models:
+
+    genome model build start "name = 'tst1-tumor-rnaseq'"
+    genome model build start "name = 'tst1-normal-rnaseq'"
+
+To build the WGS somatic and exome somatic models, wait until the regular models above complete, and then run:
+
+    genome model build start "name = 'tst1-somatic-wgs'"
+    genome model build start "name = 'tst1-somatic-exome'"
+
+When all of the above complete, the MedSeq pipeline can be run:
+
+    genome model build start "name = 'tst1-clinseq'"
+
+To monitor any build, run:
+
+    genome model build view "id = '$BUILD_ID'"
+
+To examine results, got to the build directory listead above, or list it specifically:
+
+    genome model build list --filter "id = '$BUILD_ID'" --show id,data_directory
+
 
 To import new data:
 
-    vim SAMPLESHEET
-    # example columns: flow_cell_id, lane, index, fastq1, fastq2, bam, bcf, sample.name, sample.common_name, patient.name, patient.common_name, sample.tissue_desc, 
-    
-    genome instrument-data import illumina-ngs SAMPLESHEET
-    genome model define clin-seq --name patient1-analysis1 
+    cp /opt/gms/GMS1/export/example-samplesheet.tsv mysamplesheet.csv
 
+    # edit the above with your favorite editor or spreadsheet
+    # the first row is headers with column names
+    # example columns: path, flow_cell_id, lane, index_sequence, target_region_set_name, library.name, individual.common_name, sample.common_name, sample.extraction_type
+    # be sure to set individual.common_name to something like "patient1", or another identifier unique to your organization, but anonymized.
+    # be sure to set sample.common_name to a value that distinguishes different samples for a patient, i.e.: "tumor", "normal", "relapse", "relapse 2", "metastasis" ...or just "sample 1"
+    
+    # import
+    genome instrument-data import sample-sheet mysheet.tsv
+
+    # list the things you just imported
+    genome instrument-data list
+    genome library list
+    genome sample list 
+    genome individual list
+    genome taxon list
+
+
+To make a new set of models for that data, this tool will walk you through the process interactively:
+
+    # use the common name you used during import ("individual.common_name")
+    genome model clin-seq update-analysis --individual "common_name = 'TST1'"
 
 
 System Requirements
 -------------------
 
 System requirements for processing the example data through all pipelines:
- * 1TB for the results
+ * 1TB for the results (40x WGS tumor/normal, 1 lane of exome, 1 lane of tumor RNA, processing through MedSeq)
  * 48+ GB of RAM
  * 12 cores
  * 2 weeks of processing time for full analysis (varies)
 
-To import your own data:
-
-    genome instrument-data import -h
-
-To configure analysis:
-
-    genome model clin-seq update-analysis -h
 
 
