@@ -1,6 +1,8 @@
 apache2
 cronolog
 curl
+curlftpfs
+lftp
 libanyevent-perl
 libapache2-mod-fastcgi
 libcache-memcached-perl
