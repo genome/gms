@@ -37,13 +37,13 @@ Assuming all went well you should now be able to log in as follows:
 
 Try some basic sanity checks of your system once you are logged in
 
-    bjobs
-    bhosts
-    bqueues
+    bjobs # You should not have any unfinished jobs yet
+    bhosts # You should see one host, 'precise64'
+    bqueues # You should see four queues 
 
-    genome disk group list
+    genome disk group list # You should see four disk groups
 
-    gene disk volume list
+    gene disk volume list # You should see at least one volume
 
 
 Installation on Windows
