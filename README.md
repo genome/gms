@@ -1,7 +1,7 @@
 GMS
 ===
 
-The Genome Modeling System *ALPHA*
+The Genome Modeling System **ALPHA**
 
 _(this document is a work in progress and will not actually install as described, stay tuned for relese!!)_
 
@@ -66,12 +66,17 @@ On your VM, follow the standard Ubuntu 12.04 directions above.
 Installation on cloud servers
 ------------
 
-For fancier things, like install on a cluster, edit the file "Vagrantfile", and use Amazon EC2 or OpenStack vagrant plugins.
-Management of the cloud services can be done from any host that supports vagrant.  An upcoming release will offer more support
-for managing the cluster.  For now Linux administration expertise and Vagrant expertise is required to make a cluster.
+For fancier things, like install on a cluster or cloud servers, edit the file "Vagrantfile", and use Amazon EC2 or OpenStack vagrant plugins.
+Management of the cloud services can be done from any host that supports vagrant.  
+
+An upcoming release will offer more support for managing the cluster.  
+
+For now Linux administration expertise and Vagrant expertise is required to make a cluster.
+
 
 Initial Sanity Checks
 -------------
+The following checks can be made after logging into the GMS:
 
     bjobs                   # You should not have any unfinished jobs yet
     bhosts                  # You should see one host ('precise64' if you are on a vagrant/virtualbox VM)
@@ -84,24 +89,42 @@ Initial Sanity Checks
 Usage
 -----
 
-Attach the primary GMS provided by TGI for reference sequences, and example data:
+To install the full set of example human cancer data, including reference sequences and annotation data sets:
+
+    # download
+    wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/export/2891454740-2013.09.11.dat
+    
+    # import
+    genome model import metadata 2891454740-2013.09.11.dat
+  
+    # list the data you just imported
+    genome taxon list
+    genome individual list
+    genome sample list
+    genome library list
+    genome instrument-data list
+    
+    # list the pre-defined models (no results yet ...you must launch these)
+    genome model list
+    
+    # list the processing profiles associated with those models
+    genome processing-profile list reference-alignment
+    genome processing-profile list somatic-variation
+    genome processing-profile list rna-seq
+    genome processing-profile list clin-seq
+    
+
+You now have metadata about reads from GMS1 in your system, but no access to the real data.
+This will allow you to attach GMS1 disks so you can process the data.
 
     genome sys gateway attach GMS1
 
+The above will mount GMS1 data on your system at /opt/gms/GMS1.
 
-If you would prefer to copy the GMS1 data rather than mount it via FTP, use this:
+If you would prefer to have a local copy the GMS1 data rather than mount it via FTP, use this:
 
     genome sys gateway attach GMS1 --rsync
 
-
-To install the full set of example human cancer data, including reference sequences and annotation data sets:
-    
-    # import metadata
-    genome model import metadata /opt/gms/GMS1/export/2891454740-2013.09.11.dat
-  
-    # list the models you just imported
-    genome model list
-    
 
 To build the microarray models:
 
@@ -169,10 +192,10 @@ System Requirements
 -------------------
 
 System requirements for processing the example data through all pipelines:
- * 1TB for the results (40x WGS tumor/normal, 1 lane of exome, 1 lane of tumor RNA, processing through MedSeq)
+ * 100 GB for reference-related data used by pipelines
+ * 284 GB for test data
+ * 1 TB for the results (40x WGS tumor/normal, 1 lane of exome, 1 lane of tumor RNA, processing through MedSeq)
  * 48+ GB of RAM
- * 12 cores
+ * 12+ cores
  * 2 weeks of processing time for full analysis (varies)
-
-
 
