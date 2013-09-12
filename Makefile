@@ -87,7 +87,7 @@ all: sudo done-local/user-home-$(USER) stage-software
 	DEBIAN_FRONTEND=noninteractive sudo make setup
 
 # in a VM environment, the staging occurs on the host, and the rest on the VM
-vm: sudo stage-software vminit
+vm: sudo vminit
 	#
 	# $@:
 	# log into the vm to finish the make process
@@ -263,6 +263,7 @@ done-shared/git-checkouts:
 	# $@:
 	#
 	sudo -v
+	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
 	[ -e sw/ur/.git ] 			|| git clone http://github.com/genome/UR.git -b gms-pub sw/ur
 	[ -e sw/workflow/.git ] || git clone http://github.com/genome/tgi-workflow.git -b gms-pub sw/workflow
 	[ -e sw/rails/.git ] 		|| git clone http://github.com/genome/gms-webviews.git -b gms-pub sw/rails 
