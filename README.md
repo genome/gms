@@ -9,17 +9,15 @@ The Genome Modeling System ALPHA
 Download
 --------
 
-This software suite is available on github via clone:
-
-  git clone git@github.com:genome/gms.git 
-  cd gms
+    git clone https://github.com/genome/gms.git
+    cd gms
 
 
 Installation on Ubuntu 12.04
 ------------
 
 For a standard, standalone, configuration on Ubuntu 12.04 run:
-  
+    
     make
 
 
@@ -50,6 +48,14 @@ Installation on Windows
 -------------
 
 Install Ubuntu 12.04 via virtualbox.  From within the VM, follow the Ubuntu 12.04 instructions above.
+
+    https://www.virtualbox.org/wiki/Downloads
+
+    Download correct iso:
+    http://releases.ubuntu.com/precise/
+
+    Then, follow these instructions:
+    http://www.wikihow.com/Install-Ubuntu-on-VirtualBox
 
 
 Installation on cloud servers
