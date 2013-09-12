@@ -65,7 +65,7 @@ endif
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2013-08-28
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=20130906.120901
+APT_DUMP_VERSION=20130906.150956
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -362,7 +362,12 @@ done-local/gms-home: done-local/puppet
 	# $@:
 	#
 	sudo -v
+	[ -d "/opt/gms" ] || sudo mkdir -p "/opt/gms"
+	sudo chown genome:genome /opt/gms /opt/gms/.*
+	sudo chmod g+rwxs /opt/gms /opt/gms/.*
 	[ -d "$(GMS_HOME)" ] || sudo mkdir -p "$(GMS_HOME)"
+	sudo chown -R genome:genome $(GMS_HOME)
+	sudo chmod -R g+ws $(GMS_HOME)
 	echo GMS_HOME is $(GMS_HOME)
 	cat setup/dirs | sudo xargs -n 1 -I DIR bash -c 'cd $(GMS_HOME); mkdir -p DIR; sudo chown genome:genome DIR; sudo chmod g+sw DIR'
 	[ "`readlink $(GMS_HOME)/sw`" = "$(PWD)/sw" ] || (sudo rm "$(GMS_HOME)/sw" 2>/dev/null; sudo ln -s $(PWD)/sw "$(GMS_HOME)/sw")
