@@ -9,22 +9,26 @@ The Genome Modeling System ALPHA
 Download
 --------
 
-This software suite is available on github via clone:
-
-  git clone git@github.com:genome/gms.git 
-  cd gms
-
+    # if you have "git" installed
+    git clone https://github.com/genome/gms.git
+    cd gms
+    
+    # if not you can download a compressed file and unzip it
+    # from http://github.com/genome/gms/releases/gms-0.1.tgz (TODO: get correct path)
+    
 
 Installation on Ubuntu 12.04
 ------------
 
 For a standard, standalone, configuration on Ubuntu 12.04 run:
-  
+    
     make
 
 
 Installation on Mac OSX or Linux distributions other than Ubuntu 12.04
 ------------
+
+When using another Unix/Linux box
 
 For a VM using VirtualBox and Vagrant, run the following on the HOST, which can be any POSIX system (Mac, other Linux).
 It will download data to the working directory, but do final work on the VM using vagrant commands.
@@ -35,18 +39,45 @@ Assuming all went well you should now be able to log in as follows:
 
     vagrant ssh
 
+Try some basic sanity checks of your system once you are logged in
+
+    bjobs # You should not have any unfinished jobs yet
+    bhosts # You should see one host, 'precise64'
+    bqueues # You should see four queues 
+
+    genome disk group list # You should see four disk groups
+
+    gene disk volume list # You should see at least one volume
+
 
 Installation on Windows
 -------------
 
 Install Ubuntu 12.04 via virtualbox.  From within the VM, follow the Ubuntu 12.04 instructions above.
 
+    # VirtualBox can be downloaded here
+    https://www.virtualbox.org/wiki/Downloads
+
+    # Download the correct ISO image for Ubuntu 12.04 (Precise)
+    # Either the Desktop or Server versions will work.
+    http://releases.ubuntu.com/precise/
+
+    # Then, follow these instructions:
+    http://www.wikihow.com/Install-Ubuntu-on-VirtualBox
+
+    # On your VM, install git, and clone the git repo:
+    sudo apt-get install git
+    git clone https://github.com/genome/gms.git
+    cd gms
+    make
+    
 
 Installation on cloud servers
 ------------
 
 For fancier things, like install on a cluster, edit the file "Vagrantfile", and use Amazon EC2 or OpenStack vagrant plugins.
-Management of the cloud services can be done from any host that supports vagrant.
+Management of the cloud services can be done from any host that supports vagrant.  An upcoming release will offer more support
+for managing the cluster.  For now Linux administration expertise and Vagrant expertise is required to make a cluster.
 
 Usage
 -----
