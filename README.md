@@ -1,72 +1,63 @@
 GMS
 ===
 
-The Genome Modeling System ALPHA
+The Genome Modeling System *ALPHA*
 
-(this document is a work in progress and will not actually install as described)
+_(this document is a work in progress and will not actually install as described, stay tuned for relese!!)_
 
-
-Download
---------
-
-    # if you have "git" installed
-    git clone https://github.com/genome/gms.git
-    cd gms
-    
-    # if not you can download a compressed file and unzip it
-    # from http://github.com/genome/gms/releases/gms-0.1.tgz (TODO: get correct path)
-    
 
 Installation on Ubuntu 12.04
 ------------
 
 For a standard, standalone, configuration on Ubuntu 12.04 run:
-    
+
+    sudo apt-get install git ssh make
+    git clone https://github.com/genome/gms.git
+    cd gms
     make
 
 
 Installation on Mac OSX or Linux distributions other than Ubuntu 12.04
 ------------
 
-When using another Unix/Linux box
+Installation on another Linux system, or Mac OS X requires a VM, but the VM 
+can be auto-installed if you have root access on the system.  For non-root, or for a 
+Mac without Xcode installed, fall through to the Windows instructions below.
 
-For a VM using VirtualBox and Vagrant, run the following on the HOST, which can be any POSIX system (Mac, other Linux).
+If you have root (or Xcode on a Mac), this will install VirtualBox and Vagrant.
 It will download data to the working directory, but do final work on the VM using vagrant commands.
 
-    make vm
+    git clone https://github.com/genome/gms.git
+    cd gms
+    make vminit     # install virtualbox and vagrant
+    make vm         # install the system *inside* the VM
 
 Assuming all went well you should now be able to log in as follows:
 
     vagrant ssh
 
-Try some basic sanity checks of your system once you are logged in
 
-    bjobs # You should not have any unfinished jobs yet
-    bhosts # You should see one host, 'precise64'
-    bqueues # You should see four queues 
-
-    genome disk group list # You should see four disk groups
-
-    gene disk volume list # You should see at least one volume
-
-
-Installation on Windows
+Installation on Windows, or on Mac OS X without Xcode
 -------------
 
-Install Ubuntu 12.04 via virtualbox.  From within the VM, follow the Ubuntu 12.04 instructions above.
+All other systems, including Windows, VirtualBox (or another VM provider) can be installed manually.
 
-    # VirtualBox can be downloaded here
+VirtualBox can be downloaded here:
+
     https://www.virtualbox.org/wiki/Downloads
 
-    # Download the correct ISO image for Ubuntu 12.04 (Precise)
-    # Either the Desktop or Server versions will work.
+Download the correct ISO image for Ubuntu 12.04 (Precise)
+Either the Desktop or Server versions will work.
+    
     http://releases.ubuntu.com/precise/
 
-    # Then, follow these instructions:
+Follow these instructions to install the image into VirtualBox:
+    
     http://www.wikihow.com/Install-Ubuntu-on-VirtualBox
 
-    # On your VM, install git, and clone the git repo:
-    sudo apt-get install git
+On your VM, follow the standard Ubuntu 12.04 directions above.
+
+    sudo apt-get install git ssh make
     git clone https://github.com/genome/gms.git
     cd gms
     make
@@ -78,6 +69,17 @@ Installation on cloud servers
 For fancier things, like install on a cluster, edit the file "Vagrantfile", and use Amazon EC2 or OpenStack vagrant plugins.
 Management of the cloud services can be done from any host that supports vagrant.  An upcoming release will offer more support
 for managing the cluster.  For now Linux administration expertise and Vagrant expertise is required to make a cluster.
+
+Initial Sanity Checks
+-------------
+
+    bjobs                   # You should not have any unfinished jobs yet
+    bhosts                  # You should see one host ('precise64' if you are on a vagrant/virtualbox VM)
+    bqueues                 # You should see four queues 
+    genome disk group list  # You should see four disk groups
+    genome disk volume list # You should see at least one volume for your local drive
+    genoem sys gateway list # You should see one gateway for your new home system
+
 
 Usage
 -----
@@ -95,10 +97,10 @@ If you would prefer to copy the GMS1 data rather than mount it via FTP, use this
 To install the full set of example human cancer data, including reference sequences and annotation data sets:
     
     # import metadata
-    genome model import metadata /opt/gms/GMS1/export/2891454740-2013.09.09-4.dat
+    genome model import metadata /opt/gms/GMS1/export/2891454740-2013.09.11.dat
   
-    # list
-    genome mode list
+    # list the models you just imported
+    genome model list
     
 
 To build the microarray models:
