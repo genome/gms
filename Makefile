@@ -17,6 +17,7 @@
 
 # the identify of each GMS install is unique
 # the subtraction causes the number width to grow over time slowly
+RUBY:=$(shell bash -c '(which ruby) || (echo installing ruby ... && sudo apt-get -y -f install ruby1.9.1 >/dev/null 2>&1)')
 GMS_ID:=$(shell cat /etc/genome/sysid 2>/dev/null)
 ifeq ('$(GMS_ID)','') 
 	GMS_ID:=$(shell ruby -e 'n=Time.now.to_i-1373561229; a=""; while(n > 0) do r = n % 36; a = a +  (r<=9 ? r.to_s : (55+r).chr); n=(n/36).to_i end; print a,sprintf("%02d",(rand()*100).to_i),"\n"')
@@ -98,7 +99,7 @@ vm: sudo vminit
 	# now run "vagrant ssh" to log into the new GMS
 	#
 
-sudo:
+sudo: 
 	sudo -v # sudo early to cache password (safely)
 
 # for debugging variables
