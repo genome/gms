@@ -407,6 +407,7 @@ done-local/etc: done-local/apt-config
 	# copy all data from setup/etc into /etc
 	# 
 	sudo -v
+	[ -d /etc/facter/facts.d ] || sudo mkdir -p /etc/facter/facts.d 
 	/bin/ls setup/etc/ | perl -ne 'chomp; $$o = $$_; s|\+|/|g; $$c = "cp setup/etc/$$o /etc/$$_\n"; print STDERR $$c; print STDOUT $$c' | sudo bash
 	sudo setup/bin/findreplace REPLACE_GENOME_HOME $(GMS_HOME) /etc/genome.conf /etc/apt/sources.list.d/genome.list
 	sudo setup/bin/findreplace REPLACE_GENOME_SYS_ID $(GMS_ID) /etc/genome.conf /etc/apt/sources.list.d/genome.list
