@@ -357,6 +357,7 @@ done-local/puppet: done-local/sysid done-local/hosts
 	which puppet || sudo apt-get -q -y install puppet # if puppet is already installed do NOT use apt, as the local version might be independent
 	bash -l -c 'sudo puppet apply manifests/$(MANIFEST)'
 	sudo usermod -g genome $(USER)
+	sudo usermod -g fuse $(USER)
 	#sudo usermod -g $(GMS_GROUP) $(USER)
 	#sudo usermod -g genome $(USER)
 	#sudo usermod -g $(GMS_GROUP) $(USER)
