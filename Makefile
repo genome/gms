@@ -356,6 +356,10 @@ done-local/puppet: done-local/sysid done-local/hosts
 	sudo -v
 	which puppet || sudo apt-get -q -y install puppet # if puppet is already installed do NOT use apt, as the local version might be independent
 	bash -l -c 'sudo puppet apply manifests/$(MANIFEST)'
+	sudo usermod -g genome $(USER)
+	#sudo usermod -g $(GMS_GROUP) $(USER)
+	#sudo usermod -g genome $(USER)
+	#sudo usermod -g $(GMS_GROUP) $(USER)
 	touch $@
 
 done-local/gms-home: done-local/puppet 
@@ -406,6 +410,7 @@ done-local/etc: done-local/apt-config
 	sudo setup/bin/findreplace REPLACE_GENOME_SYS_ID $(GMS_ID) /etc/genome.conf /etc/apt/sources.list.d/genome.list
 	sudo setup/bin/findreplace REPLACE_APT_DUMP_VERSION $(APT_DUMP_VERSION) /etc/apt/sources.list.d/genome.list
 	sudo bash -c 'echo "/opt/gms/$(GMS_ID) *(ro,anonuid=2001,anongid=2001)" >> /etc/exports'	
+	sudo chmod +x /etc/facter/facts.d/genome.sh
 	touch $@
 
 done-local/pkgs: done-local/etc
@@ -535,7 +540,6 @@ home: done-local/user-home-$(USER)
 	#
 	# $@:
 	#
-	sudo -v
 	
 update-repos:
 	#
