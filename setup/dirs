@@ -2,4 +2,6 @@ var/tmp
 var/lock
 var/log
 var/cache/san
-
+sw
+fs
+db

@@ -1,29 +1,15 @@
 #!/usr/bin/env make
 
-# There are four stages to the make process
-# 1. "stage_software": download more git repos and tarballs of software needed for install
-# 2. "vminit": set up VMs as necessary (skipped if installing directly on the host)
-# 3. "setup_env": configure core system things in /etc, set up user accounts, and change the environment
-# 4. "setup": after setup_env, get a login shell and use the environment to complete installation
-
-# "make" will perform 1, 3 and 4
-# "make vm" will perform 1, 2, 3 and 4
-# "make vars" will dump configuration information, and not build anything
-# "make update-repos" can be used afterward to get the latest software
-# "make db-rebuild" will re-create the database, empty, but primed for usage
-# "make home" will initialize things for the current user to use the installed GMS
-
 ##### Configuration
 
 # the identify of each GMS install is unique
-# the subtraction causes the number width to grow over time slowly
 RUBY:=$(shell bash -c '(which ruby) || (echo installing ruby ... && sudo apt-get -y -f install ruby1.9.1 >/dev/null 2>&1)')
 GMS_ID:=$(shell cat /etc/genome/sysid 2>/dev/null)
 ifeq ('$(GMS_ID)','') 
 	GMS_ID:=$(shell ruby -e 'n=Time.now.to_i-1373561229; a=""; while(n > 0) do r = n % 36; a = a +  (r<=9 ? r.to_s : (55+r).chr); n=(n/36).to_i end; print a,sprintf("%02d",(rand()*100).to_i),"\n"')
 endif
-GMS_USER:='gms$(GMS_ID)'
-GMS_GROUP:='gms$(GMS_ID)'
+GMS_USER:=genome
+GMS_GROUP:=genome
 
 # this path will be a symlink to the installation repo
 GMS_HOME:=/opt/gms/$(GMS_ID)
@@ -74,21 +60,25 @@ HOSTNAME:=$(shell hostname)
 PWD:=$(shell pwd)
 
 # ensure the local directory is present for steps with results outside of the directory
-$(shell [ -e `readlink done-local` ] || mkdir -p `readlink done-local`)
+$(shell [ -e `readlink done-host` ] || mkdir -p `readlink done-host`)
 
               
 ##### Primary Targets
 
 # in a non-VM environment the default target "all" will build the entire system
-all: sudo done-local/user-home-$(USER) stage-software 
+all: 
 	#
 	# $@:
+	# Install the GMS on the local Ubuntu 12.04 (Precise) host...
 	#
 	sudo -v
 	DEBIAN_FRONTEND=noninteractive sudo make setup
+	#
+	# LOG OUT and log back in to ensure your environment is properly initialized
+	#
 
 # in a VM environment, the staging occurs on the host, and the rest on the VM
-vm: sudo vminit
+vm: vminit
 	#
 	# $@:
 	# log into the vm to finish the make process
@@ -98,9 +88,6 @@ vm: sudo vminit
 	#
 	# now run "vagrant ssh" to log into the new GMS
 	#
-
-sudo: 
-	sudo -v # sudo early to cache password (safely)
 
 # for debugging variables
 vars:
@@ -125,28 +112,9 @@ vars:
 	# HOSTNAME: $(HOSTNAME)
 	# PWD: $(PWD)
 
+##### Behind done-host/vminit: These steps are only run when setting up a VM host.
 
-
-###### Core Steps
-
-stage-software: done-shared/git-checkouts done-shared/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-shared/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz done-shared/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
-
-setup_env: done-local/gms-home done-local/puppet 
-
-setup: setup_env
-	# nesting make ensures that the users and environment are set up before running things that depend on them
-	sudo bash -l -c 'source /etc/genome.conf; make done-local/rails done-local/apache done-local/db-schema done-local/openlava-install'
-
-##### Behind done-local/vminit: These steps are only run when setting up a VM host.
-
-done-local/apt-get-update:
-	#
-	# $@:
-	#
-	sudo apt-get -y update 
-	touch $@
-
-done-local/vminstall-Ubuntu10.04:
+done-host/vminstall-Ubuntu10.04:
 	#
 	# $@:
 	#
@@ -159,7 +127,7 @@ done-local/vminstall-Ubuntu10.04:
 	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
 	touch $@
 	
-done-local/vminstall-Ubuntu12.04:
+done-host/vminstall-Ubuntu12.04:
 	#
 	# $@:
 	#
@@ -172,7 +140,7 @@ done-local/vminstall-Ubuntu12.04:
 	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
 	touch $@
 
-done-local/vminstall-Darwin:
+done-host/vminstall-Darwin:
 	#
 	# $@:
 	#
@@ -183,17 +151,17 @@ done-local/vminstall-Darwin:
 	while [[ ! `which vagrant` ]]; do echo "waiting for vagrant install to complete..."; sleep 3; done
 	touch $@
 
-done-local/vminstall: 
+done-host/vminstall:  
 	#
-	# $@:
+	# $@: (recurses into vminstall-$(OS)
 	#
 	sudo -v
-	[ -e done-local/vminstall-$(OS) ] || sudo make done-local/vminstall-$(OS)
-	(which VirtualBox && which vagrant && touch done-local/vminstall) || echo "**** run one of the following to auto-install for your platform: vminstall-mac, vminstall-10.04, or vminstall-12.04"
+	[ -e done-host/vminstall-$(OS) ] || sudo make done-host/vminstall-$(OS)
+	(which VirtualBox && which vagrant && touch done-host/vminstall) || echo "**** run one of the following to auto-install for your platform: vminstall-mac, vminstall-10.04, or vminstall-12.04"
 	which VirtualBox || (echo "**** you can install VirtualBox manually from https://www.virtualbox.org/wiki/Downloads")
 	which vagrant || (echo "**** you can install vagrant manually from http://downloads.vagrantup.com/")
 
-done-local/vmaddbox: done-local/vminstall
+done-host/vmaddbox: done-host/vminstall
 	#
 	# $@:
 	#
@@ -203,7 +171,7 @@ done-local/vmaddbox: done-local/vminstall
 	(vagrant box list | grep '^precise64' >/dev/null && echo "found vagrant precise64 box") || (echo "installing vagrant precise64 box" && vagrant box add precise64 http://files.vagrantup.com/precise64.box)
 	touch $@
 
-done-local/vmkernel:
+done-host/vmkernel:
 	#
 	# $@:
 	#
@@ -214,8 +182,11 @@ done-local/vmkernel:
 	( (which apt-get >/dev/null) &&  ( [ -e `dpkg -L nfs-kernel-server | grep changelog` ] || sudo apt-get -y install -q -y nfs-kernel-server gcc ) ) || echo "nothing to do for Mac.."
 	touch $@
 
-vmcreate: done-local/vmaddbox done-local/vmkernel
+vmcreate: done-host/vmaddbox done-host/vmkernel
 	sudo -v
+	#
+	# $@: (recurses into done-host/apt-get-update on the VM)
+	#
 	#
 	# the first bootup will fail because the NFS client is not installed 
 	#
@@ -223,7 +194,7 @@ vmcreate: done-local/vmaddbox done-local/vmkernel
 	#
 	# fix the above issue by adding NSF to the client
 	#
-	vagrant ssh -c 'sudo apt-get update; sudo apt-get -y install -q - --force-yes nfs-client make'
+	vagrant ssh -c 'apt-get update -y >/dev/null 2>&1 || true; sudo apt-get -y install -q - --force-yes nfs-client make'
 	#vagrant ssh -c '[ -e postinstall.sh ] && sudo ./postinstall.sh'
 	#
 	# now reload the VM
@@ -235,48 +206,32 @@ vmup: vmcreate
 	((vagrant status | grep 'not created') && bash -c 'make vmcreate') || true
 	(vagrant status | grep 'running') || vagrant up
 
-
 vminit: vmup
 	#
 	# $@:
 	#
 	sudo -v
-	vagrant ssh -c 'cd /vagrant &&  make done-local/vminit'
+	vagrant ssh -c 'cd /vagrant &&  make done-host/vminit'
 
-done-local/vminit:
+##### Steps run on the VM from the host via "vagrant ssh"
+
+done-host/vminit:
 	#
 	# $@:
 	# these steps can be done in parallel with stage-software
 	#
 	sudo -v
-	sudo echo # cache password request
-	make done-local/user-home-$(USER)
-	make done-local/puppet 
-	make done-local/sysid
+	make done-host/user-home-$(USER)
+	make done-host/puppet 
+	make done-host/sysid
 	touch $@
 
-# see "vm:" above for the final steps in a VM-based setup (i.e. run "sudo make setup" on the VM)
-
-##### Behind "stage-software":
-
-done-shared/git-checkouts:
-	#
-	# $@:
-	#
-	sudo -v
-	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
-	[ -e sw/ur/.git ] 			|| git clone http://github.com/genome/UR.git -b gms-pub sw/ur
-	[ -e sw/workflow/.git ] || git clone http://github.com/genome/tgi-workflow.git -b gms-pub sw/workflow
-	[ -e sw/rails/.git ] 		|| git clone http://github.com/genome/gms-webviews.git -b gms-pub sw/rails 
-	[ -e sw/genome/.git ] 	|| git clone http://github.com/genome/gms-core.git -b gms-pub  sw/genome	
-	[ -e sw/openlava/.git ] || git clone http://github.com/openlava/openlava.git -b 2.0-release sw/openlava
-	touch $@
+##### Generic make targets used by other steps
 
 # downloading and unzipping are all done with generic targets
 # ...except one that requires special rename handling
 
-
-done-shared/download-%: 
+done-repo/download-%: 
 	#
 	# $@:
 	#
@@ -284,36 +239,36 @@ done-shared/download-%:
 	cd setup/archive-files; $(FTP) $(DATASERVER)/`basename $@ | sed s/download-//` $(DOWNLOAD_TARGET)
 	touch $@
 
-done-shared/unzip-sw-%: done-shared/download-% 
+done-repo/unzip-sw-%: done-repo/download-% 
 	#
 	# $@:
 	#
 	sudo -v
-	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C sw
+	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/sw
 	touch $@ 
 
-done-shared/unzip-fs-%: done-shared/download-%
+done-repo/unzip-fs-%: done-repo/download-%
 	#
 	# $@:
 	#
 	sudo -v
-	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C fs 
+	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/fs 
 	touch $@ 
 
-done-shared/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-shared/download-apps-$(APPS_DUMP_VERSION).tgz
+done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS_DUMP_VERSION).tgz
 	#
 	# $@:
 	# unzip apps which are not packaged as .debs (publicly available from other sources)
 	#
 	sudo -v
-	tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C sw
-	cd sw/apps && ln -s ../../sw/apps-$(APPS_DUMP_VERSION)/* . || true
+	tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
+	cd $(GMS_HOME)/sw/apps && ln -s ../../sw/apps-$(APPS_DUMP_VERSION)/* . || true
 	touch $@ 
 
 
-##### Between staging of files and running setup, or to be run by any user after:
+##### These steps only run on the actual GMS host 
 
-done-local/user-home-%:
+done-host/user-home-%: 
 	#
 	# $@: 
 	# copying configuration into the current user's home directory
@@ -322,15 +277,15 @@ done-local/user-home-%:
 	sudo -v
 	[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
 	cp $(PWD)/setup/home/.??* $(USER_HOME)
+	sudo apt-get install vim git ssh
 	touch $@
-
-##### Behind "setup_env": run as root
-
-done-local/sysid: 
+	
+done-host/sysid: 
 	#
 	# $@:
+	#
 	# setup /etc/genome/sysid if it is not present
-	# and if it is present verify that it agress with the make variable
+	# if it is present, verify that it agress with the make variable
 	#
 	sudo -v
 	[ -e /etc/genome/ ] || sudo mkdir /etc/genome
@@ -341,7 +296,7 @@ done-local/sysid:
 	test "`cat /etc/genome/sysid`" = '$(GMS_ID)' 
 	touch $@
 
-done-local/hosts:
+done-host/hosts:
 	#
 	# $@:
 	#
@@ -349,14 +304,15 @@ done-local/hosts:
 	echo "$(IP) GMS_HOST" | setup/bin/findreplace-gms | sudo bash -c 'cat - >>/etc/hosts'
 	touch $@ 
 
-done-local/puppet: done-local/sysid done-local/hosts
+done-host/puppet: done-host/sysid done-host/hosts
 	#
 	# $@:
 	# the bridge over to puppet-based install
 	#
 	sudo -v
+	(facter -v | grep 1.7) || (sudo gem install facter && sudo apt-get install facter)
 	which puppet || sudo apt-get -q -y install puppet # if puppet is already installed do NOT use apt, as the local version might be independent
-	bash -l -c 'sudo puppet apply manifests/$(MANIFEST)'
+	bash -l -c 'sudo `which puppet` apply setup/manifests/$(MANIFEST)'
 	sudo usermod -g genome $(USER)
 	sudo usermod -g fuse $(USER)
 	#sudo usermod -g $(GMS_GROUP) $(USER)
@@ -364,44 +320,72 @@ done-local/puppet: done-local/sysid done-local/hosts
 	#sudo usermod -g $(GMS_GROUP) $(USER)
 	touch $@
 
-done-local/gms-home: done-local/puppet 
+done-host/gms-home-vm:
 	#
-	# $@:
+	# $@
+	# When using a Vagrant VM, make /opt/gms a symlink to a pass-through to the host
 	#
 	sudo -v
-	[ -d "/opt/gms" ] || sudo mkdir -p "/opt/gms"
-	sudo chown genome:genome /opt/gms /opt/gms/.*
-	sudo chmod g+rwxs /opt/gms /opt/gms/.*
-	[ -d "$(GMS_HOME)" ] || sudo mkdir -p "$(GMS_HOME)"
-	sudo chown -R genome:genome $(GMS_HOME)
-	sudo chmod -R g+ws $(GMS_HOME)
-	echo GMS_HOME is $(GMS_HOME)
-	cat setup/dirs | sudo xargs -n 1 -I DIR bash -c 'cd $(GMS_HOME); mkdir -p DIR; sudo chown genome:genome DIR; sudo chmod g+sw DIR'
-	[ "`readlink $(GMS_HOME)/sw`" = "$(PWD)/sw" ] || (sudo rm "$(GMS_HOME)/sw" 2>/dev/null; sudo ln -s $(PWD)/sw "$(GMS_HOME)/sw")
-	[ "`readlink $(GMS_HOME)/fs`" = "$(PWD)/fs" ] || (sudo rm "$(GMS_HOME)/fs" 2>/dev/null; sudo ln -s $(PWD)/fs "$(GMS_HOME)/fs")
-	[ "`readlink $(GMS_HOME)/db`" = "$(PWD)/db" ] || (sudo rm "$(GMS_HOME)/db" 2>/dev/null; sudo ln -s $(PWD)/db "$(GMS_HOME)/db")
-	[ -d "$(GMS_HOME)/export" ] || mkdir "$(GMS_HOME)/export"
-	[ -d "$(GMS_HOME)/known-systems" ] || mkdir "$(GMS_HOME)/known-systems"
-	cp known-systems/* "$(GMS_HOME)/known-systems"
-	touch $(GMS_HOME)/export/sanitize.csv
-	#sudo mkdir -p $(GMS_HOME)/fs/$(GMS_ID)
-	#sudo ln -s $(PWD)/fs/* "$(GMS_HOME)/fs/$(GMS_ID)"
+	[ -d /vagrant/vm-opt-gms ] || mkdir -p /vagrant/vm-opt-gms/
+	([ `readlink /opt/gms` ] && sudo unlink /opt/gms) || true
+	[ ! -e /opt/gms ] || (echo "Unexpected /opt/gms exists on VM???" && false)
+	sudo ln -s /vagrant/vm-opt-gms /opt/gms
 	touch $@
 
-done-local/apt-config: done-local/puppet done-shared/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz
+done-host/gms-home-raw:
+	#
+	# $@
+	# When not using a VM, create a real /opt/gms
+	#	
+	[ -d "/opt/gms" ] || sudo mkdir -p "/opt/gms"
+	touch $@
+
+done-host/gms-home: done-host/puppet
+	#
+	# $@: (recurses into done-host/gms-home-{raw,vm})
+	#
+	sudo -v
+	# the creation of /opt/gms varies depending on whether this is a VM or not
+	# on a VM we want all disk activity to "pass through" to the host to be shared across installs
+	[ -e /vagrant ] && make done-host/gms-home-vm
+	[ -e /vagrant ] || make done-host/gms-home-raw
+	# set permissions on the root directory above the GMS home so that additional systems can attach
+	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.*
+	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.*
+	sudo chmod g+rwxs /opt/gms /opt/gms/.*
+	# make the home for this GMS
+	[ -d "$(GMS_HOME)" ] || sudo mkdir -p $(GMS_HOME)
+	echo GMS_HOME is $(GMS_HOME)
+	# install a directory skeleton
+	cp -a setup/gms-home-skel/* $(GMS_HOME)
+	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)
+	sudo chmod -R g+ws $(GMS_HOME)
+	# since the git repo doesn't keep empty dirs (without .gitkeep), make required subdirs dynamically
+	cat setup/dirs | sudo xargs -n 1 -I DIR bash -c 'cd $(GMS_HOME); mkdir -p DIR; sudo chown genome:genome DIR; sudo chmod g+sw DIR'
+	touch $@
+
+setup: done-host/gms-home done-host/user-home-$(USER) stage-software
+	#
+	# $@: (recurses into all subsequent steps) after sourcing the /etc/genome.conf file
+	#
+	# nesting make ensures that the users and environment are set up before running things that depend on them
+	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install'
+	touch $@
+
+done-host/apt-config: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz
 	#
 	# $@:
-	# done-local/apt-config:
+	# done-host/apt-config:
 	# configure apt to use the GMS repository
 	#
 	sudo -v
-	sudo dpkg --force-confdef --force-confnew -i sw/apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION)/mirror/repo.gsc.wustl.edu/ubuntu/pool/main/g/genome-apt-config/genome-apt-config_1.0.0-2~Ubuntu~precise_all.deb
+	sudo dpkg --force-confdef --force-confnew -i $(GMS_HOME)/sw/apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION)/mirror/repo.gsc.wustl.edu/ubuntu/pool/main/g/genome-apt-config/genome-apt-config_1.0.0-2~Ubuntu~precise_all.deb
 	/bin/cp setup/debconf.in /tmp
 	# findreplace WHATEVER /tmp/debconf.in
 	sudo debconf-set-selections < /tmp/debconf.in
 	touch $@	
 
-done-local/etc: done-local/apt-config 
+done-host/etc: done-host/apt-config 
 	#
 	# $@:
 	# copy all data from setup/etc into /etc
@@ -416,13 +400,19 @@ done-local/etc: done-local/apt-config
 	sudo chmod +x /etc/facter/facts.d/genome.sh
 	touch $@
 
-done-local/pkgs: done-local/etc
+done-host/apt-get-update: done-host/etc 
+	#
+	# $@
+	#
+	sudo -v
+	sudo apt-get -y update >/dev/null 2>&1 || true
+	touch $@
+
+done-host/pkgs: done-host/apt-get-update
 	#
 	# $@:
 	#
 	sudo -v
-	# update from the local apt mirror directory
-	sudo apt-get update >/dev/null 2>&1 || true  
 	# install primary dependency packages 
 	sudo apt-get install -q -y --force-yes git-core vim nfs-common perl-doc genome-snapshot-deps `cat setup/packages.lst`
 	# install rails dependency packages
@@ -432,17 +422,28 @@ done-local/pkgs: done-local/etc
 	sudo setup/bin/cpanm Getopt::Complete
 	touch $@
 
-### behind "setup", after "setup_env"
-
-done-local/openlava-compile: done-shared/git-checkouts done-local/hosts done-local/etc done-local/pkgs
+done-repo/git-checkouts:
 	#
 	# $@:
 	#
 	sudo -v
-	cd sw/openlava && ./bootstrap.sh && make && make check && sudo make install 
+	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
+	[ -e $(GMS_HOME)/sw/ur/.git ] 			|| git clone http://github.com/genome/UR.git -b gms-pub $(GMS_HOME)/sw/ur
+	[ -e $(GMS_HOME)/sw/workflow/.git ] || git clone http://github.com/genome/tgi-workflow.git -b gms-pub $(GMS_HOME)sw/workflow
+	[ -e $(GMS_HOME)/sw/rails/.git ] 		|| git clone http://github.com/genome/gms-webviews.git -b gms-pub $(GMS_HOME)/sw/rails 
+	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| git clone http://github.com/genome/gms-core.git -b gms-pub  $(GMS_HOME)/sw/genome	
+	[ -e $(GMS_HOME)/sw/openlava/.git ] || git clone http://github.com/openlava/openlava.git -b 2.0-release $(GMS_HOME)/sw/openlava
 	touch $@
 
-done-local/openlava-install: done-local/openlava-compile
+done-host/openlava-compile: done-repo/git-checkouts done-host/hosts done-host/etc done-host/pkgs
+	#
+	# $@:
+	#
+	sudo -v
+	cd $(GMS_HOME)/sw/openlava && ./bootstrap.sh && make && make check && sudo make install 
+	touch $@
+
+done-host/openlava-install: done-host/openlava-compile
 	#
 	# $@:
 	#
@@ -460,7 +461,7 @@ done-local/openlava-install: done-local/openlava-compile
 	sudo /etc/init.d/openlava status
 	touch $@
 
-done-local/db-init: done-local/pkgs 
+done-host/db-init: done-host/pkgs 
 	#
 	# $@:
 	# 
@@ -480,20 +481,20 @@ done-local/db-init: done-local/pkgs
 	sudo /etc/init.d/postgresql restart
 	touch $@
 
-done-local/rails: done-local/pkgs
+done-host/rails: done-host/pkgs
 	#
 	# $@:
 	# 
 	sudo -v
 	sudo gem install bundler --no-ri --no-rdoc --install-dir=/var/lib/gems/1.9.1
 	sudo chown www-data:www-data /var/www
-	sudo -u www-data rsync -r sw/rails/ /var/www/gms-webviews
+	sudo -u www-data rsync -r $(GMS_HOME)/sw/rails/ /var/www/gms-webviews
 	##cd /var/www/gms-webviews && sudo bundle install
 	[ -e /var/www/gms-webviews/tmp ] || sudo -u www-data mkdir /var/www/gms-webviews/tmp
 	sudo -u www-data touch /var/www/gms-webviews/tmp/restart.txt
 	touch $@
 
-done-local/apache: done-local/pkgs 
+done-host/apache: done-host/pkgs 
 	#
 	# $@:
 	# 
@@ -517,17 +518,17 @@ done-local/apache: done-local/pkgs
 	sudo service apache2 restart
 	touch $@
 
-done-local/db-schema: done-local/db-init done-local/hosts
+done-host/db-schema: done-host/db-init done-host/hosts
 	#
 	# $@:
 	# 
 	sudo -v
 	sudo -u postgres psql -d genome -f setup/schema.psql	
 	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-allocations.pl'
-	sudo bash -l -c 'source /etc/genome.conf; (sw/genome/bin/genome-perl sw/genome/bin/genome disk volume list | grep reads >/dev/null)' 
+	sudo bash -l -c 'source /etc/genome.conf; ($(GMS_HOME)/sw/genome/bin/genome-perl $(GMS_HOME)/sw/genome/bin/genome disk volume list | grep reads >/dev/null)' 
 	touch $@ 
 
-done-local/db-driver: done-local/pkgs
+done-host/db-driver: done-host/pkgs
 	#
 	# $@:
 	# 
@@ -537,9 +538,12 @@ done-local/db-driver: done-local/pkgs
 	[ `perl -e 'use DBD::Pg; print $$DBD::Pg::VERSION'` = '2.19.3' ] || sudo cpanm DBD::Pg
 
 
+stage-software: done-host/pkgs done-repo/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
+
+
 ##### Optional maintenance targets:
 
-home: done-local/user-home-$(USER)
+home: done-host/user-home-$(USER)
 	#
 	# $@:
 	#
@@ -549,13 +553,13 @@ update-repos:
 	# $@:
 	#
 	sudo -v
-	cd sw/genome; git pull origin gms-pub
-	cd sw/ur; git pull origin gms-pub
-	cd sw/workflow; git pull origin gms-pub
-	cd sw/rails; git pull origin gms-pub
+	cd $(GMS_HOME)/sw/genome; git pull origin gms-pub
+	cd $(GMS_HOME)/sw/ur; git pull origin gms-pub
+	cd $(GMS_HOME)/sw/workflow; git pull origin gms-pub
+	cd $(GMS_HOME)/sw/rails; git pull origin gms-pub
 	[ -d /var/www/gms-webviews ] || sudo mkdir /var/www/gms-webviews
 	sudo chown -R www-data:www-data /var/www/gms-webviews/
-	sudo -u www-data rsync -r sw/rails/ /var/www/gms-webviews
+	sudo -u www-data rsync -r $(GMS_HOME)/sw/rails/ /var/www/gms-webviews
 	sudo service apache2 restart
 
 db-drop:
@@ -579,11 +583,11 @@ db-rebuild:
 	sudo -u postgres /usr/bin/psql -c "GRANT ALL PRIVILEGES ON database genome TO \"genome\";"
 	sudo -u postgres psql -d genome -f setup/schema.psql	
 	setup/prime-allocations.pl
-	touch done-local/db-schema
+	touch done-host/db-schema
 
 apt-rebuild:
 	# redo the apt configuration, which will download a new apt blob if necessary
-	([ -e done-local/apt-config ] && rm done-local/apt-config) || true 
-	make 'done-local/apt-config'
+	([ -e done-host/apt-config ] && rm done-host/apt-config) || true 
+	make 'done-host/apt-config'
 
 
