@@ -1,8 +1,8 @@
 
 $user_name = "genome"
-$group_name = "genome"
+$group_name = "genome" 
 
-group { $user_name:
+group { $group_name:
     ensure => 'present',
     gid => '2001',
 }

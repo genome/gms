@@ -313,11 +313,8 @@ done-host/puppet: done-host/sysid done-host/hosts
 	(facter -v | grep 1.7) || (sudo gem install facter && sudo apt-get install facter)
 	which puppet || sudo apt-get -q -y install puppet # if puppet is already installed do NOT use apt, as the local version might be independent
 	bash -l -c 'sudo `which puppet` apply setup/manifests/$(MANIFEST)'
-	sudo usermod -g genome $(USER)
-	sudo usermod -g fuse $(USER)
-	#sudo usermod -g $(GMS_GROUP) $(USER)
-	#sudo usermod -g genome $(USER)
-	#sudo usermod -g $(GMS_GROUP) $(USER)
+	# add the current user to the correct groups
+	sudo usermod -g $(GMS_GROUP) -G fuse,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
 	touch $@
 
 done-host/gms-home-vm:
@@ -429,7 +426,7 @@ done-repo/git-checkouts:
 	sudo -v
 	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
 	[ -e $(GMS_HOME)/sw/ur/.git ] 			|| git clone http://github.com/genome/UR.git -b gms-pub $(GMS_HOME)/sw/ur
-	[ -e $(GMS_HOME)/sw/workflow/.git ] || git clone http://github.com/genome/tgi-workflow.git -b gms-pub $(GMS_HOME)sw/workflow
+	[ -e $(GMS_HOME)/sw/workflow/.git ] || git clone http://github.com/genome/tgi-workflow.git -b gms-pub $(GMS_HOME)/sw/workflow
 	[ -e $(GMS_HOME)/sw/rails/.git ] 		|| git clone http://github.com/genome/gms-webviews.git -b gms-pub $(GMS_HOME)/sw/rails 
 	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| git clone http://github.com/genome/gms-core.git -b gms-pub  $(GMS_HOME)/sw/genome	
 	[ -e $(GMS_HOME)/sw/openlava/.git ] || git clone http://github.com/openlava/openlava.git -b 2.0-release $(GMS_HOME)/sw/openlava
@@ -547,6 +544,8 @@ home: done-host/user-home-$(USER)
 	#
 	# $@:
 	#
+	# add the current user to the correct groups
+	sudo usermod -g $(GMS_GROUP) -G fuse,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
 	
 update-repos:
 	#
