@@ -3,7 +3,7 @@ GMS
 
 The Genome Modeling System **ALPHA**
 
-_(this document is a work in progress and will not actually install as described, stay tuned for relese!!)_
+_(this document is a work in progress and will not actually install as described, stay tuned for release!!)_
 
 
 Installation on Ubuntu 12.04
