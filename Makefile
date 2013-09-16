@@ -31,23 +31,27 @@ else
 endif
 OS:=$(shell echo $(OS_VENDOR)$(OS_RELEASE))
 
-# data which is too big to fit in the git repository is staged here
-DATASERVER=ftp://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files
-#DATASERVER=ftp://clinus234/setup/archive-files
-
 # the tool to use for bulk file transfer
 FTP:=ftp
 ifeq ('$(OS_VENDOR)','Ubuntu')
- FTP:=$(shell which ncftpget || (sudo apt-get install -q -y ncftp && which ncftpget))
+ #FTP:=$(shell which ncftpget || (sudo apt-get install -q -y ncftp && which ncftpget))
+ FTP:=wget -c
 endif
 
-# this is empty for ftp/ncftp but is set to "." for scp and rsync
+# this value is empty for tools that automatically download to the PWD (ftp, ncftpget, wget)
+# and is set to "." for tools that must be told where to download (scp, rsync)
 DOWNLOAD_TARGET=
 ifeq ('$(FTP)', 'scp')
- 	#DATASERVER=blade12-1-1:/gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files
- 	#DATASERVER=clinus234:/opt/gms/GMS1/setup/archive-files
- 	DOWNLOAD_TARGET:=.
+	DOWNLOAD_TARGET:=.
 endif
+
+# data which is too big to fit in the git repository is staged here
+DATASERVER=http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files
+
+# staging locations: (when using these, switch the $FTP tool above as necessary
+# scp: DATASERVER=blade12-1-1:/gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files
+# scp: DATASERVER=clinus234:/opt/gms/GMS1/setup/archive-files
+# ftp: DATASERVER=ftp://clinus234/setup/archive-files
 
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2013-08-28
