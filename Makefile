@@ -277,7 +277,6 @@ done-host/user-home-%:
 	sudo -v
 	[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
 	cp $(PWD)/setup/home/.??* $(USER_HOME)
-	sudo apt-get install vim git ssh
 	touch $@
 	
 done-host/sysid: 
@@ -310,11 +309,13 @@ done-host/puppet: done-host/sysid done-host/hosts
 	# the bridge over to puppet-based install
 	#
 	sudo -v
-	(facter -v | grep 1.7) || (sudo gem install facter && sudo apt-get install facter)
+	# these are needed BEFORE we get everything in place to do the full apt-get update
+	sudo apt-get update 1>/dev/null 2>&1 || true
+	(facter -v | grep 1.7) || (sudo apt-get -y install rubygems && sudo gem install facter && sudo apt-get -y install facter)
 	which puppet || sudo apt-get -q -y install puppet # if puppet is already installed do NOT use apt, as the local version might be independent
 	bash -l -c 'sudo `which puppet` apply setup/manifests/$(MANIFEST)'
 	# add the current user to the correct groups
-	sudo usermod -g $(GMS_GROUP) -G fuse,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
+	sudo usermod -g $(GMS_GROUP) -G fuse,sudo,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
 	touch $@
 
 done-host/gms-home-vm:
