@@ -194,7 +194,7 @@ vmcreate: done-host/vmaddbox done-host/vmkernel
 	#
 	# fix the above issue by adding NSF to the client
 	#
-	vagrant ssh -c 'apt-get update -y >/dev/null 2>&1 || true; sudo apt-get -y install -q - --force-yes nfs-client make'
+	vagrant ssh -c 'sudo apt-get update -y >/dev/null 2>&1 || true; sudo apt-get -y install -q - --force-yes nfs-client make'
 	#vagrant ssh -c '[ -e postinstall.sh ] && sudo ./postinstall.sh'
 	#
 	# now reload the VM
@@ -315,7 +315,7 @@ done-host/puppet: done-host/sysid done-host/hosts
 	which puppet || sudo apt-get -q -y install puppet # if puppet is already installed do NOT use apt, as the local version might be independent
 	bash -l -c 'sudo `which puppet` apply setup/manifests/$(MANIFEST)'
 	# add the current user to the correct groups
-	sudo usermod -g $(GMS_GROUP) -G fuse,sudo,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
+	sudo usermod -g $(GMS_GROUP) -G sudo,admin,fuse,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
 	touch $@
 
 done-host/gms-home-vm:
@@ -546,7 +546,7 @@ home: done-host/user-home-$(USER)
 	# $@:
 	#
 	# add the current user to the correct groups
-	sudo usermod -g $(GMS_GROUP) -G fuse,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
+	sudo usermod -g $(GMS_GROUP) -G sudo,admin,fuse,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
 	
 update-repos:
 	#
