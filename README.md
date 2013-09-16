@@ -143,7 +143,7 @@ To install the full set of example human cancer data, including reference sequen
     genome individual list
     genome sample list
     genome library list
-    genome instrument-data list
+    genome instrument-data list solexa
     
     # list the pre-defined models (no results yet ...you must launch these)
     genome model list
