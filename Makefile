@@ -281,6 +281,8 @@ done-host/user-home-%:
 	sudo -v
 	[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
 	cp $(PWD)/setup/home/.??* $(USER_HOME)
+	touch  ~/.passwd-s3fs
+	chmod 600 ~/.passwd-s3fs
 	touch $@
 	
 done-host/sysid: 
@@ -594,4 +596,18 @@ apt-rebuild:
 	([ -e done-host/apt-config ] && rm done-host/apt-config) || true 
 	make 'done-host/apt-config'
 
+s3fs:
+	#
+	# $@:
+	#
+	[ `which s3fs ` ] || make s3fs-install
+
+s3fs-install:
+	#
+	# $@:
+	#
+	wget https://s3fs.googlecode.com/files/s3fs-1.73.tar.gz
+	tar -zxvf s3fs-1.73.tar.gz
+	cd s3fs-* && ./configure && make && sudo make install
+	
 
