@@ -281,8 +281,6 @@ done-host/user-home-%:
 	sudo -v
 	[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
 	cp $(PWD)/setup/home/.??* $(USER_HOME)
-	touch  ~/.passwd-s3fs
-	chmod 600 ~/.passwd-s3fs
 	touch $@
 	
 done-host/sysid: 
