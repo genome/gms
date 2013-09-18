@@ -321,7 +321,7 @@ done-host/puppet: done-host/sysid done-host/hosts
 	which puppet || sudo apt-get -q -y install puppet # if puppet is already installed do NOT use apt, as the local version might be independent
 	bash -l -c 'sudo `which puppet` apply setup/manifests/$(MANIFEST)'
 	# add the current user to the correct groups
-	sudo usermod -g $(GMS_GROUP) -G sudo,admin,fuse,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
+	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER)
 	touch $@
 
 done-host/gms-home-vm:
@@ -351,7 +351,7 @@ done-host/gms-home: done-host/puppet
 	sudo -v
 	# the creation of /opt/gms varies depending on whether this is a VM or not
 	# on a VM we want all disk activity to "pass through" to the host to be shared across installs
-	[ -e /vagrant ] && make done-host/gms-home-vm
+	([ -e /vagrant ] && make done-host/gms-home-vm) || true
 	[ -e /vagrant ] || make done-host/gms-home-raw
 	# set permissions on the root directory above the GMS home so that additional systems can attach
 	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.*
@@ -552,7 +552,7 @@ home: done-host/user-home-$(USER)
 	# $@:
 	#
 	# add the current user to the correct groups
-	sudo usermod -g $(GMS_GROUP) -G sudo,admin,fuse,`groups $(GMS_GROUP) | sed 's/.*: //' | sed 's/ /,/g'` $(USER)
+	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER)
 	
 update-repos:
 	#
