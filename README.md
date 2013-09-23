@@ -34,12 +34,14 @@ This is the recommended approach for running on Mac OS X.  Be sure to install Xc
     git clone https://github.com/genome/gms.git
     cd gms
     make vminit     # install virtualbox and vagrant
-    make vm         # install the system *inside* the VM
+    make vm         # logs into the VM, and installs the system
 
 Assuming all went well you should now be able to log in as follows:
 
     vagrant ssh
 
+The VM will have a symlink from /opt/gms /vagrant/vm-opt-gms, putting 
+a vm-opt-gms directory on the _host_ to hold local data.  Change as desired.
 
 Installation on Windows, on Mac OS X without Xcode, or any other system that supports virtual machines:
 -------------
@@ -67,13 +69,24 @@ On your VM, follow the standard Ubuntu 12.04 directions above.
     make
     
 
+Installation expansion
+------------
+
+Once installed, the cluster can be expanded by:
+# add a host to the network running Ubuntu 12.04
+# ensure you can log into the remote matchine with ssh without a password, and can sudo
+# on the original machine, run this, using the hostname or IP of the remote host: 
+    
+    genome sys node add $IP ##FIXME: not pushed
+
+
 Installation on cloud servers
 ------------
 
-For fancier things, like install on a cluster or cloud servers, edit the file "Vagrantfile", and use Amazon EC2 or OpenStack vagrant plugins.
-Management of the cloud services can be done from any host that supports vagrant.  
+More complex configurations, like install on a cluster or cloud servers, edit the file "Vagrantfile", and use Amazon EC2 or OpenStack vagrant plugins.
+Management of the cloud services can be done from any host that supports vagrant.
 
-An upcoming release will offer more support for managing the cluster.  
+An upcoming release will offer more support for managing the cluster.
 
 For now Linux administration expertise and Vagrant expertise is required to make a cluster.  This system runs 
 daily on a 4000 node cluster with 15PB of network attached storage at The Genome Institute.  Scalability beyond
