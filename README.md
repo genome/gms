@@ -73,9 +73,9 @@ Installation expansion
 ------------
 
 Once installed, the cluster can be expanded by:
-# add a host to the network running Ubuntu 12.04
-# ensure you can log into the remote matchine with ssh without a password, and can sudo
-# on the original machine, run this, using the hostname or IP of the remote host: 
+    # add a host to the network running Ubuntu 12.04
+    # ensure you can log into the remote matchine with ssh without a password, and can sudo
+    # on the original machine, run this, using the hostname or IP of the remote host: 
     
     genome sys node add $IP ##FIXME: not pushed
 
@@ -282,23 +282,25 @@ Security
 --------
 
 The GMS presumes that _other_ GMS installations are _untrusted_ by default, and that users on the _same_ GMS are _trusted_ 
-by default.  This allows each installation to make decisions about the balance of security and convenience as suits their
+by default.  This allows each installation to make decisions about the balance of security and convenience as suits its
 needs, and to change those decisions over time.
 
 Independent GMS installations lean entirely on standard Unix/Linux permissions and sharing facilities (SSH, NFS, etc.), 
 and are as secure as those facilities.  Another GMS cannot access your data any more than a random user on the internet 
-could, but the system is configured to allow sharing to be as convienient and granular as you might like later.
+could, but the system is configured to allow sharing to be as convienient and granular as the adminstrators prefer later.
 
 Within a GMS instance, all users are in a single Unix group, and all directories are writable by that group.  If 
-a given group of users cannot be trusted to this level, they should install independent systems and use the
-"federation" facilities to share.
+a given group of users cannot be trusted to this level, it is best to install independent systems, and use the
+"federation" facilities to control sharing.  In the native environment of the GMS at Washington University, The Genome 
+Institute uses one system for a staff of several hundred (combining programmers, analysts and laboratory staff), and 
+with isolated instances in preparation only for medicaly diagnostics.
 
 In a hierarchical organization, a group of individual GMS installations can export metadata to a larger GMS, without 
-copying it, providing broad access to leadership, while 
+copying it, providing centralization of metdata, while distributiong load, and keeping data in cost centers.
 
-In an environment that requires per-user security, each user could install a GMS independently, and use the "federation" 
-capabilities to attach each others systems, share data, and peform larger scale analysis. 
+At its most extreme, in an environment that requires per-user security, each user could install a GMS independently, 
+and use the "federation" capabilities to attach the systems of co-workers, share data, and peform larger scale analysis
+entirely within that framework. 
 
-the native environment of the GMS at Washington University 
-Genome Institute uses one system for a staff of several hundred, and only uses isolated instances for medical diagnostics.
+
 
