@@ -71,13 +71,9 @@ On your VM, follow the standard Ubuntu 12.04 directions above.
 
 Installation expansion
 ------------
-
-Once installed, the cluster can be expanded by:
-    # add a host to the network running Ubuntu 12.04
-    # ensure you can log into the remote matchine with ssh without a password, and can sudo
-    # on the original machine, run this, using the hostname or IP of the remote host: 
-    
-    genome sys node add $IP ##FIXME: not pushed
+1.  add a host to the network running Ubuntu 12.04
+2.  ensure you can log into the remote matchine with ssh without a password, and can sudo
+3.  on the original machine, run this: genome sys node add $IP ##FIXME: not pushed
 
 
 Installation on cloud servers
