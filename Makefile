@@ -517,6 +517,7 @@ done-host/apache: done-host/pkgs
 	( [ -e /etc/apache2/sites-enabled/000-default ] && sudo rm /etc/apache2/sites-enabled/000-default ) || true 
 	[ -e /etc/apache2/sites-enabled/gms-webviews.conf ] || sudo ln -s  /etc/apache2/sites-available/gms-webviews.conf  /etc/apache2/sites-enabled/gms-webviews.conf
 	sudo service apache2 restart
+	sudo update-rc.d apache2 enable 345
 	touch $@
 
 done-host/db-schema: done-host/db-init done-host/hosts
