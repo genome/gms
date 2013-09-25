@@ -33,10 +33,11 @@ This is the recommended approach for running on Mac OS X.  Be sure to install Xc
 
     git clone https://github.com/genome/gms.git
     cd gms
-    make vminit     # install virtualbox and vagrant
-    make vm         # logs into the VM, and installs the system
+    make vminit     # install virtualbox and vagrant, and a Ubuntu 12.04 VM
+    vagrant ssh     # log into the VM
+    make            
 
-Assuming all went well you should now be able to log in as follows:
+Assuming all went well you should now be able to log in as follows from the host in the current directory:
 
     vagrant ssh
 
@@ -118,8 +119,8 @@ data you generate will match the path anyone else uses, allowing mounting and co
 
 There is a special GMS user and group on every system, with a name like gms$GENOME_SYS_ID
 
-    finger gms$GENOME_SYS_ID ##FIXME: This does not work because finger is not installed by default
-    groups gms$GENOME_SYS_ID ##FIXME: This does not work because said user does not exist...
+    finger gms$GENOME_SYS_ID ##FIXME: still using the genome user
+    groups gms$GENOME_SYS_ID ##FIXME: still using the genome group
 
 All users on a given GMS installation will also be members of the above group.
 
