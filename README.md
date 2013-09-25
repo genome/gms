@@ -118,8 +118,8 @@ data you generate will match the path anyone else uses, allowing mounting and co
 
 There is a special GMS user and group on every system, with a name like gms$GENOME_SYS_ID
 
-    finger gms$GENOME_SYS_ID
-    groups gms$GENOME_SYS_ID
+    finger gms$GENOME_SYS_ID ##FIXME: This does not work because finger is not installed by default
+    groups gms$GENOME_SYS_ID ##FIXME: This does not work because said user does not exist...
 
 All users on a given GMS installation will also be members of the above group.
 
