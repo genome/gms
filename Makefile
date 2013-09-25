@@ -87,7 +87,6 @@ vm: vminit
 	# $@:
 	# log into the vm to finish the make process
 	#
-	sudo -v	
 	vagrant ssh -c 'cd /vagrant && DEBIAN_FRONTEND=noninteractive sudo make setup'
 	#
 	# now run "vagrant ssh" to log into the new GMS
@@ -159,7 +158,6 @@ done-host/vminstall:
 	#
 	# $@: (recurses into vminstall-$(OS)
 	#
-	sudo -v
 	[ -e done-host/vminstall-$(OS) ] || sudo make done-host/vminstall-$(OS)
 	(which VirtualBox && which vagrant && touch done-host/vminstall) || echo "**** run one of the following to auto-install for your platform: vminstall-mac, vminstall-10.04, or vminstall-12.04"
 	which VirtualBox || (echo "**** you can install VirtualBox manually from https://www.virtualbox.org/wiki/Downloads")
@@ -182,12 +180,10 @@ done-host/vmkernel:
 	# intializing vagrant (VirtualBox) VM...
 	# these steps occur before the repo is visible on the VM
 	#
-	sudo -v
 	( (which apt-get >/dev/null) &&  ( [ -e `dpkg -L nfs-kernel-server | grep changelog` ] || sudo apt-get -y install -q -y nfs-kernel-server gcc ) ) || echo "nothing to do for Mac.."
 	touch $@
 
 vmcreate: done-host/vmaddbox done-host/vmkernel
-	sudo -v
 	#
 	# $@: (recurses into done-host/apt-get-update on the VM)
 	#
@@ -214,7 +210,6 @@ vminit: vmup
 	#
 	# $@:
 	#
-	sudo -v
 	vagrant ssh -c 'cd /vagrant &&  make done-host/vminit'
 
 ##### Steps run on the VM from the host via "vagrant ssh"
