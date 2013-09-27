@@ -76,6 +76,7 @@ all:
 	# Install the GMS on the local Ubuntu 12.04 (Precise) host...
 	#
 	sudo -v
+	make home
 	DEBIAN_FRONTEND=noninteractive sudo make setup
 	#
 	# LOG OUT and log back in to ensure your environment is properly initialized
@@ -87,7 +88,7 @@ vm: vminit
 	# $@:
 	# log into the vm to finish the make process
 	#
-	vagrant ssh -c 'cd /vagrant && DEBIAN_FRONTEND=noninteractive sudo make setup'
+	vagrant ssh -c 'cd /vagrant && make home && DEBIAN_FRONTEND=noninteractive sudo make setup'
 	#
 	# now run "vagrant ssh" to log into the new GMS
 	#
