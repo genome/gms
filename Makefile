@@ -56,7 +56,7 @@ DATASERVER=http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2013-08-28
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=20130906.150956
+APT_DUMP_VERSION=2013-09-06
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -361,7 +361,24 @@ done-host/gms-home: done-host/puppet
 	cat setup/dirs | sudo xargs -n 1 -I DIR bash -c 'cd $(GMS_HOME); mkdir -p DIR; sudo chown genome:genome DIR; sudo chmod g+sw DIR'
 	touch $@
 
-setup: done-host/gms-home done-host/user-home-$(USER) stage-software
+s3fs:
+	#
+	# $@:
+	#
+	[ `which s3fs ` ] || make done-host/s3fs-install
+
+done-host/s3fs-install:
+	#
+	# $@:
+	#
+	sudo apt-get -y install fuse-utils libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support build-essential
+	wget https://s3fs.googlecode.com/files/s3fs-1.73.tar.gz
+	tar -zxvf s3fs-1.73.tar.gz
+	setup/bin/findreplace 68719476735LL 687194767350LL s3fs-1.74/src/fdcache.cpp
+	cd s3fs-* && ./configure && make && sudo make install
+	touch $@
+
+setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	#
 	# $@: (recurses into all subsequent steps) after sourcing the /etc/genome.conf file
 	#
@@ -594,20 +611,4 @@ apt-rebuild:
 	([ -e done-host/apt-config ] && rm done-host/apt-config) || true 
 	make 'done-host/apt-config'
 
-s3fs:
-	#
-	# $@:
-	#
-	[ `which s3fs ` ] || make s3fs-install
-
-s3fs-install:
-	#
-	# $@:
-	#
-	sudo apt-get -y install fuse-utils libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support build-essential
-	wget https://s3fs.googlecode.com/files/s3fs-1.73.tar.gz
-	tar -zxvf s3fs-1.73.tar.gz
-	setup/bin/findreplace 68719476735LL 687194767350LL s3fs-1.74/src/fdcache.cpp
-	cd s3fs-* && ./configure && make && sudo make install
-	
 
