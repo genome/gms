@@ -437,7 +437,7 @@ done-host/pkgs: done-host/apt-get-update
 	sudo setup/bin/cpanm Getopt::Complete
 	touch $@
 
-done-repo/git-checkouts:
+done-host/git-checkouts:
 	#
 	# $@:
 	#
@@ -450,7 +450,7 @@ done-repo/git-checkouts:
 	[ -e $(GMS_HOME)/sw/openlava/.git ] || git clone http://github.com/openlava/openlava.git -b 2.0-release $(GMS_HOME)/sw/openlava
 	touch $@
 
-done-host/openlava-compile: done-repo/git-checkouts done-host/hosts done-host/etc done-host/pkgs
+done-host/openlava-compile: done-host/git-checkouts done-host/hosts done-host/etc done-host/pkgs
 	#
 	# $@:
 	#
@@ -558,7 +558,7 @@ done-host/db-driver: done-host/pkgs
 	[ `perl -e 'use DBD::Pg; print $$DBD::Pg::VERSION'` = '2.19.3' ] || sudo cpanm DBD::Pg
 
 
-stage-software: done-host/pkgs done-repo/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
+stage-software: done-host/pkgs done-host/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
 
 
 ##### Optional maintenance targets:
