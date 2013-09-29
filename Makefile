@@ -274,9 +274,8 @@ done-host/user-home-%:
 	# copying configuration into the current user's home directory
 	# re-run "make home" for any new user...
 	#
-	sudo -v
-	[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
-	cp $(PWD)/setup/home/.??* $(USER_HOME)
+	#[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
+	cp $(PWD)/setup/home/.??* ~/$(USER)
 	touch $@
 	
 done-host/sysid: 
@@ -375,7 +374,9 @@ done-host/s3fs-install:
 	sudo apt-get -y install fuse-utils libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support build-essential
 	wget https://s3fs.googlecode.com/files/s3fs-1.73.tar.gz
 	tar -zxvf s3fs-1.73.tar.gz
-	setup/bin/findreplace 68719476735LL 687194767350LL s3fs-1.74/src/fdcache.cpp
+	setup/bin/findreplace 68719476735LL 687194767350LL s3fs-1.73/src/fdcache.cpp
+	cp s3fs-1.73/src/s3fs.cpp s3fs-1.73/src/s3fs.cpp.old
+	patch -p 0 s3fs-1.73/src/s3fs.cpp < setup/s3fs.cpp.patch
 	cd s3fs-* && ./configure && make && sudo make install
 	touch $@
 
