@@ -569,7 +569,7 @@ home: done-host/user-home-$(USER)
 	# $@:
 	#
 	# add the current user to the correct groups
-	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER)
+	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER) || true # wait for groups to be defined
 	
 update-repos:
 	#
