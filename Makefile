@@ -77,7 +77,7 @@ all:
 	#
 	sudo -v
 	make home
-	DEBIAN_FRONTEND=noninteractive sudo make setup
+	DEBIAN_FRONTEND=noninteractive make setup
 	#
 	# LOG OUT and log back in to ensure your environment is properly initialized
 	#
@@ -88,7 +88,7 @@ vm: vminit
 	# $@:
 	# log into the vm to finish the make process
 	#
-	vagrant ssh -c 'cd /vagrant && make home && DEBIAN_FRONTEND=noninteractive sudo make setup'
+	vagrant ssh -c 'cd /vagrant && make home && DEBIAN_FRONTEND=noninteractive make setup'
 	#
 	# now run "vagrant ssh" to log into the new GMS
 	#
@@ -244,6 +244,7 @@ done-repo/unzip-sw-%: done-repo/download-%
 	# $@:
 	#
 	sudo -v
+	sudo chmod -R +w $(GMS_HOME)/sw
 	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/sw
 	touch $@ 
 
@@ -252,6 +253,7 @@ done-repo/unzip-fs-%: done-repo/download-%
 	# $@:
 	#
 	sudo -v
+	sudo chmod -R o+w $(GMS_HOME)/fs
 	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/fs 
 	touch $@ 
 
@@ -261,6 +263,7 @@ done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS
 	# unzip apps which are not packaged as .debs (publicly available from other sources)
 	#
 	sudo -v
+	sudo chmod -R o+w $(GMS_HOME)/sw
 	tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
 	cd $(GMS_HOME)/sw/apps && ln -s ../../sw/apps-$(APPS_DUMP_VERSION)/* . || true
 	touch $@ 
@@ -275,7 +278,7 @@ done-host/user-home-%:
 	# re-run "make home" for any new user...
 	#
 	#[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
-	cp $(PWD)/setup/home/.??* ~/$(USER)
+	cp $(PWD)/setup/home/.??* ~$(USER)
 	touch $@
 	
 done-host/sysid: 
@@ -472,7 +475,7 @@ done-host/openlava-install: done-host/openlava-compile
 	sudo cp /tmp/lsf.cluster.openlava /opt/openlava-2.0/etc/lsf.cluster.openlava
 	rm /tmp/lsf.cluster.openlava
 	cd /etc; [ -e lsf.conf ] || ln -s ../opt/openlava-2.0/etc/lsf.conf lsf.conf
-	grep 127.0.1.1 /etc/hosts >/dev/null && sudo bash -c 'grep 127.0 /etc/hosts >> /opt/openlava-2.0/etc/hosts && setup/bin/findreplace localhost `hostname` /opt/openlava-2.0/etc/hosts'
+	(grep 127.0.1.1 /etc/hosts >/dev/null && sudo bash -c 'grep 127.0 /etc/hosts >> /opt/openlava-2.0/etc/hosts && setup/bin/findreplace localhost `hostname` /opt/openlava-2.0/etc/hosts') || true
 	sudo /etc/init.d/openlava start || sudo /etc/init.d/openlava restart
 	sudo /etc/init.d/openlava status
 	touch $@
