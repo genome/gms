@@ -9,8 +9,6 @@ Vagrant.configure("2") do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "precise64"
 
-  # GMS specific 
-  
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
   # config.vm.box_url = "http://domain.com/path/to/above.box"
@@ -34,12 +32,22 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  gms_dir = File.dirname(__FILE__)
-  #config.vm.synced_folder gms_dir, '/opt/gms/setup', :nfs => true
+ 
+  ##
+  ## Customize your GMS install to match the hardware available.
+  ## Note: over-allocating CPU or memory will likely case your analysis to thrash or swap, respectively.
+  ## 
+
   config.vm.provider "virtualbox" do |v|
-      v.customize ["modifyvm", :id, "--memory", 10240]          # too little memory will prevent some jobs from running
-      v.customize ["modifyvm", :id, "--cpus", 12]               # set more CPUs to prevent job deadlocks
-      v.customize ["modifyvm", :id, "--natnet1", "192.168/16"]  # prevent collisions with local net
+      v.customize ["modifyvm", :id, "--memory", 10240]          # 10GB: too little memory will prevent some jobs from running.
+      v.customize ["modifyvm", :id, "--cpus", 24]               # 24 CPUS: set more CPUs to prevent job deadlocks.
+      v.customize ["modifyvm", :id, "--natnet1", "192.168/16"]  # Use a subnet that prevents prevent collisions with local network.
+      
+      v.customize ['createhd', '--filename', 'opt-gms', '--size', 10 * 1024 * 1024] # 10TB (virtual): The root dir for all GMSs.  Holds cached remote data.
+      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'opt-gms']
+      
+      v.customize ['createhd', '--filename', 'disk1', '--size', 10 * 1024 * 1024]   # 10TB (virtual): This GMS resides under the above.
+      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hde', '--medium', 'disk1']
   end
 
   # Provider-specific configuration so you can fine-tune various
