@@ -50,11 +50,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.customize ["modifyvm", :id, "--cpus", 24]               # 24 CPUS: set more CPUs to prevent job deadlocks.
       v.customize ["modifyvm", :id, "--natnet1", "192.168/16"]  # Use a subnet that prevents prevent collisions with local network.
       
-      v.customize ['createhd', '--filename', 'opt-gms', '--size', 10 * 1024 * 1024] # 10TB (virtual): The root dir for all GMSs.  Holds cached remote data.
-      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'opt-gms']
-      
-      v.customize ['createhd', '--filename', 'disk1', '--size', 10 * 1024 * 1024]   # 10TB (virtual): This GMS resides under the above.
-      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hde', '--medium', 'disk1']
+      v.customize ['createhd', '--filename', 'disk1.vdi', '--size',  2*1024*1024, '--format', 'VDI'] #  2TB (virtual): The root dir for all GMSs.  Holds cached remote data.
+      v.customize ['createhd', '--filename', 'disk2.vdi', '--size', 10*1024*1024, '--format', 'VDI'] # 10TB (virtual): This GMS resides under the above.
+      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'disk1.vdi']
+      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'disk2.vdi']
   end
 
   # Provider-specific configuration so you can fine-tune various
