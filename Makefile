@@ -76,7 +76,8 @@ all:
 	# Install the GMS on the local Ubuntu 12.04 (Precise) host...
 	#
 	sudo -v
-	DEBIAN_FRONTEND=noninteractive sudo make setup
+	make home
+	DEBIAN_FRONTEND=noninteractive make setup
 	#
 	# LOG OUT and log back in to ensure your environment is properly initialized
 	#
@@ -87,7 +88,7 @@ vm: vminit
 	# $@:
 	# log into the vm to finish the make process
 	#
-	vagrant ssh -c 'cd /vagrant && DEBIAN_FRONTEND=noninteractive sudo make setup'
+	vagrant ssh -c 'cd /vagrant && make home && DEBIAN_FRONTEND=noninteractive make setup'
 	#
 	# now run "vagrant ssh" to log into the new GMS
 	#
@@ -243,6 +244,7 @@ done-repo/unzip-sw-%: done-repo/download-%
 	# $@:
 	#
 	sudo -v
+	sudo chmod -R +w $(GMS_HOME)/sw
 	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/sw
 	touch $@ 
 
@@ -251,6 +253,7 @@ done-repo/unzip-fs-%: done-repo/download-%
 	# $@:
 	#
 	sudo -v
+	sudo chmod -R o+w $(GMS_HOME)/fs
 	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/fs 
 	touch $@ 
 
@@ -260,6 +263,7 @@ done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS
 	# unzip apps which are not packaged as .debs (publicly available from other sources)
 	#
 	sudo -v
+	sudo chmod -R o+w $(GMS_HOME)/sw
 	tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
 	cd $(GMS_HOME)/sw/apps && ln -s ../../sw/apps-$(APPS_DUMP_VERSION)/* . || true
 	touch $@ 
@@ -273,9 +277,8 @@ done-host/user-home-%:
 	# copying configuration into the current user's home directory
 	# re-run "make home" for any new user...
 	#
-	sudo -v
-	[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
-	cp $(PWD)/setup/home/.??* $(USER_HOME)
+	#[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
+	cp $(PWD)/setup/home/.??* ~$(USER)
 	touch $@
 	
 done-host/sysid: 
@@ -361,7 +364,26 @@ done-host/gms-home: done-host/puppet
 	cat setup/dirs | sudo xargs -n 1 -I DIR bash -c 'cd $(GMS_HOME); mkdir -p DIR; sudo chown genome:genome DIR; sudo chmod g+sw DIR'
 	touch $@
 
-setup: done-host/gms-home done-host/user-home-$(USER) stage-software
+s3fs:
+	#
+	# $@:
+	#
+	[ `which s3fs ` ] || make done-host/s3fs-install
+
+done-host/s3fs-install:
+	#
+	# $@:
+	#
+	sudo apt-get -y install fuse-utils libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support build-essential
+	wget https://s3fs.googlecode.com/files/s3fs-1.73.tar.gz
+	tar -zxvf s3fs-1.73.tar.gz
+	setup/bin/findreplace 68719476735LL 687194767350LL s3fs-1.73/src/fdcache.cpp
+	cp s3fs-1.73/src/s3fs.cpp s3fs-1.73/src/s3fs.cpp.old
+	patch -p 0 s3fs-1.73/src/s3fs.cpp < setup/s3fs.cpp.patch
+	cd s3fs-* && ./configure && make && sudo make install
+	touch $@
+
+setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	#
 	# $@: (recurses into all subsequent steps) after sourcing the /etc/genome.conf file
 	#
@@ -419,7 +441,7 @@ done-host/pkgs: done-host/apt-get-update
 	sudo setup/bin/cpanm Getopt::Complete
 	touch $@
 
-done-repo/git-checkouts:
+done-host/git-checkouts:
 	#
 	# $@:
 	#
@@ -432,7 +454,7 @@ done-repo/git-checkouts:
 	[ -e $(GMS_HOME)/sw/openlava/.git ] || git clone http://github.com/openlava/openlava.git -b 2.0-release $(GMS_HOME)/sw/openlava
 	touch $@
 
-done-host/openlava-compile: done-repo/git-checkouts done-host/hosts done-host/etc done-host/pkgs
+done-host/openlava-compile: done-host/git-checkouts done-host/hosts done-host/etc done-host/pkgs
 	#
 	# $@:
 	#
@@ -453,7 +475,7 @@ done-host/openlava-install: done-host/openlava-compile
 	sudo cp /tmp/lsf.cluster.openlava /opt/openlava-2.0/etc/lsf.cluster.openlava
 	rm /tmp/lsf.cluster.openlava
 	cd /etc; [ -e lsf.conf ] || ln -s ../opt/openlava-2.0/etc/lsf.conf lsf.conf
-	grep 127.0.1.1 /etc/hosts >/dev/null && sudo bash -c 'grep 127.0 /etc/hosts >> /opt/openlava-2.0/etc/hosts && setup/bin/findreplace localhost `hostname` /opt/openlava-2.0/etc/hosts'
+	(grep 127.0.1.1 /etc/hosts >/dev/null && sudo bash -c 'grep 127.0 /etc/hosts >> /opt/openlava-2.0/etc/hosts && setup/bin/findreplace localhost `hostname` /opt/openlava-2.0/etc/hosts') || true
 	sudo /etc/init.d/openlava start || sudo /etc/init.d/openlava restart
 	sudo /etc/init.d/openlava status
 	touch $@
@@ -517,6 +539,7 @@ done-host/apache: done-host/pkgs
 	( [ -e /etc/apache2/sites-enabled/000-default ] && sudo rm /etc/apache2/sites-enabled/000-default ) || true 
 	[ -e /etc/apache2/sites-enabled/gms-webviews.conf ] || sudo ln -s  /etc/apache2/sites-available/gms-webviews.conf  /etc/apache2/sites-enabled/gms-webviews.conf
 	sudo service apache2 restart
+	sudo update-rc.d apache2 enable 345
 	touch $@
 
 done-host/db-schema: done-host/db-init done-host/hosts
@@ -539,7 +562,7 @@ done-host/db-driver: done-host/pkgs
 	[ `perl -e 'use DBD::Pg; print $$DBD::Pg::VERSION'` = '2.19.3' ] || sudo cpanm DBD::Pg
 
 
-stage-software: done-host/pkgs done-repo/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
+stage-software: done-host/pkgs done-host/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
 
 
 ##### Optional maintenance targets:
@@ -549,7 +572,7 @@ home: done-host/user-home-$(USER)
 	# $@:
 	#
 	# add the current user to the correct groups
-	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER)
+	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER) || true # wait for groups to be defined
 	
 update-repos:
 	#
@@ -593,20 +616,4 @@ apt-rebuild:
 	([ -e done-host/apt-config ] && rm done-host/apt-config) || true 
 	make 'done-host/apt-config'
 
-s3fs:
-	#
-	# $@:
-	#
-	[ `which s3fs ` ] || make s3fs-install
-
-s3fs-install:
-	#
-	# $@:
-	#
-	sudo apt-get -y install fuse-utils libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support build-essential
-	wget https://s3fs.googlecode.com/files/s3fs-1.73.tar.gz
-	tar -zxvf s3fs-1.73.tar.gz
-	setup/bin/findreplace 68719476735LL 687194767350LL s3fs-1.74/src/fdcache.cpp
-	cd s3fs-* && ./configure && make && sudo make install
-	
 
