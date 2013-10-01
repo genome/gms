@@ -54,7 +54,7 @@ DATASERVER=http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-
 # ftp: DATASERVER=ftp://clinus234/setup/archive-files
 
 # when tarballs of software and data are updated they are given new names
-APPS_DUMP_VERSION=2013-08-28
+APPS_DUMP_VERSION=2013-10-01
 JAVA_DUMP_VERSION=2013-08-27
 APT_DUMP_VERSION=20130906.150956
 
@@ -265,7 +265,9 @@ done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS
 	sudo -v
 	sudo chmod -R o+w $(GMS_HOME)/sw
 	tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
+	[ -e $(GMS_HOME)/sw/apps ] || mkdir -p $(GMS_HOME)/sw/apps
 	cd $(GMS_HOME)/sw/apps && ln -s ../../sw/apps-$(APPS_DUMP_VERSION)/* . || true
+	[ -e $(GMS_HOME)/sw/apps ] 
 	touch $@ 
 
 
