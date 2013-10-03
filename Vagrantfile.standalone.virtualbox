@@ -45,18 +45,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   ## Note: over-allocating CPU or memory will likely case your analysis to thrash or swap, respectively.
   ## 
 
-  opt_gms = './opt-gms.vdi'
-  disk1 = './disk1.vdi'
+  opt_gms_disk = './opt-gms.vdi'
+  data_disk = './data-disk.vdi'
   config.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--memory", 10240]          # 10GB: too little memory will prevent some jobs from running.
       v.customize ["modifyvm", :id, "--cpus", 24]               # 24 CPUS: set more CPUs to prevent job deadlocks.
       v.customize ["modifyvm", :id, "--natnet1", "192.168/16"]  # Use a subnet that prevents prevent collisions with local network.
       
-      v.customize ['createhd', '--filename', opt_gms , '--size', 10 * 1024 * 1024] # 10TB (virtual): The root dir for all GMSs.  Holds cached remote data.
-      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', opt_gms]
+      v.customize ['createhd', '--filename', opt_gms_disk , '--size', 2 * 1024 * 1024] # 2TB (virtual): The root dir for all GMSs.  Holds cached remote data.
+      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', opt_gms_disk]
      
-      v.customize ['createhd', '--filename', disk1, '--size', 10 * 1024 * 1024]   # 10TB (virtual): This GMS resides under the above.
-      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk1]
+      v.customize ['createhd', '--filename', data_disk, '--size', 2 * 1024 * 1024]   # 2TB (virtual): This GMS resides under the above.
+      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', data_disk]
   end
 
   # Provider-specific configuration so you can fine-tune various
