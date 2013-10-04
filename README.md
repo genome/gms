@@ -33,13 +33,9 @@ This is the recommended approach for running on Mac OS X.  Be sure to install Xc
 
     git clone https://github.com/genome/gms.git
     cd gms
-    make vminit     # install virtualbox and vagrant, and a Ubuntu 12.04 VM
+    make vminit     # install virtualbox and vagrant, and an Ubuntu 12.04 VM
     vagrant ssh     # log into the VM
     make            
-
-Assuming all went well you should now be able to log in as follows from the host in the current directory:
-
-    vagrant ssh
 
 The VM will have a symlink from /opt/gms /vagrant/vm-opt-gms, putting 
 a vm-opt-gms directory on the _host_ to hold local data.  Change as desired.
