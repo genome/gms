@@ -74,6 +74,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # View the documentation for the provider you're using for more
   # information on available options.
 
+  # Simple shell provisioning to set up mounts
+  # 'vagrant provision' is run automatically at 'vagrant [up|reload]'
+  # Here we set up added block devices.
+  config.vm.provision "shell", path: "drive_setup.sh"
+
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.
   # You will need to create the manifests directory and a manifest in

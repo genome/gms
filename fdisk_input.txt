@@ -1,0 +1,8 @@
+cat sdc.layout
+n
+p
+1
+
+
+w
+x
