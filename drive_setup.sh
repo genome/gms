@@ -22,7 +22,8 @@ sudo dumpe2fs /dev/sdb1 >/dev/null 2>&1 || \
 
 # Let /opt/gms be our first extra drive
 mkdir -p /opt/gms
-mount -t ext4 /dev/sdb1 /opt/gms
+mount | grep -q "^/dev/sdb1" || \
+  mount -t ext4 /dev/sdb1 /opt/gms
 
 # I'm not yet clear on what we want sdc1 for
 # /tmp is a tmpfs filesystem and is special
