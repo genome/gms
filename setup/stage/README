@@ -1,3 +1,21 @@
 This directory contains files to prepare fresh .tgzs to be downloaded from TGI.  
 Nothing here is needed for a GMS install directly.
 
+IMPORTANT NOTE: "Changes" to files should result in new files.  Keep files immutible once posted, so that the download/make process can recognize truly new content.
+
+APT MIRROR TGZ:
+
+To rebuild the mirror, just run "make".
+
+When the mirror tgz is rebuilt, it can be deployed to the TGI FTP site by placing it here, and waiting for a cron to sync it up.
+/gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files
+
+It should also be pushd to the gmsdata S3 bucket.
+
+APPS TGZ:
+
+For the apps-$DATE.tgz: the best options to make additions is to unzip the example file (also staged at the directory above), 
+and make a new one with similar contents.  These files are meant to be additive, so just put the NEW apps in the new tgz, and update the Makefile to pull it down too.  
+When trimming down the old file, unzip it, replace it with something lighter, and have the Makefile stop using the old one entirely.
+
+
