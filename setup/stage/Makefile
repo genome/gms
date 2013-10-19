@@ -6,7 +6,7 @@
 ifneq ("$(TIMESTAMP)", "")
   $(info using existing timestamp $(TIMESTAMP))
 else
-  TIMESTAMP=$(shell date +%Y-%m-%d)
+  TIMESTAMP=$(shell date +%Y.%m.%d)
   $(info timestamp $(TIMESTAMP))
 endif
 
