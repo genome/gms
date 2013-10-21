@@ -20,14 +20,13 @@ sudo dumpe2fs /dev/sdb1 >/dev/null 2>&1 || \
 #sudo dumpe2fs /dev/sdc1 >/dev/null 2>&1 || \
 #  mkfs.ext4 /dev/sdc1
 
-# Let /opt/gms be our first extra drive
+#Mounting plan
+#/dev/sdb1 /opt/gms
+#/dev/sdc1 /opt/gms/$GENOME_SYS_ID
+#/dev/sdd1 /tmp
+
+# Mount /opt/gms to our first extra drive
 mkdir -p /opt/gms
 mount | grep -q "^/dev/sdb1" || \
   mount -t ext4 /dev/sdb1 /opt/gms
 
-# I'm not yet clear on what we want sdc1 for
-# /tmp is a tmpfs filesystem and is special
-# and already used by vagrant.  If we need
-# more tmp space for GMS, perhaps we can use
-# an environment variable to put its temp
-# at GENOME_TMP=/opt/gms/tmp
