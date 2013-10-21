@@ -32,5 +32,5 @@ stage-tgi-$(TIMESTAMP): mkmirror-$(TIMESTAMP)
 	touch $@
 
 stage-s3-$(TIMESTAMP): mkmirror-$(TIMESTAMP)
-	echo "USE the aws command to sync ../archive-files with S3"
+	echo "*** now use the aws command to sync ../archive-files with S3! ***"
 
