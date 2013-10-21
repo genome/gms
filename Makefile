@@ -221,6 +221,8 @@ done-host/vminit:
 	# these steps can be done in parallel with stage-software
 	#
 	sudo -v
+	# Since /tmp has been mounted to a new disk make sure the permissions are set correctly immediately
+	sudo chmod -R 1777 /tmp
 	make done-host/user-home-$(USER)
 	make done-host/puppet 
 	make done-host/sysid
@@ -357,6 +359,11 @@ done-host/gms-home: done-host/puppet
 	sudo chmod g+rwxs /opt/gms /opt/gms/.* /opt/gms/*
 	# make the home for this GMS
 	[ -d "$(GMS_HOME)" ] || sudo mkdir -p $(GMS_HOME)
+	# Now that $(GMS_HOME) exists, it should be mounted
+	#sudo echo /dev/sdd1  $(GMS_HOME)  ext4  defaults  0  0 >> /etc/fstab
+	sudo bash -c 'echo /dev/sdd1  $(GMS_HOME)  ext4  defaults  0  0 >> /etc/fstab'
+	sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdc1 $(GMS_HOME)
+	# set permissions for $GMS_HOME
 	echo GMS_HOME is $(GMS_HOME)
 	sudo chown $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)
 	sudo chmod g+rwxs $(GMS_HOME)

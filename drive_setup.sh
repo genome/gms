@@ -31,12 +31,26 @@ sudo dumpe2fs /dev/sdd1 >/dev/null 2>&1 || \
   mkfs.ext4 /dev/sdd1
 
 #Mounting plan
-#/dev/sdb1 /opt/gms
-#/dev/sdc1 /opt/gms/$GENOME_SYS_ID
-#/dev/sdd1 /tmp
+#/dev/sdb1 /tmp
+#/dev/sdc1 /opt/gms
+#/dev/sdd1 /opt/gms/$GENOME_SYS_ID
 
-# Mount /opt/gms to our first extra drive
+#fstab entries could ultimately look something like this:
+#/dev/sdb1  /tmp                     ext4  defaults  0  0
+#/dev/sdc1  /opt/gms                 ext4  defaults  0  0
+#/dev/sdd1  /opt/gms/$GENOME_SYS_ID  ext4  defaults  0  0
+
+# Mount /tmp to our first extra drive
+sudo mount | grep -q "^/dev/sdb1" || \
+  sudo mount -t ext4 /dev/sdb1 /tmp
+# Create an fstab entry for /tmp 
+sudo echo /dev/sdb1  /tmp  ext4  defaults  0  0 >> /etc/fstab
+
+# Mount /opt/gms to our second extra drive
 mkdir -p /opt/gms
-mount | grep -q "^/dev/sdb1" || \
-  mount -t ext4 /dev/sdb1 /opt/gms
+sudo mount | grep -q "^/dev/sdc1" || \
+  sudo mount -t ext4 /dev/sdc1 /opt/gms
+# Create an fstab entry for /opt/gms
+sudo echo /dev/sdc1  /opt/gms  ext4  defaults  0  0 >> /etc/fstab
+
 
