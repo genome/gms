@@ -56,7 +56,7 @@ DATASERVER=http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2013-10-01
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=20130906.150956
+APT_DUMP_VERSION=2013.10.19
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -352,9 +352,8 @@ done-host/gms-home: done-host/puppet
 	([ -e /vagrant ] && make done-host/gms-home-vm) || true
 	[ -e /vagrant ] || make done-host/gms-home-raw
 	# set permissions on the root directory above the GMS home so that additional systems can attach
-	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.*
-	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.*
-	sudo chmod g+rwxs /opt/gms /opt/gms/.*
+	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.* /opt/gms/*
+	sudo chmod g+rwxs /opt/gms /opt/gms/.* /opt/gms/*
 	# make the home for this GMS
 	[ -d "$(GMS_HOME)" ] || sudo mkdir -p $(GMS_HOME)
 	echo GMS_HOME is $(GMS_HOME)
