@@ -352,17 +352,21 @@ done-host/gms-home: done-host/puppet
 	([ -e /vagrant ] && make done-host/gms-home-vm) || true
 	[ -e /vagrant ] || make done-host/gms-home-raw
 	# set permissions on the root directory above the GMS home so that additional systems can attach
+	sudo touch /opt/gms/test
 	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.* /opt/gms/*
 	sudo chmod g+rwxs /opt/gms /opt/gms/.* /opt/gms/*
 	# make the home for this GMS
 	[ -d "$(GMS_HOME)" ] || sudo mkdir -p $(GMS_HOME)
 	echo GMS_HOME is $(GMS_HOME)
+	sudo chown $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)
+	sudo chmod g+rwxs $(GMS_HOME)
 	# install a directory skeleton
 	cp -a setup/gms-home-skel/* $(GMS_HOME)
 	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)
 	sudo chmod -R g+ws $(GMS_HOME)
 	# since the git repo doesn't keep empty dirs (without .gitkeep), make required subdirs dynamically
 	cat setup/dirs | sudo xargs -n 1 -I DIR bash -c 'cd $(GMS_HOME); mkdir -p DIR; sudo chown genome:genome DIR; sudo chmod g+sw DIR'
+	sudo rm -f /opt/gms/test
 	touch $@
 
 s3fs:
