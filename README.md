@@ -1,10 +1,15 @@
 GMS
 ===
 
-The Genome Modeling System **ALPHA**
+The Genome Modeling System (GMS) **ALPHA**
 
 _(this document is a work in progress and will not actually install as described, stay tuned for release!!)_
 
+A paper describing the GMS is under preparation.
+
+Some of the tools made available through the GMS have been previously released as <a href="http://gmt.genome.wustl.edu/">Genome Modeling Tools</a>
+
+The raw data and reference files needed for the tutorial below are made available through our <a href="http://genome.wustl.edu/pub/software/gms/testdata/">FTP</a> and as an <a href="https://gmsdata.s3.amazonaws.com/">Amazon Public Dataset</a>
 
 Installation on Ubuntu 12.04
 ------------

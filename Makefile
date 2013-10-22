@@ -49,7 +49,7 @@ endif
 DATASERVER=http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files
 
 # staging locations: (when using these, switch the $FTP tool above as necessary
-# scp: DATASERVER=blade12-1-1:/gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files
+# scp: DATASERVER=blade12-1-1:/gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files -> http://genome.wustl.edu/pub/software/gms/GMS1/setup/archive-files
 # scp: DATASERVER=clinus234:/opt/gms/GMS1/setup/archive-files
 # ftp: DATASERVER=ftp://clinus234/setup/archive-files
 
