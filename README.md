@@ -244,9 +244,12 @@ System requirements for processing the example data through all pipelines:
  * 100 GB for reference-related data used by pipelines
  * 284 GB for test data
  * 1 TB for the results (40x WGS tumor/normal, 1 lane of exome, 1 lane of tumor RNA, processing through MedSeq)
+ * 1 TB of /tmp space 
  * 48+ GB of RAM
  * 12+ cores
  * 2 weeks of processing time for full analysis (varies)
+
+One of the systems we used for testing the GMS from within a Virtual Machine looked like this: Mac Pro, Mid 2010, 2 x 2.4 GHz Quad-Core Intel Xeon, 64 GB 800 MHz DDR3 ECC, and three 2TB SATA drives.
 
 System Expansion
 ----------------
