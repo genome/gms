@@ -45,6 +45,9 @@ This is the recommended approach for running on Mac OS X.  Be sure to install Xc
 The VM will have a symlink from /opt/gms /vagrant/vm-opt-gms, putting 
 a vm-opt-gms directory on the _host_ to hold local data.  Change as desired.
 
+Once the virtual machine is created successfully if you want to reboot the host system, you should
+log out of the VM and use 'vagrant suspend' to shutdown the VM, then 'vagrant resume' to reboot it.
+
 Installation on Windows, on Mac OS X without Xcode, or any other system that supports virtual machines:
 -------------
 
