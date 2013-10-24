@@ -191,15 +191,14 @@ To build the microarray models:
 
 To build the WGS tumor, WGS normal, exome tumor, and exome normal data, wait until the above finish, then run:
     
-    genome model build start "name='tst1-tumor-wgs'"
-    genome model build start "name='tst1-normal-wgs'"
-    genome model build start "name='tst1-tumor-exome'"
-    genome model build start "name='tst1-tumor-exome'"
+    genome model build start "name='tst1-tumor-refalign-wgs'"
+    genome model build start "name='tst1-normal-refalign-wgs'"
+    genome model build start "name='tst1-tumor-refalign-exome'"
+    genome model build start "name='tst1-normal-refalign-exome'"
 
 While those are building, you can run the RNA-Seq models:
 
     genome model build start "name='tst1-tumor-rnaseq'"
-    genome model build start "name='tst1-normal-rnaseq'"
 
 To build the WGS somatic and exome somatic models, wait until the regular models above complete, and then run:
 
