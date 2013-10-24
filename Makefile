@@ -366,7 +366,7 @@ done-host/gms-home: done-host/puppet
 	# make the home for this GMS
 	[ -d "$(GMS_HOME)" ] || sudo mkdir -p $(GMS_HOME)
 	# Now that $(GMS_HOME) exists, it should be mounted
-	[ -e /vagrant ] && make done-host/vm-mount-disk
+	[ -e /vagrant ] && make done-host/vm-mount-disk || true
 	# set permissions for $GMS_HOME
 	echo GMS_HOME is $(GMS_HOME)
 	sudo chown $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)
