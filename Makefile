@@ -455,6 +455,7 @@ done-host/pkgs: done-host/apt-get-update
 	# install unpackaged Perl modules
 	[ -e setup/bin/cpanm ] || (curl -L https://raw.github.com/miyagawa/cpanminus/master/cpanm >| setup/bin/cpanm && chmod +x setup/bin/cpanm)
 	sudo setup/bin/cpanm Getopt::Complete
+	sudo setup/bin/cpanm DBD::Pg # 2.19.3 
 	touch $@
 
 done-host/git-checkouts:
