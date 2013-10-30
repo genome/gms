@@ -180,7 +180,7 @@ The above will mount GMS1 data on your system at /opt/gms/GMS1.
 
 If you would prefer to have a local copy the GMS1 data rather than mount it via FTP, use this:
 
-    genome sys gateway attach GMS1 --rsync
+    genome sys gateway attach GMS1 --protocol ftp --rsync
 
 **WARNING**: This data set is 385 GB.  It can consume considerable bandwidth and be very slow to install.
 
