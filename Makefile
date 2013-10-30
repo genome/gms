@@ -347,7 +347,7 @@ done-host/gms-home-raw:
 done-host/vm-mount-disk:
 	#Once $(GMS_HOME) exists, it should be mounted
 	sudo bash -c 'echo /dev/sdd1  $(GMS_HOME)  ext4  defaults  0  0 >> /etc/fstab'
-	sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdc1 $(GMS_HOME)
+	sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdd1 $(GMS_HOME)
 	touch $@
 
 done-host/gms-home: done-host/puppet
