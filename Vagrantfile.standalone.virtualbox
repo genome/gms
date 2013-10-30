@@ -19,7 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network :forwarded_port, guest: 80, host: 9000
+  config.vm.network :forwarded_port, guest: 80, host: 9003
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -45,24 +45,36 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   ## Note: over-allocating CPU or memory will likely case your analysis to thrash or swap, respectively.
   ##
 
-  tmp_disk = './tmp-disk.vdi'         #Will be '/dev/sdb' partitioned as '/dev/sdb1' within the VM and mounted as '/tmp'
-  opt_gms_disk = './opt-gms-disk.vdi' #Will be '/dev/sdc' partitioned as '/dev/sdc1' within the VM and mounted as '/opt/gms'
-  data_disk = './data-disk.vdi'       #Will be '/dev/sdd' partitioned as '/dev/sdd1' within the VM and mounted as '/opt/gms/$GENOME_SYS_ID'
+  vagrant_root = File.dirname(__FILE__)
+
+  # ensure disk files are present
+  system("setup/vmdisk.sh")
+
+  # make these symlinks if the vdi files move
+  tmp_disk = vagrant_root + '/tmp-disk.vdi'         #Will be '/dev/sdb' partitioned as '/dev/sdb1' within the VM and mounted as '/tmp'
+  opt_gms_disk = vagrant_root + '/opt-gms-disk.vdi' #Will be '/dev/sdc' partitioned as '/dev/sdc1' within the VM and mounted as '/opt/gms'
+  data_disk = vagrant_root + '/data-disk.vdi'       #Will be '/dev/sdd' partitioned as '/dev/sdd1' within the VM and mounted as '/opt/gms/$GENOME_SYS_ID'
 
   config.vm.provider "virtualbox" do |v|
-      v.customize ["modifyvm", :id, "--memory", 10240]          # 10GB: too little memory will prevent some jobs from running.
-      v.customize ["modifyvm", :id, "--cpus", 24]               # 24 CPUS: set more CPUs to prevent job deadlocks. Must be >=12.
+      v.customize ["modifyvm", :id, "--memory", 55000]          # 10GB: too little memory will prevent some jobs from running.
+      v.customize ["modifyvm", :id, "--cpus", 24]               # 24 CPUS: set more CPUs to prevent job deadlocks.
       v.customize ["modifyvm", :id, "--natnet1", "192.168/16"]  # Use a subnet that prevents prevent collisions with local network.
 
-      v.customize ['createhd', '--filename', tmp_disk, '--size', 2 * 1024 * 1024]   # 2TB (virtual): Temp dir for all /tmp processing.
       v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', tmp_disk]
-      
-      v.customize ['createhd', '--filename', opt_gms_disk , '--size', 2 * 1024 * 1024] # 2TB (virtual): The root dir for all GMSs.  Holds cached remote data.
       v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', opt_gms_disk]
-
-      v.customize ['createhd', '--filename', data_disk, '--size', 2 * 1024 * 1024]   # 2TB (virtual): This GMS resides under the above.
       v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', data_disk]
   end
+
+  # Provisioning:
+  #  - Note as of Vagrant 1.3.0:
+  #  vagrant up will now only run provisioning by default the first time it is
+  #  run. Subsequent reload or up will need to explicitly specify the
+  #  --provision flag to provision.
+  #
+  # Simple shell provisioning to set up mounts
+  # 'vagrant provision' is run automatically at 'vagrant [up|reload]'
+  # Here we set up added block devices.
+  config.vm.provision "shell", path: "drive_setup.sh"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -78,17 +90,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   # View the documentation for the provider you're using for more
   # information on available options.
-
-  # Provisioning:
-  #  - Note as of Vagrant 1.3.0:
-  #  vagrant up will now only run provisioning by default the first time it is
-  #  run. Subsequent reload or up will need to explicitly specify the
-  #  --provision flag to provision.
-  #
-  # Simple shell provisioning to set up mounts
-  # 'vagrant provision' is run automatically at 'vagrant [up|reload]'
-  # Here we set up added block devices.
-  config.vm.provision "shell", path: "drive_setup.sh"
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.
