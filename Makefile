@@ -567,6 +567,7 @@ done-host/db-schema: done-host/db-init done-host/hosts
 	sudo -v
 	sudo -u postgres psql -d genome -f setup/schema.psql	
 	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-allocations.pl'
+	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-sqlite.pl'
 	sudo bash -l -c 'source /etc/genome.conf; ($(GMS_HOME)/sw/genome/bin/genome-perl $(GMS_HOME)/sw/genome/bin/genome disk volume list | grep reads >/dev/null)' 
 	touch $@ 
 
