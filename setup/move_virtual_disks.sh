@@ -9,9 +9,18 @@ GMS_PATH='/Volumes/GMS2'
 DATA_PATH='/Volumes/GMS2'
 
 #Check these paths
-[ -d $TMP_PATH ] || (echo "*** Specified TMP_PATH does not exist: $TMP_PATH  ***" && exit) 
-[ -d $GMS_PATH ] || (echo "*** Specified GMS_PATH does not exist: $GMS_PATH  ***" && exit) 
-[ -d $DATA_PATH ] || (echo "*** Specified DATA_PATH does not exist: $DATA_PATH  ***" && exit) 
+if [ ! -d $TMP_PATH ]; then
+  echo "*** Specified TMP_PATH does not exist: $TMP_PATH  ***"
+  exit
+fi
+if [ ! -d $GMS_PATH ]; then
+  echo "*** Specified GMS_PATH does not exist: $GMS_PATH  ***"
+  exit
+fi
+if [ ! -d $DATA_PATH ]; then
+  echo "*** Specified DATA_PATH does not exist: $DATA_PATH  ***"
+  exit
+fi
 
 CWD=$(dirname $0)
 
