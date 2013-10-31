@@ -11,13 +11,13 @@ echo "Provisioning added block devices..."
 # was correctly mounted during 'vagrant up'
 echo "Creating partition on /dev/sdb -> /dev/sdb1"
 sudo fdisk -l /dev/sdb | grep -q "^/dev/sdb1" || \
-  fdisk /dev/sdb < /vagrant/fdisk_input.txt
+  fdisk /dev/sdb < /vagrant/setup/fdisk_input.txt
 echo "Creating partition on /dev/sdc -> /dev/sdc1"
 sudo fdisk -l /dev/sdc | grep -q "^/dev/sdc1" || \
-  fdisk /dev/sdc < /vagrant/fdisk_input.txt
+  fdisk /dev/sdc < /vagrant/setup/fdisk_input.txt
 echo "Creating partition on /dev/sdd -> /dev/sdd1"
 sudo fdisk -l /dev/sdd | grep -q "^/dev/sdd1" || \
-  fdisk /dev/sdd < /vagrant/fdisk_input.txt
+  fdisk /dev/sdd < /vagrant/setup/fdisk_input.txt
 
 # Check for a filesystem, make one if needed
 echo "Formatting partition sdb1 as ext4"
