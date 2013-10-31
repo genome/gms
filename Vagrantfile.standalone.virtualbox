@@ -74,7 +74,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Simple shell provisioning to set up mounts
   # 'vagrant provision' is run automatically at 'vagrant [up|reload]'
   # Here we set up added block devices.
-  config.vm.provision "shell", path: "drive_setup.sh"
+  config.vm.provision "shell", path: "setup/drive_setup.sh"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
