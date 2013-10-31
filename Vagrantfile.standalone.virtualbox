@@ -50,7 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ensure disk files are present
   system("setup/vmdisk.sh")
 
-  # make these symlinks if the vdi files move
+  # make these symlinks if the vdi files move.  See 'setup/move_virtual_disks.sh' for an example
   tmp_disk = vagrant_root + '/tmp-disk.vdi'         #Will be '/dev/sdb' partitioned as '/dev/sdb1' within the VM and mounted as '/tmp'
   opt_gms_disk = vagrant_root + '/opt-gms-disk.vdi' #Will be '/dev/sdc' partitioned as '/dev/sdc1' within the VM and mounted as '/opt/gms'
   data_disk = vagrant_root + '/data-disk.vdi'       #Will be '/dev/sdd' partitioned as '/dev/sdd1' within the VM and mounted as '/opt/gms/$GENOME_SYS_ID'
