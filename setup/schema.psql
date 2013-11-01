@@ -222,7 +222,7 @@ CREATE TABLE fragment_library (
     library_id character varying(64) NOT NULL,
     full_name character varying(64) NOT NULL,
     sample_id character varying(64) NOT NULL,
-    transcript_strand character varying(64) NOT NULL,
+    transcript_strand character varying(64),
     library_insert_size character varying(64),
     original_insert_size character varying(64),
     protocol character varying(64)
