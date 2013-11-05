@@ -493,7 +493,7 @@ done-host/openlava-install: done-host/openlava-compile
 	sudo cp /tmp/lsf.cluster.openlava /opt/openlava-2.0/etc/lsf.cluster.openlava
 	rm /tmp/lsf.cluster.openlava
 	cd /etc; [ -e lsf.conf ] || ln -s ../opt/openlava-2.0/etc/lsf.conf lsf.conf
-	(grep 127.0.1.1 /etc/hosts >/dev/null && sudo bash -c 'grep 127.0 /etc/hosts >> /opt/openlava-2.0/etc/hosts && setup/bin/findreplace localhost `hostname` /opt/openlava-2.0/etc/hosts') || true
+	(grep 127.0.1.1 /etc/hosts >/dev/null && sudo bash -c 'grep 127.0 /etc/hosts >> /opt/openlava-2.0/etc/hosts && setup/bin/findreplace localhost `hostname -s` /opt/openlava-2.0/etc/hosts') || true
 	sudo /etc/init.d/openlava start || sudo /etc/init.d/openlava restart
 	sudo /etc/init.d/openlava status
 	touch $@
