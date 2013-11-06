@@ -2,7 +2,8 @@
 use strict;
 use warnings;
 use Sys::Hostname;
-my $hostname = Sys::Hostname::hostname;
+my $hostname = `hostname -s`;
+chomp($hostname);
 
 my %replace = (
     GMS_HOST => $hostname,
