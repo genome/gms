@@ -53,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # make these symlinks if the vdi files move.  See 'setup/move_virtual_disks.sh' for an example
   tmp_disk = vagrant_root + '/tmp-disk.vdi'         #Will be '/dev/sdb' partitioned as '/dev/sdb1' within the VM and mounted as '/tmp'
   opt_gms_disk = vagrant_root + '/opt-gms-disk.vdi' #Will be '/dev/sdc' partitioned as '/dev/sdc1' within the VM and mounted as '/opt/gms'
-  data_disk = vagrant_root + '/data-disk.vdi'       #Will be '/dev/sdd' partitioned as '/dev/sdd1' within the VM and mounted as '/opt/gms/$GENOME_SYS_ID'
+  #data_disk = vagrant_root + '/data-disk.vdi'       #Will be '/dev/sdd' partitioned as '/dev/sdd1' within the VM and mounted as '/opt/gms/$GENOME_SYS_ID'
 
   config.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--memory", 55000]          # 10GB: too little memory will prevent some jobs from running.
@@ -62,7 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', tmp_disk]
       v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', opt_gms_disk]
-      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', data_disk]
+      #v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', data_disk]
   end
 
   # Provisioning:

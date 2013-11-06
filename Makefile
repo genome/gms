@@ -324,17 +324,17 @@ done-host/puppet: done-host/sysid done-host/hosts
 	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER)
 	touch $@
 
-done-host/gms-home-vm:
+#done-host/gms-home-vm:
 	#
 	# $@
 	# When using a Vagrant VM, make /opt/gms a symlink to a pass-through to the host
 	#
-	sudo -v
-	[ -d /vagrant/vm-opt-gms ] || mkdir -p /vagrant/vm-opt-gms/
-	([ `readlink /opt/gms` ] && sudo unlink /opt/gms) || true
-	[ ! -e /opt/gms ] || (echo "Unexpected /opt/gms exists on VM???" && false)
-	sudo ln -s /vagrant/vm-opt-gms /opt/gms
-	touch $@
+	#sudo -v
+	#[ -d /vagrant/vm-opt-gms ] || mkdir -p /vagrant/vm-opt-gms/
+	#([ `readlink /opt/gms` ] && sudo unlink /opt/gms) || true
+	#[ ! -e /opt/gms ] || (echo "Unexpected /opt/gms exists on VM???" && false)
+	#sudo ln -s /vagrant/vm-opt-gms /opt/gms
+	#touch $@
 
 done-host/gms-home-raw:
 	#
@@ -344,11 +344,11 @@ done-host/gms-home-raw:
 	[ -d "/opt/gms" ] || sudo mkdir -p "/opt/gms"
 	touch $@
 
-done-host/vm-mount-disk:
+#done-host/vm-mount-disk:
 	#Once $(GMS_HOME) exists, it should be mounted
-	sudo bash -c 'echo /dev/sdd1  $(GMS_HOME)  ext4  defaults  0  0 >> /etc/fstab'
-	sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdd1 $(GMS_HOME)
-	touch $@
+	#sudo bash -c 'echo /dev/sdd1  $(GMS_HOME)  ext4  defaults  0  0 >> /etc/fstab'
+	#sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdd1 $(GMS_HOME)
+	#touch $@
 
 done-host/gms-home: done-host/puppet
 	#
@@ -357,7 +357,7 @@ done-host/gms-home: done-host/puppet
 	sudo -v
 	# the creation of /opt/gms varies depending on whether this is a VM or not
 	# on a VM we want all disk activity to "pass through" to the host to be shared across installs
-	([ -e /vagrant ] && make done-host/gms-home-vm) || true
+	#([ -e /vagrant ] && make done-host/gms-home-vm) || true
 	[ -e /vagrant ] || make done-host/gms-home-raw
 	# set permissions on the root directory above the GMS home so that additional systems can attach
 	sudo touch /opt/gms/test
@@ -366,7 +366,7 @@ done-host/gms-home: done-host/puppet
 	# make the home for this GMS
 	[ -d "$(GMS_HOME)" ] || sudo mkdir -p $(GMS_HOME)
 	# Now that $(GMS_HOME) exists, it should be mounted
-	[ -e /vagrant ] && make done-host/vm-mount-disk || true
+	#[ -e /vagrant ] && make done-host/vm-mount-disk || true
 	# set permissions for $GMS_HOME
 	echo GMS_HOME is $(GMS_HOME)
 	sudo chown $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)
