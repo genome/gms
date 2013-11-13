@@ -53,6 +53,17 @@ CREATE SCHEMA subject;
 
 ALTER SCHEMA subject OWNER TO genome;
 
+
+--
+-- Name: timeline; Type: SCHEMA; Schema: -; Owner: genome
+--
+
+CREATE SCHEMA timeline;
+
+
+ALTER SCHEMA timeline OWNER TO genome;
+
+
 --
 -- Name: web; Type: SCHEMA; Schema: -; Owner: genome
 --
@@ -108,7 +119,6 @@ SET default_with_oids = false;
 --
 -- Name: allocation; Type: TABLE; Schema: disk; Owner: genome; Tablespace: 
 --
-
 CREATE TABLE allocation (
     id character varying(255) NOT NULL,
     allocation_path character varying(4000) NOT NULL,
@@ -117,18 +127,16 @@ CREATE TABLE allocation (
     mount_path character varying(255) NOT NULL,
     kilobytes_requested numeric(20,0) NOT NULL,
     kilobytes_used numeric(20,0),
-    kilobytes_used_time timestamp(6) without time zone,
     owner_class_name character varying(255),
     owner_id character varying(255),
     creation_time timestamp(6) without time zone,
     reallocation_time timestamp(6) without time zone,
     original_kilobytes_requested numeric(20,0),
     archivable boolean,
-    preserved boolean,
-    kilobytes_requested_time timestamp(6) without time zone,
-    archive_after_time timestamp(6) without time zone
+    kilobytes_used_time timestamp without time zone,
+    archive_after_time timestamp without time zone NOT NULL,
+    status character varying(40) NOT NULL
 );
-
 
 ALTER TABLE disk.allocation OWNER TO genome;
 
@@ -615,7 +623,8 @@ CREATE TABLE "user" (
     software_result_id character varying(32) NOT NULL,
     user_id character varying(255) NOT NULL,
     user_class_name character varying(255),
-    label character varying(100)
+    label character varying(100),
+    active boolean DEFAULT true NOT NULL
 )
 WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 
@@ -747,6 +756,51 @@ CREATE TABLE "user" (
 
 
 ALTER TABLE subject."user" OWNER TO genome;
+
+SET search_path = timeline, pg_catalog;
+
+--
+-- Name: base; Type: TABLE; Schema: timeline; Owner: genome; Tablespace: 
+--
+
+CREATE TABLE base (
+    id character varying NOT NULL,
+    created_by character varying NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    name character varying NOT NULL,
+    object_id character varying NOT NULL,
+    object_class_name character varying NOT NULL,
+    reason character varying NOT NULL
+);
+
+
+ALTER TABLE timeline.base OWNER TO genome;
+
+--
+-- Name: allocation; Type: TABLE; Schema: timeline; Owner: genome; Tablespace: 
+--
+
+CREATE TABLE allocation (
+    kilobytes_requested character varying NOT NULL,
+    absolute_path character varying NOT NULL,
+    status character varying NOT NULL
+)
+INHERITS (base);
+
+
+ALTER TABLE timeline.allocation OWNER TO genome;
+
+--
+-- Name: allocation_event_type; Type: TABLE; Schema: timeline; Owner: genome; Tablespace: 
+--
+
+CREATE TABLE allocation_event_type (
+    id character varying NOT NULL
+);
+
+
+ALTER TABLE timeline.allocation_event_type OWNER TO genome;
 
 SET search_path = web, pg_catalog;
 
