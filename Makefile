@@ -628,7 +628,7 @@ db-rebuild:
 	sudo -u postgres /usr/bin/psql -c "GRANT ALL PRIVILEGES ON database genome TO \"genome\";"
 	sudo -u postgres psql -d genome -f setup/schema.psql	
 	setup/prime-allocations.pl
-	touch done-host/db-schema
+	sudo touch done-host/db-schema
 
 apt-rebuild:
 	# redo the apt configuration, which will download a new apt blob if necessary
