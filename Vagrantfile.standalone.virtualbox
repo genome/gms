@@ -45,18 +45,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   ## Note: over-allocating CPU or memory will likely case your analysis to thrash or swap, respectively.
   ##
 
+  #The setup of virtual disks in the VM is determined collectively by settings in this file, in 'setup/vmdisk.sh', and in 'setup/drive_setup.sh'
+
   vagrant_root = File.dirname(__FILE__)
 
   # ensure disk files are present
   system("setup/vmdisk.sh")
 
   # If you want your VDIs to be in special locations, change the path as desired in the following two lines
-  # You will also need to change the paths in setup/vmdisk.sh to match these
+  # You will also need to change the paths in setup/vmdisk.sh to match these.  The size of these disks is also set in setup/vmdisk.sh
   tmp_disk = vagrant_root + '/tmp-disk.vdi'         #Will be '/dev/sdb' partitioned as '/dev/sdb1' within the VM and mounted as '/tmp'
   opt_gms_disk = vagrant_root + '/opt-gms-disk.vdi' #Will be '/dev/sdc' partitioned as '/dev/sdc1' within the VM and mounted as '/opt/gms'
 
   config.vm.provider "virtualbox" do |v|
-      v.customize ["modifyvm", :id, "--memory", 55000]          # 10GB: too little memory will prevent some jobs from running.
+      v.customize ["modifyvm", :id, "--memory", 55000]          # 55GB: too little memory will prevent some jobs from running.
       v.customize ["modifyvm", :id, "--cpus", 24]               # 24 CPUS: set more CPUs to prevent job deadlocks.
       v.customize ["modifyvm", :id, "--natnet1", "192.168/16"]  # Use a subnet that prevents prevent collisions with local network.
 

@@ -1,3 +1,3 @@
 #!/bin/bash
-[ -e "/Volumes/GMS1/tmp-disk.vdi" ]     || (echo "*** creating /Volumes/GMS1/tmp-disk.vdi ***"     && VBoxManage createhd --filename "/Volumes/GMS1/tmp-disk.vdi" --size 2000000 --format VDI)
-[ -e "/Volumes/GMS2/opt-gms-disk.vdi" ] || (echo "*** creating /Volumes/GMS2/opt-gms-disk.vdi ***" && VBoxManage createhd --filename "/Volumes/GMS2/opt-gms-disk.vdi" --size 2000000 --format VDI)
+[ -e "tmp-disk.vdi" ]     || (echo "*** creating tmp-disk.vdi ***"     && VBoxManage createhd --filename "tmp-disk.vdi" --size 2000000 --format VDI)
+[ -e "opt-gms-disk.vdi" ] || (echo "*** creating opt-gms-disk.vdi ***" && VBoxManage createhd --filename "opt-gms-disk.vdi" --size 2000000 --format VDI)
