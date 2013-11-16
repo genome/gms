@@ -186,15 +186,15 @@ If you would prefer to have a local copy the GMS1 data rather than mount it via 
 
 To build the microarray models:
 
-    genome model build start "name='tst1-tumor-snparray'"
     genome model build start "name='tst1-normal-snparray'"
+    genome model build start "name='tst1-tumor-snparray'"
 
 To build the WGS tumor, WGS normal, exome tumor, and exome normal data, wait until the above finish, then run:
     
-    genome model build start "name='tst1-tumor-refalign-wgs'"
-    genome model build start "name='tst1-normal-refalign-wgs'"
-    genome model build start "name='tst1-tumor-refalign-exome'"
     genome model build start "name='tst1-normal-refalign-exome'"
+    genome model build start "name='tst1-tumor-refalign-exome'"
+    genome model build start "name='tst1-normal-refalign-wgs'"
+    genome model build start "name='tst1-tumor-refalign-wgs'"
 
 While those are building, you can run the RNA-Seq models:
 
@@ -202,8 +202,8 @@ While those are building, you can run the RNA-Seq models:
 
 To build the WGS somatic and exome somatic models, wait until the regular models above complete, and then run:
 
-    genome model build start "name='tst1-somatic-wgs'"
     genome model build start "name='tst1-somatic-exome'"
+    genome model build start "name='tst1-somatic-wgs'"
 
 When all of the above complete, the MedSeq pipeline can be run:
 
