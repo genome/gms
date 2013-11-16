@@ -324,18 +324,6 @@ done-host/puppet: done-host/sysid done-host/hosts
 	sudo usermod -aG $(GMS_GROUP),sudo,fuse $(USER)
 	touch $@
 
-#done-host/gms-home-vm:
-	#
-	# $@
-	# When using a Vagrant VM, make /opt/gms a symlink to a pass-through to the host
-	#
-	#sudo -v
-	#[ -d /vagrant/vm-opt-gms ] || mkdir -p /vagrant/vm-opt-gms/
-	#([ `readlink /opt/gms` ] && sudo unlink /opt/gms) || true
-	#[ ! -e /opt/gms ] || (echo "Unexpected /opt/gms exists on VM???" && false)
-	#sudo ln -s /vagrant/vm-opt-gms /opt/gms
-	#touch $@
-
 done-host/gms-home-raw:
 	#
 	# $@
@@ -350,8 +338,6 @@ done-host/gms-home: done-host/puppet
 	#
 	sudo -v
 	# the creation of /opt/gms varies depending on whether this is a VM or not
-	# on a VM we want all disk activity to "pass through" to the host to be shared across installs
-	#([ -e /vagrant ] && make done-host/gms-home-vm) || true
 	[ -e /vagrant ] || make done-host/gms-home-raw
 	# set permissions on the root directory above the GMS home so that additional systems can attach
 	sudo touch /opt/gms/test
