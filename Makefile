@@ -344,12 +344,6 @@ done-host/gms-home-raw:
 	[ -d "/opt/gms" ] || sudo mkdir -p "/opt/gms"
 	touch $@
 
-#done-host/vm-mount-disk:
-	#Once $(GMS_HOME) exists, it should be mounted
-	#sudo bash -c 'echo /dev/sdd1  $(GMS_HOME)  ext4  defaults  0  0 >> /etc/fstab'
-	#sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdd1 $(GMS_HOME)
-	#touch $@
-
 done-host/gms-home: done-host/puppet
 	#
 	# $@: (recurses into done-host/gms-home-{raw,vm})
@@ -365,8 +359,6 @@ done-host/gms-home: done-host/puppet
 	sudo chmod g+rwxs /opt/gms /opt/gms/.* /opt/gms/*
 	# make the home for this GMS
 	[ -d "$(GMS_HOME)" ] || sudo mkdir -p $(GMS_HOME)
-	# Now that $(GMS_HOME) exists, it should be mounted
-	#[ -e /vagrant ] && make done-host/vm-mount-disk || true
 	# set permissions for $GMS_HOME
 	echo GMS_HOME is $(GMS_HOME)
 	sudo chown $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)
