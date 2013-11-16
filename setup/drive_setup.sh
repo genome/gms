@@ -15,9 +15,6 @@ sudo fdisk -l /dev/sdb | grep -q "^/dev/sdb1" || \
 echo "Creating partition on /dev/sdc -> /dev/sdc1"
 sudo fdisk -l /dev/sdc | grep -q "^/dev/sdc1" || \
   fdisk /dev/sdc < /vagrant/setup/fdisk_input.txt
-#echo "Creating partition on /dev/sdd -> /dev/sdd1"
-#sudo fdisk -l /dev/sdd | grep -q "^/dev/sdd1" || \
-#  fdisk /dev/sdd < /vagrant/setup/fdisk_input.txt
 
 # Check for a filesystem, make one if needed
 echo "Formatting partition sdb1 as ext4"
@@ -26,19 +23,14 @@ sudo dumpe2fs /dev/sdb1 >/dev/null 2>&1 || \
 echo "Formatting partition sdc1 as ext4"
 sudo dumpe2fs /dev/sdc1 >/dev/null 2>&1 || \
   mkfs.ext4 /dev/sdc1
-#echo "Formatting partition sdd1 as ext4"
-#sudo dumpe2fs /dev/sdd1 >/dev/null 2>&1 || \
-#  mkfs.ext4 /dev/sdd1
 
 #Mounting plan
 #/dev/sdb1 /tmp
 #/dev/sdc1 /opt/gms
-#/dev/sdd1 /opt/gms/$GENOME_SYS_ID
 
 #fstab entries could ultimately look something like this:
 #/dev/sdb1  /tmp                     ext4  defaults  0  0
 #/dev/sdc1  /opt/gms                 ext4  defaults  0  0
-#/dev/sdd1  /opt/gms/$GENOME_SYS_ID  ext4  defaults  0  0
 
 # Mount /tmp to our first extra drive
 sudo mount | grep -q "^/dev/sdb1" || \
@@ -52,5 +44,4 @@ sudo mount | grep -q "^/dev/sdc1" || \
   sudo mount -t ext4 /dev/sdc1 /opt/gms
 # Create an fstab entry for /opt/gms
 sudo echo /dev/sdc1  /opt/gms  ext4  defaults  0  0 >> /etc/fstab
-
 
