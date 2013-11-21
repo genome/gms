@@ -330,8 +330,8 @@ done-host/gms-home-raw:
 	# When not using a VM, create a real /opt/gms
 	#	
 	[ -d "/opt/gms" ] || sudo mkdir -p "/opt/gms"
-	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.* /opt/gms/*
-	sudo chmod g+rwxs /opt/gms /opt/gms/.* /opt/gms/*
+	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.*
+	sudo chmod g+rwxs /opt/gms /opt/gms/.*
 	touch $@
 
 done-host/gms-home: done-host/puppet
