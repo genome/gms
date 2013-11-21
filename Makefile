@@ -330,6 +330,8 @@ done-host/gms-home-raw:
 	# When not using a VM, create a real /opt/gms
 	#	
 	[ -d "/opt/gms" ] || sudo mkdir -p "/opt/gms"
+	sudo chown $(GMS_USER):$(GMS_GROUP) /opt/gms /opt/gms/.* /opt/gms/*
+	sudo chmod g+rwxs /opt/gms /opt/gms/.* /opt/gms/*
 	touch $@
 
 done-host/gms-home: done-host/puppet
@@ -448,6 +450,8 @@ done-host/git-checkouts:
 	[ -e $(GMS_HOME)/sw/rails/.git ] 		|| sudo git clone http://github.com/genome/gms-webviews.git -b gms-pub $(GMS_HOME)/sw/rails 
 	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git -b gms-pub  $(GMS_HOME)/sw/genome	
 	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git -b 2.0-release $(GMS_HOME)/sw/openlava
+	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)/sw
+	sudo chmod -R g+rwxs $(GMS_HOME)/sw
 	touch $@
 
 done-host/openlava-compile: done-host/git-checkouts done-host/hosts done-host/etc done-host/pkgs
