@@ -21,6 +21,7 @@ For a standard, standalone, configuration on Ubuntu 12.04 run:
     cd gms
     make
 
+Once the installation completes make sure to log out and log in again to ensure your user permissions are set properly.
 
 Installation on Mac OS X, Linux distributions other than Ubuntu 12.04, or other POSIX systems:
 ------------
@@ -73,6 +74,7 @@ On your VM, follow the standard Ubuntu 12.04 directions above.
     cd gms
     make
     
+Once the installation completes make sure to log out and log in again to ensure your user permissions are set properly.
 
 Installation expansion
 ------------
