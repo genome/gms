@@ -79,7 +79,7 @@ all:
 	make home
 	DEBIAN_FRONTEND=noninteractive make setup
 	#
-	# LOG OUT and log back in to ensure your environment is properly initialized
+	# *** LOG OUT and log back in to ensure your environment is properly initialized! ***
 	#
 
 # in a VM environment, the staging occurs on the host, and the rest on the VM
