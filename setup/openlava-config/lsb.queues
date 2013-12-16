@@ -158,35 +158,6 @@
 #
 
 Begin Queue
-QUEUE_NAME   = alignment 
-PRIORITY     = 30
-NICE         = 20
-#QJOB_LIMIT   = 60 		# job limit of the queue
-#UJOB_LIMIT   = 5               # job limit per user
-#PJOB_LIMIT   = 2               # job limit per processor
-#RUN_WINDOW   = 5:19:00-1:8:30 20:00-8:30
-#r1m	     = 0.7/2.0        # loadSched/loadStop
-#r15m	      = 1.0/2.5
-#pg	      = 4.0/8
-#ut           = 0.2
-#io	      = 50/240
-#CPULIMIT     = 180/apple      # 3 hours of host apple
-#FILELIMIT    = 20000
-#MEMLIMIT     = 5000           # jobs bigger than this (5M) will be niced
-#DATALIMIT    = 20000          # jobs data segment limit
-#STACKLIMIT   = 2048
-#CORELIMIT    = 20000
-#PROCLIMIT    = 5              # job processor limit
-#USERS        = all            # users who can submit jobs to this queue
-#HOSTS        = all            # hosts on which jobs in this queue can run
-#PRE_EXEC     = /usr/local/lsf/misc/testq_pre >> /tmp/pre.out
-#POST_EXEC    = /usr/local/lsf/misc/testq_post |grep -v "Hey"
-#REQUEUE_EXIT_VALUES = 55 34 78
-DESCRIPTION  = For normal low priority jobs, running only if hosts are \
-lightly loaded.
-End Queue
-
-Begin Queue
 QUEUE_NAME   = apipe
 PRIORITY     = 30
 NICE         = 20
