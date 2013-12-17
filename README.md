@@ -181,10 +181,16 @@ This will allow you to attach GMS1 disks so you can process the data.
 The above will mount GMS1 data on your system at /opt/gms/GMS1.
 
 If you would prefer to have a local copy the GMS1 data rather than mount it via FTP, use this:
+**WARNING**: This data set is 385 GB.  It can consume considerable bandwidth and be very slow to install.
 
     genome sys gateway attach GMS1 --protocol ftp --rsync
 
-**WARNING**: This data set is 385 GB.  It can consume considerable bandwidth and be very slow to install.
+To download data sets of annotation files used by the clin-seq pipeline:
+**WARNING**: These data sets are also very slow to download. 
+
+    genome db cosmic install 65.1
+    genome db tgi install tgi/cancer-annotation/human/build37-20130401.1
+    genome db tgi install tgi/misc-annotation/human/build37-20130113.1
 
 To build the microarray models:
 
