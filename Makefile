@@ -445,7 +445,7 @@ done-host/git-checkouts:
 	#
 	sudo -v
 	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
-	[ -e $(GMS_HOME)/sw/ur/.git ] 			|| sudo git clone http://github.com/genome/UR.git -b gms-pub $(GMS_HOME)/sw/ur
+	[ -e $(GMS_HOME)/sw/ur/.git ] 			|| sudo git clone http://github.com/genome/UR.git -b gms-pub-tag $(GMS_HOME)/sw/ur
 	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git -b gms-pub $(GMS_HOME)/sw/workflow
 	[ -e $(GMS_HOME)/sw/rails/.git ] 		|| sudo git clone http://github.com/genome/gms-webviews.git -b gms-pub $(GMS_HOME)/sw/rails 
 	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git -b gms-pub  $(GMS_HOME)/sw/genome	
@@ -581,7 +581,7 @@ update-repos:
 	#
 	sudo -v
 	cd $(GMS_HOME)/sw/genome; git pull origin gms-pub
-	cd $(GMS_HOME)/sw/ur; git pull origin gms-pub
+	cd $(GMS_HOME)/sw/ur; git pull origin gms-pub-tag
 	cd $(GMS_HOME)/sw/workflow; git pull origin gms-pub
 	cd $(GMS_HOME)/sw/rails; git pull origin gms-pub
 	[ -d /var/www/gms-webviews ] || sudo mkdir /var/www/gms-webviews
