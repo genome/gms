@@ -1467,13 +1467,6 @@ CREATE INDEX kilobytes_requested_index ON allocation USING btree (kilobytes_requ
 
 
 --
--- Name: kilobytes_requested_time_idx; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
---
-
-CREATE INDEX kilobytes_requested_time_idx ON allocation USING btree (kilobytes_requested_time);
-
-
---
 -- Name: kilobytes_used_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
 --
 
