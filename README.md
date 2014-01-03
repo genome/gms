@@ -185,13 +185,6 @@ If you would prefer to have a local copy the GMS1 data rather than mount it via 
 
     genome sys gateway attach GMS1 --protocol ftp --rsync
 
-To download data sets of annotation files used by the clin-seq pipeline:
-**WARNING**: These data sets are also very slow to download. 
-
-    genome db cosmic install 65.1
-    genome db tgi install tgi/cancer-annotation/human/build37-20130401.1
-    genome db tgi install tgi/misc-annotation/human/build37-20130113.1
-
 To build the microarray models:
 
     genome model build start "name='tst1-normal-snparray'"
