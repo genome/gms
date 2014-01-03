@@ -168,8 +168,8 @@ To install the full set of example human cancer data, including reference sequen
     genome processing-profile list reference-alignment
     genome processing-profile list somatic-variation
     genome processing-profile list rna-seq
+    genome processing-profile list differential-expression    
     genome processing-profile list clin-seq
-    
 
 You now have metadata about reads from GMS1 in your system, but no access to the real underlying 
 files (reads, alignments, variant calls).
@@ -187,34 +187,37 @@ If you would prefer to have a local copy the GMS1 data rather than mount it via 
 
 To build the microarray models:
 
-    genome model build start "name='tst1-normal-snparray'"
-    genome model build start "name='tst1-tumor-snparray'"
+    genome model build start "name='hcc1395-normal-snparray'"
+    genome model build start "name='hcc1395-tumor-snparray'"
 
 To build the WGS tumor, WGS normal, exome tumor, and exome normal data, wait until the above finish, then run:
     
-    genome model build start "name='tst1-normal-refalign-exome'"
-    genome model build start "name='tst1-tumor-refalign-exome'"
-    genome model build start "name='tst1-normal-refalign-wgs'"
-    genome model build start "name='tst1-tumor-refalign-wgs'"
+    genome model build start "name='hcc1395-normal-refalign-exome'"
+    genome model build start "name='hcc1395-tumor-refalign-exome'"
+    genome model build start "name='hcc1395-normal-refalign-wgs'"
+    genome model build start "name='hcc1395-tumor-refalign-wgs'"
 
 While those are building, you can run the RNA-Seq models:
 
-    genome model build start "name='tst1-tumor-rnaseq'"
+    genome model build start "name='hcc1395-tumor-rnaseq'"
 
 To build the WGS somatic and exome somatic models, wait until the regular models above complete, and then run:
 
-    genome model build start "name='tst1-somatic-exome'"
-    genome model build start "name='tst1-somatic-wgs'"
+    genome model build start "name='hcc1395-somatic-exome'"
+    genome model build start "name='hcc1395-somatic-wgs'"
 
 When all of the above complete, the MedSeq pipeline can be run:
 
-    genome model build start "name='tst1-clinseq'"
+    genome model build start "name='hcc1395-clinseq'"
+
+To view the inputs to any model, you can do something like the following:
+    genome model input show --model="hcc1395-clinseq"
 
 To monitor any build, run:
 
     genome model build view "id='$BUILD_ID'"
 
-To examine results, got to the build directory listead above, or list it specifically:
+To examine results, got to the build directory listed above, or list it specifically:
 
     genome model build list --filter "id='$BUILD_ID'" --show id,data_directory
 
