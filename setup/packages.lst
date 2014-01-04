@@ -45,4 +45,4 @@ tomcat6
 libnet-statsd-perl
 libfilesys-df-perl
 tcl-dev
-
+libcairo2-dev
