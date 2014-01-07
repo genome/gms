@@ -384,7 +384,7 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	# $@: (recurses into all subsequent steps) after sourcing the /etc/genome.conf file
 	#
 	# nesting make ensures that the users and environment are set up before running things that depend on them
-	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install'
+	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/custom-r'
 	touch $@
 
 done-host/apt-config: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz
@@ -553,6 +553,15 @@ done-host/db-schema: done-host/db-init done-host/hosts
 	sudo bash -l -c 'source /etc/genome.conf; ($(GMS_HOME)/sw/genome/bin/genome-perl $(GMS_HOME)/sw/genome/bin/genome disk volume list | grep reads >/dev/null)' 
 	touch $@ 
 
+done-host/custom-r: done-host/pkgs
+	#
+	# $@
+	#
+	# Install a local custom version of R with all desired packages from CRAN, Bioconductor, and ad hoc sources
+	sudo -v
+	sudo bash -l -c 'source /etc/genome.conf; /bin/bash setup/install_custom_r.sh'
+	touch $@
+
 done-host/db-driver: done-host/pkgs
 	#
 	# $@:
@@ -561,7 +570,7 @@ done-host/db-driver: done-host/pkgs
 	# DBD::Pg as repackaged has deps which do not work with Ubuntu Precise.  This works around it.
 	sudo -v
 	[ `perl -e 'use DBD::Pg; print $$DBD::Pg::VERSION'` = '2.19.3' ] || sudo cpanm DBD::Pg
-
+	touch $@
 
 stage-software: done-host/pkgs done-host/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
 
