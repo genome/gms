@@ -199,6 +199,7 @@ To build the WGS tumor, WGS normal, exome tumor, and exome normal data, wait unt
 
 While those are building, you can run the RNA-Seq models:
 
+    genome model build start "name='hcc1395-normal-rnaseq'"
     genome model build start "name='hcc1395-tumor-rnaseq'"
 
 To build the WGS somatic and exome somatic models, wait until the regular models above complete, and then run:
