@@ -45,6 +45,3 @@ tomcat6
 libnet-statsd-perl
 libfilesys-df-perl
 tcl-dev
-libcairo2-dev
-libglu1-mesa-dev
-libhdf5-serial-dev

@@ -1,16 +1,17 @@
 #!/bin/bash
 #Install a custom version of R and R packages needed
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo "Script dir is " $DIR
 
 #Install a specific version of R to custom location
-echo "INSTALLING R"
-R_VERSION="R-2.15.2"
+export R_VERSION="R-2.15.2"
+echo "INSTALLING R VERSION" $R_VERSION
 mkdir -p $GENOME_SW/R/
 cd $GENOME_SW/R/
 wget http://cran.r-project.org/src/base/R-2/$R_VERSION.tar.gz
 tar -zxvf $R_VERSION.tar.gz
 cd $GENOME_SW/R/$R_VERSION
-./configure --prefix=$GENOME_SW/R/$R_VERSION/
+./configure --prefix=$GENOME_SW/R/$R_VERSION/ --enable-memory-profiling --with-tcltk
 make
 make install
 
@@ -19,26 +20,23 @@ export PATH=$GENOME_SW/R/R_$VERSION/bin:$PATH
 
 #Install R libraries needed from within an R session
 echo "INSTALLING R LIBRARIES FROM WITHIN AN R SESSION"
-echo $DIR
+echo "Script dir is " $DIR
 $GENOME_SW/R/$R_VERSION/bin/R CMD BATCH $DIR/install_r_packages.R $GENOME_SW/R/$R_VERSION/install_r_packages.stdout
 
 #Install R libraries that must be handled manually
 echo "INSTALLING R LIBRARIES THAT MUST BE HANDLED MANUALLY"
 mkdir $GENOME_SW/R/$R_VERSION/custom_packages
-CUSTOM_DIR="$GENOME_SW/R/$R_VERSION/custom_packages"
+export CUSTOM_DIR="$GENOME_SW/R/$R_VERSION/custom_packages"
+echo "Directory for custom packages is " $CUSTOM_DIR
 
 #Install CopyCat R package manually -> 'copyCat'
+echo $CUSTOM_DIR
 cd $CUSTOM_DIR
 git clone https://github.com/chrisamiller/copyCat.git
 cd $CUSTOM_DIR/copyCat
-COPYCAT_VERSION=$(grep "Version" copyCat/DESCRIPTION | awk '{print $2}')
+export COPYCAT_VERSION=$(grep "Version" copyCat/DESCRIPTION | awk '{print $2}')
 $GENOME_SW/R/$R_VERSION/bin/R CMD build copyCat
 $GENOME_SW/R/$R_VERSION/bin/R CMD INSTALL --library=$GENOME_SW/R/$R_VERSION/lib/R/library copyCat_$COPYCAT_VERSION.tar.gz
-
-#Install 'boot' package manually -> 'boot'
-#cd $CUSTOM_DIR
-#wget http://cran.r-project.org/src/contrib/Archive/boot/boot_1.3-5.tar.gz
-#$GENOME_SW/R/$R_VERSION/bin/R CMD INSTALL --library=$GENOME_SW/R/$R_VERSION/lib/R/library boot_1.3-5.tar.gz
 
 #Install 'gplots' package manually -> 'gplots'
 cd $CUSTOM_DIR

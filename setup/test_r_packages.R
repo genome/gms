@@ -21,4 +21,6 @@ for (package_name in installed_package_list){
   }
 }
 
+#Display overall capabilities of this R installation
+capabilities() 
 

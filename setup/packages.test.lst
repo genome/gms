@@ -1,0 +1,5 @@
+libcairo2-dev
+libglu1-mesa-dev
+libhdf5-serial-dev
+tk
+tk-dev
