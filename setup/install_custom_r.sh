@@ -55,6 +55,9 @@ $GENOME_SW/R/$R_VERSION/bin/R CMD INSTALL --library=$GENOME_SW/R/$R_VERSION/lib/
 echo "TESTING THAT ALL R PACKAGES CAN LOAD"
 $GENOME_SW/R/$R_VERSION/bin/R CMD BATCH $DIR/test_r_packages.R $GENOME_SW/R/$R_VERSION/test_r_packages.stdout
 
+#Make sure 'cairo' is used for bitmap creation instead of 'Xlib' by creating a setting in a .Rprofile file
+bash -c 'echo options\(bitmapType = \"cairo\"\) > /opt/gms/XNQB947/sw/apps/R/R-2.15.2/etc/.Rprofile'
+
 #Display the result of the final test
 cat $GENOME_SW/R/$R_VERSION/test_r_packages.stdout | grep "\[1\]"
 

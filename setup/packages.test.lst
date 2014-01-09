@@ -3,3 +3,7 @@ libglu1-mesa-dev
 libhdf5-serial-dev
 tk
 tk-dev
+libtiff4-dev
+lzma-dev
+libjbig2dec0-dev
+libpango1.0-dev
