@@ -15,6 +15,6 @@
 
 #'test_r_packages.R' contains basic tests to run at the end of the installation
 #This will test that all packages can be loaded, print out system info, and test certain fundamental R capabilities
-
-
+#Note that all capabilities except 'X11' should be working.  
+#The capability 'cledit' will only be functional from within an interactive session
 

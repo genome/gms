@@ -7,3 +7,6 @@ libtiff4-dev
 lzma-dev
 libjbig2dec0-dev
 libpango1.0-dev
+texinfo
+texi2html
+texlive-latex-base
