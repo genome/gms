@@ -4,6 +4,15 @@ export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "Script dir is:" $DIR
 
 #Check environment
+if [ -z "$GENOME_SW" ]; then
+  echo "GENOME_SW is not set, attempting to source /etc/genome.conf"
+  if [ -e "/etc/genome.conf" ]; 
+  then
+    source "/etc/genome.conf"
+  else
+    echo "Could not source because /etc/genome.conf is not present"
+  fi
+fi  
 [ -z "$GENOME_SW" ] && echo "GENOME_SW is not set " && exit 1;
 echo "GENOME_SW is:" $GENOME_SW
 
