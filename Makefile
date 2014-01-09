@@ -429,7 +429,7 @@ done-host/pkgs: done-host/apt-get-update
 	#
 	sudo -v
 	# install primary dependency packages 
-	sudo apt-get install -q -y --force-yes git-core vim byobu nfs-common perl-doc genome-snapshot-deps `cat setup/packages.lst`
+	sudo apt-get install -q -y --force-yes git-core vim byobu nfs-common perl-doc genome-snapshot-deps `cat setup/packages.lst` `cat setup/install_custom_r/packages.r.lst`
 	# install rails dependency packages
 	sudo apt-get install -q -y --force-yes git ruby1.9.1 ruby1.9.1-dev rubygems1.9.1 irb1.9.1 ri1.9.1 rdoc1.9.1 build-essential apache2 libopenssl-ruby1.9.1 libssl-dev zlib1g-dev libcurl4-openssl-dev apache2-prefork-dev libapr1-dev libaprutil1-dev postgresql postgresql-contrib libpq-dev libxslt-dev libxml2-dev genome-rails-prod
 	# install unpackaged Perl modules
@@ -559,7 +559,7 @@ done-host/custom-r: done-host/pkgs
 	#
 	# Install a local custom version of R with all desired packages from CRAN, Bioconductor, and ad hoc sources
 	sudo -v
-	sudo bash -l -c 'source /etc/genome.conf; /bin/bash setup/install_custom_r.sh'
+	sudo bash -l -c 'source /etc/genome.conf; /bin/bash setup/install_custom_r/install_custom_r.sh'
 	touch $@
 
 done-host/db-driver: done-host/pkgs

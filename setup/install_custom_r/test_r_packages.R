@@ -27,5 +27,8 @@ capabilities()
 #Will Cairo be used for PNGs as desired?
 getOption("bitmapType")
 
-
+#Test device types
+png()
+tiff()
+jpeg()
 

@@ -11,7 +11,7 @@ cd $GENOME_SW/R/
 wget http://cran.r-project.org/src/base/R-2/$R_VERSION.tar.gz
 tar -zxvf $R_VERSION.tar.gz
 cd $GENOME_SW/R/$R_VERSION
-./configure --prefix=$GENOME_SW/R/$R_VERSION/ --enable-memory-profiling --with-tcltk
+./configure --prefix=$GENOME_SW/R/$R_VERSION/ --enable-memory-profiling --with-tcltk --with-cairo --with-libpng --with-jpeglib --with-libtiff
 make
 make install
 
