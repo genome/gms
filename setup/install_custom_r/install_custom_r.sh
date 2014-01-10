@@ -41,8 +41,15 @@ make install
 #Make this first version of R to use in PATH
 export PATH=$GENOME_SW/R/$R_VERSION/bin:$PATH
 
+#Note adding R's bin to PATH can be dangerous because there are binaries in there with generic names
+#Some of these like 'pager' can cause problems by over-riding /usr/bin/pager
+#To be more precise we will create a new bin with just 'R' and 'Rscript' and add *that* to PATH
+mkdir $R_INSTALL_DIR/bin_safe/
+cp $R_INSTALL_DIR/bin/R $R_INSTALL_DIR/bin_safe/
+cp $R_INSTALL_DIR/bin/Rscript $R_INSTALL_DIR/bin_safe/
+
 #Make sure the R bin was successfully installed where expected
-export R_BIN="$R_INSTALL_DIR/bin/R"
+export R_BIN="$R_INSTALL_DIR/bin_safe/R"
 [ ! -e $R_BIN ] && echo "R_BIN missing:" $R_BIN && exit 1
 
 #Install R libraries needed from within an R session
