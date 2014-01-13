@@ -202,10 +202,14 @@ While those are building, you can run the RNA-Seq models:
     genome model build start "name='hcc1395-normal-rnaseq'"
     genome model build start "name='hcc1395-tumor-rnaseq'"
 
-To build the WGS somatic and exome somatic models, wait until the regular models above complete, and then run:
+To build the WGS somatic and exome somatic models, wait until the ref-align models above complete, and then run:
 
     genome model build start "name='hcc1395-somatic-exome'"
     genome model build start "name='hcc1395-somatic-wgs'"
+
+To build the differential expression models, wait until the rna-seq models above complete, and then run:
+
+    genome model build start "name='hcc1395-differential-expression'"
 
 When all of the above complete, the MedSeq pipeline can be run:
 
