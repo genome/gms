@@ -56,7 +56,7 @@ DATASERVER=http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2014-01-10
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=2013.10.19
+APT_DUMP_VERSION=2013.15.19
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
