@@ -26,6 +26,9 @@ $files{'gerald_D1VCPACXX_5.bam'}{replacement_path} = $base_dir . "gc6001/product
 $files{'gerald_D1VCPACXX_6.bam'}{replacement_path} = $base_dir . "gc6001/production/csf_135291690/gerald_D1VCPACXX_6.bam";
 $files{'gerald_D1VCPACXX_7.bam'}{replacement_path} = $base_dir . "gc6001/production/csf_135292156/gerald_D1VCPACXX_7.bam";
 $files{'gerald_D1VCPACXX_8.bam'}{replacement_path} = $base_dir . "gc6001/production/csf_135291998/gerald_D1VCPACXX_8.bam";
+$files{'gerald_C1TD1ACXX_8_ACAGTG.bam'}{replacement_path} = $base_dir . "gc6001/production/csf_135450623/gerald_C1TD1ACXX_8_ACAGTG.bam";
+$files{'gerald_C2DBEACXX_3.bam'}{replacement_path} = $base_dir . "gc6001/production/csf_142880229/gerald_C2DBEACXX_3.bam";
+
 
 foreach my $file (sort keys %files){
   print "\n\nProcessing: $file";
