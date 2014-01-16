@@ -2,10 +2,35 @@
 
 use warnings;
 use strict;
+use Getopt::Long;
+
+my $usage=<<INFO;
+
+./use_sampled_tst1_data.pl --ds=100 
+
+Arguments:
+--ds [100|1000] downsampling option to specify 100-fold or 1000-fold downsampling.
+
+INFO
+
+my $ds = '';
+GetOptions ('ds=s'=>\$ds);
+
+unless ($ds){
+  print "\n\nParameters missing\n\n";
+  print "$usage";
+  exit();
+}
 
 #Location of downsampled BAMs once the TST1 data is installed in a sGMS instance
-my $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1percent/";
-#my $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1tenth_percent/";
+my $subsample_dir;
+if ($ds==100){
+  $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1percent/";
+}elsif($ds==1000){
+  $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1tenth_percent/";
+}else{
+  die print "\n\nInvalid ds value\n\n";
+}
 
 unless (-e $subsample_dir && -d $subsample_dir){
   die print "\nCould not find expected subsample dir: $subsample_dir\nStill need to sync GMS1 data?";
