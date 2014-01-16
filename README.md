@@ -152,10 +152,10 @@ Usage
 To install the full set of example human cancer data, including reference sequences and annotation data sets:
 
     # download
-    wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/export/18177dd5eca44514a47f367d9804e17a-2014.1.15.dat
+    wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/export/18177dd5eca44514a47f367d9804e17a-2014.1.16.dat
     
     # import
-    genome model import metadata 18177dd5eca44514a47f367d9804e17a-2014.1.15.dat
+    genome model import metadata 18177dd5eca44514a47f367d9804e17a-2014.1.16.dat
   
     # list the data you just imported
     genome taxon list
