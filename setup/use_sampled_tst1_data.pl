@@ -5,6 +5,8 @@ use strict;
 
 #Location of downsampled BAMs once the TST1 data is installed in a sGMS instance
 my $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1percent/";
+#my $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1tenth_percent/";
+
 unless (-e $subsample_dir && -d $subsample_dir){
   die print "\nCould not find expected subsample dir: $subsample_dir\nStill need to sync GMS1 data?";
 }
