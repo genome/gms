@@ -100,12 +100,15 @@ Initial Sanity Checks
 -------------
 The following checks can be made after logging into the GMS:
 
-    bjobs                   # You should not have any unfinished jobs yet
-    bhosts                  # You should see one host ('precise64' if you are on a vagrant/virtualbox VM)
-    bqueues                 # You should see four queues 
-    genome disk group list  # You should see four disk groups
-    genome disk volume list # You should see at least one volume for your local drive
-    genome sys gateway list # You should see two gateways, one for your new home system and one for "GMS1"
+    lsid                      # You should see the openlava cluster identification
+    lsload                    # You should see a report of available resources
+    bjobs                     # You should not have any unfinished jobs yet
+    bsub 'sleep 60'           # You should be able to submit a job to openlava (run bjobs again to see it)
+    bhosts                    # You should see one host ('precise64' if you are on a vagrant/virtualbox VM)
+    bqueues                   # You should see four queues 
+    genome disk group list    # You should see four disk groups
+    genome disk volume list   # You should see at least one volume for your local drive
+    genome sys gateway list   # You should see two gateways, one for your new home system and one for "GMS1"
 
 Your New System:
 -------------
@@ -149,10 +152,10 @@ Usage
 To install the full set of example human cancer data, including reference sequences and annotation data sets:
 
     # download
-    wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/export/18177dd5eca44514a47f367d9804e17a-2014.1.15.dat
+    wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/export/18177dd5eca44514a47f367d9804e17a-2014.1.16.dat
     
     # import
-    genome model import metadata 18177dd5eca44514a47f367d9804e17a-2014.1.15.dat
+    genome model import metadata 18177dd5eca44514a47f367d9804e17a-2014.1.16.dat
   
     # list the data you just imported
     genome taxon list

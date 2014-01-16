@@ -919,7 +919,7 @@ CREATE TABLE instance (
     name character varying(255) NOT NULL,
     input_stored bytea,
     output_stored bytea,
-    parallel_index character varying(255),
+    parallel_index integer,
     parent_execution_id character varying(255),
     intention character varying(15)
 )
