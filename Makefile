@@ -449,7 +449,7 @@ done-host/git-checkouts:
 	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git -b gms-pub $(GMS_HOME)/sw/workflow
 	[ -e $(GMS_HOME)/sw/rails/.git ] 		|| sudo git clone http://github.com/genome/gms-webviews.git -b gms-pub $(GMS_HOME)/sw/rails 
 	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git -b gms-pub  $(GMS_HOME)/sw/genome	
-	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git -b 2.0-release $(GMS_HOME)/sw/openlava
+	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git -b 2.2 $(GMS_HOME)/sw/openlava
 	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)/sw
 	sudo chmod -R g+rwxs $(GMS_HOME)/sw
 	touch $@
@@ -467,15 +467,16 @@ done-host/openlava-install: done-host/openlava-compile
 	# $@:
 	#
 	sudo -v
-	sudo chown -R genome:root /opt/openlava-2.0/work/  
+	sudo chown -R genome:root /opt/openlava-2.2/work/
 	sudo chmod +x /etc/init.d/openlava
 	sudo update-rc.d openlava defaults 98 02 || echo ...
-	sudo cp setup/openlava-config/lsb.queues /opt/openlava-2.0/etc/lsb.queues
+	sudo cp setup/openlava-config/lsb.queues /opt/openlava-2.2/etc/lsb.queues
 	cat setup/openlava-config/lsf.cluster.openlava | setup/bin/findreplace-gms >| /tmp/lsf.cluster.openlava
-	sudo cp /tmp/lsf.cluster.openlava /opt/openlava-2.0/etc/lsf.cluster.openlava
-	rm /tmp/lsf.cluster.openlava
-	cd /etc; [ -e lsf.conf ] || ln -s ../opt/openlava-2.0/etc/lsf.conf lsf.conf
-	(grep 127.0.1.1 /etc/hosts >/dev/null && sudo bash -c 'grep 127.0 /etc/hosts >> /opt/openlava-2.0/etc/hosts && setup/bin/findreplace localhost `hostname` /opt/openlava-2.0/etc/hosts') || true
+	sudo cp /tmp/lsf.cluster.openlava /opt/openlava-2.2/etc/lsf.cluster.openlava
+	sudo rm /tmp/lsf.cluster.openlava
+	cd $(GMS_HOME)/sw/openlava/config; sudo cp lsb.hosts lsb.params lsb.users lsf.conf lsf.shared lsf.task openlava.sh openlava.csh /opt/openlava-2.2/etc/
+	cd /etc; [ -e lsf.conf ] || sudo ln -s ../opt/openlava-2.2/etc/lsf.conf lsf.conf
+	(grep 127.0.1.1 /etc/hosts >/dev/null && sudo bash -c 'grep 127.0 /etc/hosts >> /opt/openlava-2.2/etc/hosts && setup/bin/findreplace localhost `hostname` /opt/openlava-2.2/etc/hosts') || true
 	sudo /etc/init.d/openlava start || sudo /etc/init.d/openlava restart
 	sudo /etc/init.d/openlava status
 	touch $@
