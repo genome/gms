@@ -92,6 +92,9 @@ echo "INSTALLING R LIBRARIES FROM WITHIN AN R SESSION"
 echo "Script dir is " $DIR
 $R_BIN CMD BATCH $DIR/install_r_packages.R $R_INSTALL_DIR/install_r_packages.stdout
 
+#Reinstall plyr library that for some reason is being upgraded by Bioconductor despite being told not to
+cd $CUSTOM_DIR
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plyr_1.4.tar.gz
 
 #Install CopyCat R package manually -> 'copyCat'
 echo "INSTALLING COPYCAT MANUALLY"
