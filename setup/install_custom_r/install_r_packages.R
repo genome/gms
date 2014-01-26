@@ -4,10 +4,11 @@ r_package_repo="http://cran.wustl.edu"
 #Display current lib paths known within R
 .libPaths()
 
+
 #List of CRAN packages
-cran_package_list = c('bitops', 'Cairo', 'caTools', 'colorspace', 'doMC', 'e1071', 'filehash', 'foreach', 
-                      'fpc', 'ggplot2', 'Hmisc', 'intervals', 'itertools', 'Matrix', 'mgcv', 'mixdist', 
-                      'mixtools', 'multicore', 'nortest', 'h5r', 'plotrix', 'proto', 'RColorBrewer', 
+cran_package_list = c('bitops', 'Cairo', 'caTools', 'doMC', 'e1071', 'filehash', 'foreach', 
+                      'fpc', 'Hmisc', 'intervals', 'Matrix', 'mgcv', 'mixdist', 
+                      'mixtools', 'multicore', 'nortest', 'h5r', 'plotrix',   
                       'scatterplot3d', 'SKAT', 'statmod', 'xtable', 'getopt', 'gtools', 'gdata')
 
 #List of Bioconductor packages
@@ -22,23 +23,31 @@ pkgTestCran <- function(x){
   }
 }
 
-#Create a function to install CRAN packages if they are not already installed (and then test for success)
+#Create a function to install BioConductor packages if they are not already installed (and then test for success)
 pkgTestBioc <- function(x){
   if (!require(x,character.only = TRUE)){
-    biocLite(x,ask=FALSE)
+    biocLite(x,ask=FALSE,suppressUpdates=TRUE)
     if(!require(x,character.only = TRUE)) stop("Package not found")
   }
 }
 
+#Installation and test of CRAN packages
 for (cran_package_name in cran_package_list){
   pkgTestCran(cran_package_name)
 }
 
-#Bioconductor packages
+#Install a custom version of ggplot2 that is old even for R 2.15.2
+#packageurl <- "http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_0.8.9.tar.gz"
+#install.packages(packageurl, contriburl=NULL, type="source")
+#if(!require("ggplot2",character.only = TRUE)) stop("Package not found")
+#This method doesn't seem to work for versions that are not officially supported by the base R version
+
+#Installation and test of Bioconductor packages
 source("http://bioconductor.org/biocLite.R")
 for (bioc_package_name in bioc_package_list){
   pkgTestBioc(bioc_package_name);
 }
+
 
 #Documentation of desired R CRAN and Bioconductor packages
 #r-base (= 2.15.2-1precise0) - already part of R install
@@ -55,7 +64,7 @@ for (bioc_package_name in bioc_package_list){
 #r-cran-filehash (>= 2.1-1-1cran1) -> 'filehash'
 #r-cran-foreach (>= 1.3.0-2) -> 'foreach'
 #r-cran-fpc (>= 2.0-3) -> 'fpc'
-#r-cran-ggplot2 (>= 0.8.9-1cran1) -> 'ggplot2'
+#r-cran-ggplot2 (= 0.8.9-1cran1) -> 'ggplot2'
 #r-cran-gplots (>= 2.8.0-1cran1) - must be installed separately -> 'gplots'
 #r-cran-hmisc (>= 3.8) -> 'Hmisc'
 #r-cran-intervals (>= 0.13.3-1cran1) -> 'intervals'

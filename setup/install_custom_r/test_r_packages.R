@@ -32,3 +32,6 @@ png()
 tiff()
 jpeg()
 
+#Print out complete session info
+sessionInfo()
+
