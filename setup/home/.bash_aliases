@@ -40,6 +40,13 @@ alias rm='rm -i'
 alias mv='mv -i'
 alias grep='grep --color=tty'
 alias less='less -R'
+alias gm='genome model'
+alias gml='genome model list'
+alias gmb='genome model build'
+alias gmba='genome model build abandon'
+alias gmbl='genome model build list'
+alias gmbs='genome model build start'
+alias gmbv='genome model build view'
 
 #alias cd="pushd >/dev/null";
 #alias bd="popd >/dev/null";
