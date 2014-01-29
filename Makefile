@@ -353,6 +353,10 @@ done-host/gms-home: done-host/puppet
 	sudo chmod g+rwxs $(GMS_HOME)
 	# install a directory skeleton
 	sudo cp -a setup/gms-home-skel/* $(GMS_HOME)
+	sudo mv /opt/gms/$(GMS_ID)/known-systems/LocalSystem.tsv /opt/gms/$(GMS_ID)/known-systems/$(GMS_ID).tsv
+	sudo setup/bin/findreplace GMS_HOME $(GMS_HOME) /opt/gms/$(GMS_ID)/known-systems/$(GMS_ID).tsv
+	sudo setup/bin/findreplace GMS_ID $(GMS_ID) /opt/gms/$(GMS_ID)/known-systems/$(GMS_ID).tsv
+	sudo setup/bin/findreplace HOST_NAME $(HOSTNAME) /opt/gms/$(GMS_ID)/known-systems/$(GMS_ID).tsv
 	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)
 	sudo chmod -R g+ws $(GMS_HOME)
 	# since the git repo doesn't keep empty dirs (without .gitkeep), make required subdirs dynamically
