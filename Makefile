@@ -439,7 +439,7 @@ done-host/pkgs: done-host/apt-get-update
 	# install unpackaged Perl modules
 	[ -e setup/bin/cpanm ] || (curl -L https://raw.github.com/miyagawa/cpanminus/master/cpanm >| setup/bin/cpanm && chmod +x setup/bin/cpanm)
 	sudo setup/bin/cpanm Getopt::Complete
-	sudo setup/bin/cpanm DBD::Pg # 2.19.3
+	sudo setup/bin/cpanm DBD::Pg@2.19.3 #2.19.3
 	sudo setup/bin/cpanm Set::IntervalTree
 	touch $@
 
@@ -574,7 +574,7 @@ done-host/db-driver: done-host/pkgs
 	# Install a newer DBD::Pg 
 	# DBD::Pg as repackaged has deps which do not work with Ubuntu Precise.  This works around it.
 	sudo -v
-	[ `perl -e 'use DBD::Pg; print $DBD::Pg::VERSION'` = '2.19.3' ] || sudo setup/bin/cpanm DBD::Pg@2.19.3
+	[ `perl -e 'use DBD::Pg; print $$DBD::Pg::VERSION'` = '2.19.3' ] || sudo setup/bin/cpanm DBD::Pg@2.19.3
 	touch $@
 
 stage-software: done-host/pkgs done-host/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
