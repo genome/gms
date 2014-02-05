@@ -50,3 +50,5 @@ libglu1-mesa-dev
 libhdf5-serial-dev
 tk
 tk-dev
+exim4-daemon-light
+mailutils

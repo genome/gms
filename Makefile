@@ -388,7 +388,7 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	# $@: (recurses into all subsequent steps) after sourcing the /etc/genome.conf file
 	#
 	# nesting make ensures that the users and environment are set up before running things that depend on them
-	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/custom-r'
+	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/custom-r done-host/exim-config'
 	touch $@
 
 done-host/apt-config: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz
@@ -414,6 +414,7 @@ done-host/etc: done-host/apt-config
 	/bin/ls setup/etc/ | perl -ne 'chomp; $$o = $$_; s|\+|/|g; $$c = "cp setup/etc/$$o /etc/$$_\n"; print STDERR $$c; print STDOUT $$c' | sudo bash
 	sudo setup/bin/findreplace REPLACE_GENOME_HOME $(GMS_HOME) /etc/genome.conf /etc/apt/sources.list.d/genome.list
 	sudo setup/bin/findreplace REPLACE_GENOME_SYS_ID $(GMS_ID) /etc/genome.conf /etc/apt/sources.list.d/genome.list
+	sudo setup/bin/findreplace REPLACE_GENOME_HOST $(HOSTNAME) /etc/genome.conf
 	sudo setup/bin/findreplace REPLACE_APT_DUMP_VERSION $(APT_DUMP_VERSION) /etc/apt/sources.list.d/genome.list
 	sudo bash -c 'echo "/opt/gms/$(GMS_ID) *(ro,anonuid=2001,anongid=2001)" >> /etc/exports'	
 	sudo chmod +x /etc/facter/facts.d/genome.sh
@@ -566,6 +567,13 @@ done-host/custom-r: done-host/pkgs
 	sudo -v
 	sudo bash -l -c 'source /etc/genome.conf; /bin/bash setup/install_custom_r/install_custom_r.sh'
 	touch $@
+
+done-host/exim-config: done-host/pkgs
+	#
+	# Configure Exim to send LSF job reports when jobs complete.
+	sudo cp setup/etc/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf
+	sudo setup/bin/findreplace HOST_NAME $(HOSTNAME) /etc/exim4/update-exim4.conf.conf
+	sudo update-exim4.conf
 
 done-host/db-driver: done-host/pkgs
 	#
