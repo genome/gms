@@ -26,7 +26,7 @@ export R_BASE_DIR="$GENOME_SW/R"
 export R_INSTALL_DIR="$R_BASE_DIR/$R_VERSION"
 
 #Make sure this version of R is not already there
-[ -d $R_INSTALL_DIR ] && echo "Already installed this version of R?:" $R_INSTALL_DIR && exit 1
+[ -d $R_INSTALL_DIR ] && echo "Already installed this version of R?:" $R_INSTALL_DIR && exit 0
 
 #Install a specific version of R to custom location
 cd $R_BASE_DIR
