@@ -399,7 +399,7 @@ done-host/apt-config: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-
 	#
 	sudo -v
 	sudo dpkg --force-confdef --force-confnew -i $(GMS_HOME)/sw/apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION)/mirror/repo.gsc.wustl.edu/ubuntu/pool/main/g/genome-apt-config/genome-apt-config_1.0.0-2~Ubuntu~precise_all.deb
-	/bin/cp setup/debconf.in /tmp
+	sudo /bin/cp setup/debconf.in /tmp
 	# findreplace WHATEVER /tmp/debconf.in
 	sudo debconf-set-selections < /tmp/debconf.in
 	touch $@	
