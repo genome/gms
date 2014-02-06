@@ -570,10 +570,13 @@ done-host/custom-r: done-host/pkgs
 
 done-host/exim-config: done-host/pkgs
 	#
+	# $@
+	#
 	# Configure Exim to send LSF job reports when jobs complete.
 	sudo cp setup/etc/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf
 	sudo setup/bin/findreplace HOST_NAME $(HOSTNAME) /etc/exim4/update-exim4.conf.conf
 	sudo update-exim4.conf
+	touch $@
 
 done-host/db-driver: done-host/pkgs
 	#
