@@ -1,0 +1,31 @@
+
+Explanation: provides our packages at top priority
+Package: *
+Pin: release n=precise-genome-development
+Pin-Priority: 1002
+
+Explanation: The Genome Center's lucid repo contains some packages we need, but don't prefer this repo
+Package: *
+Pin: release n=lucid-genome-development
+Pin-Priority: 900
+
+Explanation: set precise default to 990, same as -t precise
+Package: *
+Pin: release n=precise
+Pin-Priority: 990
+
+Explanation: provides R at prio matching precise
+Package: *
+Pin: release o=CRAN
+Pin-Priority: 990
+
+Explanation: provides an X lib for consed to work
+Package: *
+Pin: release o=LP-PPA-crcarlin
+Pin-Priority: 300
+
+Explanation: available only with apt-get -t natty
+Package: *
+Pin: release n=natty
+Pin-Priority: -500
+
