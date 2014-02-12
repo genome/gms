@@ -34,7 +34,7 @@ OS:=$(shell echo $(OS_VENDOR)$(OS_RELEASE))
 # the tool to use for bulk file transfer
 FTP:=ftp
 ifeq ('$(OS_VENDOR)','Ubuntu')
- #FTP:=$(shell which ncftpget || (sudo apt-get install -q -y ncftp && which ncftpget))
+ # FTP:=$(shell which ncftpget || (sudo apt-get install -q -y ncftp && which ncftpget))
  FTP:=wget -v -c
 endif
 
@@ -46,12 +46,8 @@ ifeq ('$(FTP)', 'scp')
 endif
 
 # data which is too big to fit in the git repository is staged here
+# /gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files -> http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/
 DATASERVER=http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files
-
-# staging locations: (when using these, switch the $FTP tool above as necessary
-# scp: DATASERVER=blade12-1-1:/gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files -> http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/
-# scp: DATASERVER=clinus234:/opt/gms/GMS1/setup/archive-files
-# ftp: DATASERVER=ftp://clinus234/setup/archive-files
 
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2014-01-16
@@ -196,7 +192,7 @@ vmcreate: done-host/vmaddbox done-host/vmkernel
 	# fix the above issue by adding NSF to the client
 	#
 	vagrant ssh -c 'sudo apt-get update -y >/dev/null 2>&1 || true; sudo apt-get -y install -q - --force-yes nfs-client make'
-	#vagrant ssh -c '[ -e postinstall.sh ] && sudo ./postinstall.sh'
+	# vagrant ssh -c '[ -e postinstall.sh ] && sudo ./postinstall.sh'
 	#
 	# now reload the VM
 	# there should be no NFS errors
@@ -281,7 +277,7 @@ done-host/user-home-%:
 	# copying configuration into the current user's home directory
 	# re-run "make home" for any new user...
 	#
-	#[ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
+	# [ `basename $(USER_HOME)` = `basename $@ | sed s/user-home-//` ]
 	cp $(PWD)/setup/home/.??* ~$(USER)
 	touch $@
 	
@@ -391,31 +387,27 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/custom-r done-host/exim-config'
 	touch $@
 
-done-host/apt-config: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz
+done-host/etc: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
 	#
 	# $@:
-	# done-host/apt-config:
-	# configure apt to use the GMS repository
-	#
-	sudo -v
-	sudo dpkg --force-confdef --force-confnew -i $(GMS_HOME)/sw/apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION)/mirror/repo.gsc.wustl.edu/ubuntu/pool/main/g/genome-apt-config/genome-apt-config_1.0.0-2~Ubuntu~precise_all.deb
-	sudo /bin/cp setup/debconf.in /tmp
-	# findreplace WHATEVER /tmp/debconf.in
-	sudo debconf-set-selections < /tmp/debconf.in
-	touch $@	
-
-done-host/etc: done-host/apt-config 
-	#
-	# $@:
-	# copy all data from setup/etc into /etc
+	# copy all data from setup/etc into /etc and configure apt sources
 	# 
 	sudo -v
 	[ -d /etc/facter/facts.d ] || sudo mkdir -p /etc/facter/facts.d 
+	# Copy apt sources files from setup/etc in /etc/
 	/bin/ls setup/etc/ | perl -ne 'chomp; $$o = $$_; s|\+|/|g; $$c = "sudo cp setup/etc/$$o /etc/$$_\n"; print STDERR $$c; print STDOUT $$c' | sudo bash
+	# perform various system specific findreplace commands on genome.conf and genome.list
 	sudo setup/bin/findreplace REPLACE_GENOME_HOME $(GMS_HOME) /etc/genome.conf /etc/apt/sources.list.d/genome.list
 	sudo setup/bin/findreplace REPLACE_GENOME_SYS_ID $(GMS_ID) /etc/genome.conf /etc/apt/sources.list.d/genome.list
 	sudo setup/bin/findreplace REPLACE_GENOME_HOST $(HOSTNAME) /etc/genome.conf
 	sudo setup/bin/findreplace REPLACE_APT_DUMP_VERSION $(APT_DUMP_VERSION) /etc/apt/sources.list.d/genome.list
+	# Add r-cran source and GPG keys for r-cran and TGI
+	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+	wget http://repo.gsc.wustl.edu/ubuntu/files/genome-institute.asc
+	sudo apt-key add genome-institute.asc
+	# Remove multi-architecture package support (e.g i386)
+	sudo mv /etc/dpkg/dpkg.cfg.d/multiarch /etc/dpkg/dpkg.cfg.d/multiarch.backup
+	# Set some file permissions
 	sudo bash -c 'echo "/opt/gms/$(GMS_ID) *(ro,anonuid=2001,anongid=2001)" >> /etc/exports'	
 	sudo chmod +x /etc/facter/facts.d/genome.sh
 	touch $@
@@ -440,7 +432,7 @@ done-host/pkgs: done-host/apt-get-update
 	# install unpackaged Perl modules
 	[ -e setup/bin/cpanm ] || (curl -L https://raw.github.com/miyagawa/cpanminus/master/cpanm >| setup/bin/cpanm && chmod +x setup/bin/cpanm)
 	sudo setup/bin/cpanm Getopt::Complete
-	sudo setup/bin/cpanm DBD::Pg@2.19.3 #2.19.3
+	sudo setup/bin/cpanm DBD::Pg@2.19.3
 	sudo setup/bin/cpanm Set::IntervalTree
 	touch $@
 
@@ -514,7 +506,7 @@ done-host/rails: done-host/pkgs
 	sudo gem install bundler --no-ri --no-rdoc --install-dir=/var/lib/gems/1.9.1
 	sudo chown www-data:www-data /var/www
 	sudo -u www-data rsync -r $(GMS_HOME)/sw/rails/ /var/www/gms-webviews
-	##cd /var/www/gms-webviews && sudo bundle install
+	# cd /var/www/gms-webviews && sudo bundle install
 	sudo /usr/bin/gem1.9.1 install bundler --no-ri --no-rdoc
 	sudo -u www-data  mv /var/www/gms-webviews/config/database.yml.template /var/www/gms-webviews/config/database.yml
 	cd /var/www/gms-webviews && sudo bundle install && cd -
@@ -636,9 +628,4 @@ db-rebuild:
 	sudo -u postgres psql -d genome -f setup/schema.psql	
 	setup/prime-allocations.pl
 	sudo touch done-host/db-schema
-
-apt-rebuild:
-	# redo the apt configuration, which will download a new apt blob if necessary
-	([ -e done-host/apt-config ] && rm done-host/apt-config) || true 
-	make 'done-host/apt-config'
 
