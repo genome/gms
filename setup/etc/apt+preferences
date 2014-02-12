@@ -14,7 +14,7 @@ Package: *
 Pin: release n=precise
 Pin-Priority: 990
 
-Explanation: provides R at prio matching precise
+Explanation: provides R at priority matching precise
 Package: *
 Pin: release o=CRAN
 Pin-Priority: 990

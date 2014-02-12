@@ -1,3 +1,1 @@
-# This file is owned by genome-apt-config
-# It should not normally be modified, but is by the GMS makefile to point to a local fs cache of the repo 
 deb http://cran.wustl.edu/bin/linux/ubuntu precise/

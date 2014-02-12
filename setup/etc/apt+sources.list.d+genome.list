@@ -1,5 +1,3 @@
-# This file is owned by genome-apt-config
-# It should not normally be modified, but is by the GMS makefile to point to a local fs cache of the repo 
 deb file:REPLACE_GENOME_HOME/sw/apt-mirror-min-ubuntu-12.04-REPLACE_APT_DUMP_VERSION/mirror/repo.gsc.wustl.edu/ubuntu lucid-genome-systems main
 deb file:REPLACE_GENOME_HOME/sw/apt-mirror-min-ubuntu-12.04-REPLACE_APT_DUMP_VERSION/mirror/repo.gsc.wustl.edu/ubuntu lucid-genome-development main
 deb file:REPLACE_GENOME_HOME/sw/apt-mirror-min-ubuntu-12.04-REPLACE_APT_DUMP_VERSION/mirror/repo.gsc.wustl.edu/ubuntu precise-genome-systems main
