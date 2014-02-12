@@ -430,10 +430,14 @@ done-host/pkgs: done-host/apt-get-update
 	# install rails dependency packages
 	sudo apt-get install -q -y --force-yes git ruby1.9.1 ruby1.9.1-dev rubygems1.9.1 irb1.9.1 ri1.9.1 rdoc1.9.1 build-essential apache2 libopenssl-ruby1.9.1 libssl-dev zlib1g-dev libcurl4-openssl-dev apache2-prefork-dev libapr1-dev libaprutil1-dev postgresql postgresql-contrib libpq-dev libxslt-dev libxml2-dev genome-rails-prod
 	# install unpackaged Perl modules
+	# download cpanm unless it is already in the gms repo
 	[ -e setup/bin/cpanm ] || (curl -L https://raw.github.com/miyagawa/cpanminus/master/cpanm >| setup/bin/cpanm && chmod +x setup/bin/cpanm)
+	# install Getopt::Complete and DBD:Pg directly from CPAN. These should be replaced with debian packages eventually
 	sudo setup/bin/cpanm Getopt::Complete
 	sudo setup/bin/cpanm DBD::Pg@2.19.3
-	sudo setup/bin/cpanm Set::IntervalTree
+	# install TGI's instance of Set::IntervalTree. Once the ubuntu precise debian packages are built get it from there instead
+	sudo git clone https://github.com/genome-vendor/libset-intervaltree-perl.git
+	cd libset-intervaltree-perl && sudo perl Makefile.PL && sudo make && sudo make install
 	touch $@
 
 done-host/git-checkouts:
