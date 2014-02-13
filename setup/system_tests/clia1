@@ -26,25 +26,26 @@ rm -fr gms-install-done-local/
 cd /opt/gms
 ls -1 | grep -v tmp | perl -ne 'print "sudo rm -fr $_"' | sh
 
-#tweaks to the apt repo setup
-sudo /etc/init.d/puppet status #check status of puppet
-sudo /etc/init.d/puppet status stop #stop puppet
-sudo rm -f /etc/apt/sources.list.d/*  #remove config files created by puppet
-#cp sources.list that is used in the vanilla ubuntu install
-sudo apt-get update #update apt to use the new apt sources
-sudo apt-get -f install #fix broken packages
-cd ~
-git clone https://github.com/genome/gms.git
-cd gms
-make #run the gms install
-
-
 #clone the gms repo
 cd ~
 git clone https://github.com/genome/gms.git
 cd gms
+
+#tweaks to the apt repo setup
+sudo /etc/init.d/puppet status #check status of puppet
+sudo /etc/init.d/puppet stop #stop puppet
+sudo /etc/init.d/puppet status #check status of puppet
+sudo rm -f /etc/apt/sources.list.d/*  #remove config files created by puppet
+sudo cp -f setup/system_tests/sources.list /etc/apt/ #copy sources.list that is used in the vanilla ubuntu install
+sudo apt-get update #update apt to use the new apt sources
+sudo apt-get -f install #fix broken packages
+
+#run the gms install
+cd ~/gms
 make
 
 #restart puppet daemon
 sudo /etc/init.d/puppet start
+sudo /etc/init.d/puppet status
+
 
