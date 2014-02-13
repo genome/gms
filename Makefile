@@ -407,6 +407,7 @@ done-host/etc: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$
 	sudo apt-key add genome-institute.asc
 	# Remove multi-architecture package support (e.g i386)
 	[ ! -e /etc/dpkg/dpkg.cfg.d/multiarch ] || sudo mv /etc/dpkg/dpkg.cfg.d/multiarch /etc/dpkg/dpkg.cfg.d/multiarch.backup
+	sudo apt-get -y -f install
 	# Set some file permissions
 	sudo bash -c 'echo "/opt/gms/$(GMS_ID) *(ro,anonuid=2001,anongid=2001)" >> /etc/exports'	
 	sudo chmod +x /etc/facter/facts.d/genome.sh

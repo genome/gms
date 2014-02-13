@@ -43,8 +43,8 @@ sudo cp -f setup/system_tests/sources.list /etc/apt/
 
 #remove multi architecture support and fix broken packages that result
 sudo mv /etc/dpkg/dpkg.cfg.d/multiarch /etc/dpkg/dpkg.cfg.d/multiarch.backup
-sudo apt-get update
-sudo apt-get -f install
+sudo apt-get -y update
+sudo apt-get -y -f install
 
 #run the gms install
 cd ~/gms
