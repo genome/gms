@@ -32,13 +32,17 @@ git clone https://github.com/genome/gms.git
 cd gms
 
 #tweaks to the apt repo setup
-sudo /etc/init.d/puppet status #check status of puppet
-sudo /etc/init.d/puppet stop #stop puppet
-sudo /etc/init.d/puppet status #check status of puppet
-sudo rm -f /etc/apt/sources.list.d/*  #remove config files created by puppet
-sudo cp -f setup/system_tests/sources.list /etc/apt/ #copy sources.list that is used in the vanilla ubuntu install
-sudo apt-get update #update apt to use the new apt sources
-sudo apt-get -f install #fix broken packages
+sudo /etc/init.d/puppet status
+sudo /etc/init.d/puppet stop
+sudo /etc/init.d/puppet status
+
+#replace config files from puppet with those used in the sGMS
+sudo rm -f /etc/apt/sources.list.d/*
+sudo cp -f setup/system_tests/sources.list /etc/apt/
+sudo apt-get update
+
+#fix broken packages
+#sudo apt-get -f install
 
 #run the gms install
 cd ~/gms
@@ -47,5 +51,4 @@ make
 #restart puppet daemon
 sudo /etc/init.d/puppet start
 sudo /etc/init.d/puppet status
-
 
