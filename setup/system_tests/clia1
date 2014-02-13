@@ -1,0 +1,50 @@
+#to re-image the system 
+# sudo wget -q -O - http://puppetmaster2:3001/precise_image=10.0.70.20 && sudo /sbin/reboot
+
+#once the system comes on line login with ldap credentials
+ssh clia1
+
+#basic setup of login user
+sudo mkdir /gscuser
+sudo chown mgriffit:info /gscuser
+mkdir /gscuser/mgriffit
+cd /gscuser/mgriffit
+mkdir .ssh
+touch .ssh/authorized_keys
+echo "if [ -f ~/.bashrc ]; then" >> .bash_profile
+echo "  . ~/.bashrc" >> .bash_profile
+echo fi >> .bash_profile
+echo "alias ll='ls -l'" >> .bashrc
+
+#change to the test user:
+sudo -i -u gmsuser
+
+#make sure unwanted remnants of last install are not in /tmp (e.g. /tmp/gms-install-done-local/). Clean-up if needed
+rm -fr gms-install-done-local/
+
+#delete previous install from /opt/gms
+cd /opt/gms
+ls -1 | grep -v tmp | perl -ne 'print "sudo rm -fr $_"' | sh
+
+#tweaks to the apt repo setup
+sudo /etc/init.d/puppet status #check status of puppet
+sudo /etc/init.d/puppet status stop #stop puppet
+sudo rm -f /etc/apt/sources.list.d/*  #remove config files created by puppet
+#cp sources.list that is used in the vanilla ubuntu install
+sudo apt-get update #update apt to use the new apt sources
+sudo apt-get -f install #fix broken packages
+cd ~
+git clone https://github.com/genome/gms.git
+cd gms
+make #run the gms install
+
+
+#clone the gms repo
+cd ~
+git clone https://github.com/genome/gms.git
+cd gms
+make
+
+#restart puppet daemon
+sudo /etc/init.d/puppet start
+
