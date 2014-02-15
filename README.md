@@ -15,10 +15,12 @@ Installation on Ubuntu 12.04
 
 For a standard, standalone, configuration on Ubuntu 12.04 run:
 
-    sudo apt-get install git ssh make
-    git clone https://github.com/genome/gms.git
-    cd gms
-    make
+```bash
+sudo apt-get install git ssh make
+git clone https://github.com/genome/gms.git
+cd gms
+make
+```
 
 Once the installation completes make sure to log out and log in again to ensure your user permissions are set properly.
 
@@ -37,11 +39,13 @@ NOTE: You must install git, ssh, and make on your system before doing the follow
 
 This is the recommended approach for running on Mac OS X.  Be sure to install Xcode first.
 
-    git clone https://github.com/genome/gms.git
-    cd gms
-    make vminit     # install virtualbox and vagrant, and an Ubuntu 12.04 VM
-    vagrant ssh     # log into the VM
-    make            # install the gms
+```bash
+git clone https://github.com/genome/gms.git
+cd gms
+make vminit     # install virtualbox and vagrant, and an Ubuntu 12.04 VM
+vagrant ssh     # log into the VM
+make            # install the gms
+```
 
 Once the virtual machine is created successfully if you want to reboot the host system, you should
 log out of the VM and use 'vagrant suspend' to shutdown the VM, then 'vagrant resume' to reboot it.
@@ -67,11 +71,13 @@ Follow these instructions to install the image into VirtualBox:
 
 On your VM, follow the standard Ubuntu 12.04 directions above.
 
-    sudo apt-get install git ssh make
-    git clone https://github.com/genome/gms.git
-    cd gms
-    make
-    
+```bash
+sudo apt-get install git ssh make
+git clone https://github.com/genome/gms.git
+cd gms
+make
+```
+
 Once the installation completes make sure to log out and log in again to ensure your user permissions are set properly.
 
 
@@ -93,29 +99,33 @@ Initial Sanity Checks
 
 The following checks can be made after logging into the GMS:
 
-    lsid                      # You should see the openlava cluster identification
-    lsload                    # You should see a report of available resources
-    bjobs                     # You should not have any unfinished jobs yet
-    bsub 'sleep 60'           # You should be able to submit a job to openlava (run bjobs again to see it)
-    bhosts                    # You should see one host
-    bqueues                   # You should see four queues
-    genome disk group list    # You should see four disk groups
-    genome disk volume list   # You should see at least one volume for your local drive
-    genome sys gateway list   # You should see two gateways, one for your new home system and one for the test data "GMS1"
-
+```bash
+lsid                      # You should see the openlava cluster identification
+lsload                    # You should see a report of available resources
+bjobs                     # You should not have any unfinished jobs yet
+bsub 'sleep 60'           # You should be able to submit a job to openlava (run bjobs again to see it)
+bhosts                    # You should see one host
+bqueues                   # You should see four queues
+genome disk group list    # You should see four disk groups
+genome disk volume list   # You should see at least one volume for your local drive
+genome sys gateway list   # You should see two gateways, one for your new home system and one for the test data "GMS1"
+```
 
 Your New System:
 -------------
 
 Each GMS has a unique ID:
-    
-    cat /etc/genome/sysid
-    echo $GENOME_SYS_ID
-    
+
+```bash
+cat /etc/genome/sysid
+echo $GENOME_SYS_ID
+```
+
 The entire installation lives in a directory with the ID embedded:
 
-    echo $GENOME_HOME
-    # /opt/gms/$GENOME_SYS_ID
+```bash
+echo $GENOME_HOME # /opt/gms/$GENOME_SYS_ID
+```
 
 The initial system has one node, and that node has only its local disk on which to perform analysis.  
 To expand the system to multiple nodes, add disks, or use network-attached storage, see the secion below
@@ -127,88 +137,114 @@ Usage
 
 To install the full set of example human cancer data, including reference sequences and annotation data sets:
 
-    # download
-    wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/export/18177dd5eca44514a47f367d9804e17a-2014.1.16.dat
+```bash
+# download
+wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/export/18177dd5eca44514a47f367d9804e17a-2014.1.16.dat
     
-    # import
-    genome model import metadata 18177dd5eca44514a47f367d9804e17a-2014.1.16.dat
+# import
+genome model import metadata 18177dd5eca44514a47f367d9804e17a-2014.1.16.dat
   
-    # list the data you just imported
-    genome taxon list
-    genome individual list
-    genome sample list
-    genome library list
-    genome instrument-data list solexa
+# list the data you just imported
+genome taxon list
+genome individual list
+genome sample list
+genome library list
+genome instrument-data list solexa
     
-    # list the pre-defined models (no results yet ... you will launch these and generate results)
-    genome model list
+# list the pre-defined models (no results yet ... you will launch these and generate results)
+genome model list
     
-    # list the processing profiles associated with those models
-    genome processing-profile list reference-alignment
-    genome processing-profile list somatic-variation
-    genome processing-profile list rna-seq
-    genome processing-profile list differential-expression    
-    genome processing-profile list clin-seq
+# list the processing profiles associated with those models
+genome processing-profile list reference-alignment
+genome processing-profile list somatic-variation
+genome processing-profile list rna-seq
+genome processing-profile list differential-expression    
+genome processing-profile list clin-seq
+```
 
 You now have metadata about reads from GMS1 in your system, but no access to the real underlying 
 files (reads, alignments, variant calls).
 
 This will allow you to attach GMS1 disks so you can process the data.
 
-    genome sys gateway attach GMS1
+```bash
+genome sys gateway attach GMS1
+```
 
 The above will mount GMS1 data on your system at /opt/gms/GMS1.
 
 If you would prefer to have a local copy the GMS1 data rather than mount it via FTP (highly recommended), use this:
 **WARNING**: This data set is 385 GB.  It may consume considerable bandwidth and be very slow to install.
 
-    genome sys gateway attach GMS1 --protocol ftp --rsync
+```bash
+genome sys gateway attach GMS1 --protocol ftp --rsync
+```
 
 To build the genotype microarray models:
 
-    genome model build start "name='hcc1395-normal-snparray'"
-    genome model build start "name='hcc1395-tumor-snparray'"
+```bash
+genome model build start "name='hcc1395-normal-snparray'"
+genome model build start "name='hcc1395-tumor-snparray'"
+```
 
 To build the WGS tumor, WGS normal, exome tumor, and exome normal data, wait until the above finish, then run:
-    
-    genome model build start "name='hcc1395-normal-refalign-exome'"
-    genome model build start "name='hcc1395-tumor-refalign-exome'"
-    genome model build start "name='hcc1395-normal-refalign-wgs'"
-    genome model build start "name='hcc1395-tumor-refalign-wgs'"
+
+```bash
+genome model build start "name='hcc1395-normal-refalign-exome'"
+genome model build start "name='hcc1395-tumor-refalign-exome'"
+genome model build start "name='hcc1395-normal-refalign-wgs'"
+genome model build start "name='hcc1395-tumor-refalign-wgs'"
+```
 
 While those are building, you can run the RNA-Seq models:
 
-    genome model build start "name='hcc1395-normal-rnaseq'"
-    genome model build start "name='hcc1395-tumor-rnaseq'"
+```bash
+genome model build start "name='hcc1395-normal-rnaseq'"
+genome model build start "name='hcc1395-tumor-rnaseq'"
+```
 
 To build the WGS somatic and exome somatic models, wait until the ref-align models above complete, and then run:
 
-    genome model build start "name='hcc1395-somatic-exome'"
-    genome model build start "name='hcc1395-somatic-wgs'"
+```bash
+genome model build start "name='hcc1395-somatic-exome'"
+genome model build start "name='hcc1395-somatic-wgs'"
+```
 
 To build the differential expression models, wait until the rna-seq models above complete, and then run:
 
-    genome model build start "name='hcc1395-differential-expression'"
+```bash
+genome model build start "name='hcc1395-differential-expression'"
+```
 
 When all of the above complete, the MedSeq pipeline can be run:
 
-    genome model build start "name='hcc1395-clinseq'"
+```bash
+genome model build start "name='hcc1395-clinseq'"
+```
 
 To view the inputs to any model, you can do something like the following:
 
-    genome model input show --model="hcc1395-clinseq"
+```bash
+genome model input show --model="hcc1395-clinseq"
+```
 
 To view the status of all builds, run:
 
-    genome model build list
+```bash
+genome model build list
+```
 
 To monitor progress of any particular build, run:
 
-    genome model build view "id='$BUILD_ID'"
+```bash
+genome model build view "id='$BUILD_ID'"
+```
 
 To examine results, go to the build directory listed above, or list it specifically:
 
-    genome model build list --filter "id='$BUILD_ID'" --show id,data_directory
+```bash
+genome model build list --filter "id='$BUILD_ID'" --show id,data_directory
+```
 
 To import new data:
 
@@ -216,9 +252,10 @@ To import new data:
 
 To make a new set of models for that data once imported, this tool will walk you through the process interactively:
 
-    # use the common name you used during import ("individual.common_name")
-    genome model clin-seq update-analysis --individual "common_name = 'TST1'"
-
+```bash
+# use the common name you used during import ("individual.common_name")
+genome model clin-seq update-analysis --individual "common_name = 'TST1'"
+```
 
 System Requirements
 -------------------
@@ -268,37 +305,47 @@ Step 3.  On the original machine, run this: genome sys node add $IP ##FIXME: not
 
 To work with expanding the system beyond one node:
 
-    genome sys node list    ##FIXME not pushed
-    genome sys node add     ##FIXME not pushed
-    genome sys node remove  ##FIXME not pushed
-    
+```bash
+genome sys node list    ##FIXME not pushed
+genome sys node add     ##FIXME not pushed
+genome sys node remove  ##FIXME not pushed
+```
+
 To make the GMS aware of disk at a given mount point:
 
-    genome disk volume list
-    genome disk volume attach               ##FIXME not pushed
-    genome disk volume detach               ##FIXME not pushed
-    genome disk volume disable-allocation   ##FIXME not pushed
-    genome disk volume enable-allocation    ##FIXME not pushed
-    
+```bash
+genome disk volume list
+genome disk volume attach               ##FIXME not pushed
+genome disk volume detach               ##FIXME not pushed
+genome disk volume disable-allocation   ##FIXME not pushed
+genome disk volume enable-allocation    ##FIXME not pushed
+```
+
 To attach/detach other systems:
 
-    genome sys gateway list
-    genome sys gateway attach
-    genome sys gateway detach
- 
+```bash
+genome sys gateway list
+genome sys gateway attach
+genome sys gateway detach
+```
+
 Because the system always uses unique paths, data across systems can be federated easily.  No path to any
 data you generate will match the path anyone else uses, allowing mounting and copying of data to occur without collisions.
 
 There is a special GMS user and group on every system, with a name like gms$GENOME_SYS_ID
 
-    finger gms$GENOME_SYS_ID ##FIXME: still using the genome user
-    groups gms$GENOME_SYS_ID ##FIXME: still using the genome group
+```bash
+finger gms$GENOME_SYS_ID ##FIXME: still using the genome user
+groups gms$GENOME_SYS_ID ##FIXME: still using the genome group
+```
 
 All users on a given GMS installation will also be members of the above group.
 
 To do this for new users beyond the user that installs the system, run:
 
-    genome sys user init ##FIXME: not pushed
+```bash
+genome sys user init ##FIXME: not pushed
+```
 
 When other GMS installations give your installation permissions, they will add a user with that name 
 and give permissions to that user.  When you attach their systems, you will do so as that user, and
