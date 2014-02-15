@@ -6,10 +6,10 @@ r_package_repo="http://cran.wustl.edu"
 
 
 #List of CRAN packages
-cran_package_list = c('bitops', 'Cairo', 'caTools', 'doMC', 'e1071', 'foreach', 
-                      'fpc', 'Hmisc', 'intervals', 'Matrix', 'mgcv', 'mixdist', 
-                      'mixtools', 'multicore', 'nortest', 'h5r', 'plotrix',   
-                      'scatterplot3d', 'SKAT', 'statmod', 'xtable', 'getopt', 'gtools', 'gdata')
+#cran_package_list = c('bitops', 'Cairo', 'caTools', 'doMC', 'e1071', 'foreach', 
+#                      'fpc', 'Hmisc', 'intervals', 'Matrix', 'mgcv', 'mixdist', 
+#                      'mixtools', 'multicore', 'nortest', 'h5r', 'plotrix',   
+#                      'scatterplot3d', 'SKAT', 'statmod', 'xtable', 'getopt', 'gtools', 'gdata')
 
 #List of Bioconductor packages
 bioc_package_list = c('affy', 'Biobase', 'cummeRbund', 'DNAcopy', 'edgeR', 'limma', 'gcrma', 'genefilter', 
@@ -32,15 +32,10 @@ pkgTestBioc <- function(x){
 }
 
 #Installation and test of CRAN packages
-for (cran_package_name in cran_package_list){
-  pkgTestCran(cran_package_name)
-}
-
-#Install a custom version of ggplot2 that is old even for R 2.15.2
-#packageurl <- "http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_0.8.9.tar.gz"
-#install.packages(packageurl, contriburl=NULL, type="source")
-#if(!require("ggplot2",character.only = TRUE)) stop("Package not found")
-#This method doesn't seem to work for versions that are not officially supported by the base R version
+#Replaced with manual install of specific versions from archives
+#for (cran_package_name in cran_package_list){
+#  pkgTestCran(cran_package_name)
+#}
 
 #Installation and test of Bioconductor packages
 source("http://bioconductor.org/biocLite.R")
