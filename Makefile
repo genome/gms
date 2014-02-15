@@ -447,11 +447,16 @@ done-host/git-checkouts:
 	#
 	sudo -v
 	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
-	[ -e $(GMS_HOME)/sw/ur/.git ] 			|| sudo git clone http://github.com/genome/UR.git -b gms-pub-tag $(GMS_HOME)/sw/ur
-	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git -b gms-pub $(GMS_HOME)/sw/workflow
-	[ -e $(GMS_HOME)/sw/rails/.git ] 		|| sudo git clone http://github.com/genome/gms-webviews.git -b gms-pub $(GMS_HOME)/sw/rails 
-	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git -b gms-pub  $(GMS_HOME)/sw/genome	
-	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git -b 2.2 $(GMS_HOME)/sw/openlava
+	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout tags/gms-pub-tag -b gms-pub-tag
+	cd $(GMS_HOME)/sw/ur/ && git ls-remote --exit-code . gms-pub-tag 1>/dev/null || (echo "failed to clone ur repo" && false)
+	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git $(GMS_HOME)/sw/workflow && cd $(GMS_HOME)/sw/workflow && sudo git checkout gms-pub 
+	cd $(GMS_HOME)/sw/workflow/ && git ls-remote --exit-code . gms-pub 1>/dev/null || (echo "failed to clone workflow repo" && false)
+	[ -e $(GMS_HOME)/sw/rails/.git ] 	|| sudo git clone http://github.com/genome/gms-webviews.git $(GMS_HOME)/sw/rails && cd $(GMS_HOME)/sw/rails && sudo git checkout gms-pub 
+	cd $(GMS_HOME)/sw/rails/ && git ls-remote --exit-code . gms-pub 1>/dev/null || (echo "failed to clone gms-webviews repo" && false)	
+	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git $(GMS_HOME)/sw/genome && cd $(GMS_HOME)/sw/genome && sudo git checkout gms-pub	
+	cd $(GMS_HOME)/sw/genome/ && git ls-remote --exit-code . gms-pub 1>/dev/null || (echo "failed to clone gms-core repo" && false)	
+	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git $(GMS_HOME)/sw/openlava && cd $(GMS_HOME)/sw/openlava && sudo git checkout 2.2
+	cd $(GMS_HOME)/sw/openlava/ && git ls-remote --exit-code . 2.2 1>/dev/null || (echo "failed to clone openlava repo" && false)	
 	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)/sw
 	sudo chmod -R g+rwxs $(GMS_HOME)/sw
 	touch $@
