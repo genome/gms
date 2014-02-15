@@ -6,7 +6,7 @@ r_package_repo="http://cran.wustl.edu"
 
 
 #List of CRAN packages
-cran_package_list = c('bitops', 'Cairo', 'caTools', 'doMC', 'e1071', 'filehash', 'foreach', 
+cran_package_list = c('bitops', 'Cairo', 'caTools', 'doMC', 'e1071', 'foreach', 
                       'fpc', 'Hmisc', 'intervals', 'Matrix', 'mgcv', 'mixdist', 
                       'mixtools', 'multicore', 'nortest', 'h5r', 'plotrix',   
                       'scatterplot3d', 'SKAT', 'statmod', 'xtable', 'getopt', 'gtools', 'gdata')

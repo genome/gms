@@ -67,6 +67,7 @@ echo "Directory for custom packages is " $CUSTOM_DIR
 echo "INSTALLING GGPLOT2 AND ITS DEPENDENCIES MANUALLY"
 echo $CUSTOM_DIR
 cd $CUSTOM_DIR
+wget http://cran.r-project.org/src/contrib/Archive/filehash/filehash_2.2-1.tar.gz
 wget http://cran.r-project.org/src/contrib/Archive/colorspace/colorspace_1.0-1.tar.gz
 wget http://cran.r-project.org/src/contrib/Archive/digest/digest_0.4.2.tar.gz
 wget http://cran.r-project.org/src/contrib/Archive/RColorBrewer/RColorBrewer_1.0-2.tar.gz
@@ -77,6 +78,7 @@ wget http://cran.r-project.org/src/contrib/Archive/plyr/plyr_1.4.tar.gz
 wget http://cran.r-project.org/src/contrib/reshape_0.8.4.tar.gz
 wget http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_0.8.9.tar.gz
 
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library filehash_2.2-1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library colorspace_1.0-1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library digest_0.4.2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library RColorBrewer_1.0-2.tar.gz
