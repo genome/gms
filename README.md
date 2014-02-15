@@ -58,16 +58,22 @@ All other systems, including Windows, VirtualBox (or another VM provider) can be
 
 VirtualBox can be downloaded here:
 
-    https://www.virtualbox.org/wiki/Downloads
+```
+https://www.virtualbox.org/wiki/Downloads
+```
 
 Download the correct ISO image for Ubuntu 12.04 (Precise)
 Either the Desktop or Server versions will work.
-    
-    http://releases.ubuntu.com/precise/
+
+```
+http://releases.ubuntu.com/precise/
+```
 
 Follow these instructions to install the image into VirtualBox:
-    
-    http://www.wikihow.com/Install-Ubuntu-on-VirtualBox
+
+```
+http://www.wikihow.com/Install-Ubuntu-on-VirtualBox
+```
 
 On your VM, follow the standard Ubuntu 12.04 directions above.
 
@@ -248,7 +254,9 @@ genome model build list --filter "id='$BUILD_ID'" --show id,data_directory
 
 To import new data:
 
-    *sample importer coming soon*
+```bash
+*sample importer coming soon*
+```
 
 To make a new set of models for that data once imported, this tool will walk you through the process interactively:
 
