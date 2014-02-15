@@ -52,24 +52,17 @@ cp $R_INSTALL_DIR/bin/Rscript $R_INSTALL_DIR/bin_safe/
 export R_BIN="$R_INSTALL_DIR/bin_safe/R"
 [ ! -e $R_BIN ] && echo "R_BIN missing:" $R_BIN && exit 1
 
-#DEBUG
-exit 
-
 #Install R libraries manually within a subdir of the R installation dir
 echo "INSTALLING R LIBRARIES THAT MUST BE HANDLED MANUALLY"
 mkdir $R_INSTALL_DIR/custom_packages
 export CUSTOM_DIR="$GENOME_SW/R/$R_VERSION/custom_packages"
 echo "Directory for custom packages is " $CUSTOM_DIR
 
-
 #Install an old version of ggplot2 manually
-#ggplot2 depends (recursive) on:  ‘reshape’, ‘proto’, ‘plyr’, ‘RColorBrewer’, ‘digest’, ‘colorspace’, 'itertools', 'iterators'
-#versions used in TGI: 
-#'colorspace_1.0-1', 'digest_0.4.2' 'RColorBrewer_1.0-2' 'ggplot2_0.8.9', 'proto_0.3-10', 
-#'reshape_0.8.4', 'plyr_1.4', 'itertools_0.1-1', 'iterators_1.0.3'
-echo "INSTALLING GGPLOT2 AND ITS DEPENDENCIES MANUALLY"
+echo "INSTALLING ALL CRAN DEPENDENCIES FROM ARCHIVES"
 echo $CUSTOM_DIR
 cd $CUSTOM_DIR
+echo "DOWNLOADING ARCHIVES FOR EACH CRAN LIBRARY"
 wget http://cran.r-project.org/src/contrib/Archive/bitops/bitops_1.0-4.1.tar.gz
 wget http://cran.r-project.org/src/contrib/Archive/Cairo/Cairo_1.4-8.tar.gz
 wget http://cran.r-project.org/src/contrib/Archive/caTools/caTools_1.11.tar.gz
@@ -112,6 +105,7 @@ wget http://cran.r-project.org/src/contrib/Archive/gtools/gtools_2.6.2.tar.gz
 wget http://cran.r-project.org/src/contrib/Archive/gdata/gdata_2.8.1.tar.gz
 wget http://cran.r-project.org/src/contrib/Archive/gplots/gplots_2.8.0.tar.gz
 
+echo "INSTALLING EACH ARCHIVE"
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library bitops_1.0-4.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Cairo_1.4-8.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library caTools_1.11.tar.gz
