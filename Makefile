@@ -568,7 +568,7 @@ done-host/custom-r: done-host/pkgs
 	# Install a local custom version of R with all desired packages from CRAN, Bioconductor, and ad hoc sources
 	sudo -v
 	sudo bash -l -c 'source /etc/genome.conf; /bin/bash setup/install_custom_r/install_custom_r.sh'
-	grep "R PACKAGE INSTALL SUCCESS" $(GMS_HOME)/sw/apps/R/R-2.15.2/test_r_packages.stdout || (echo "R package install failed" && false)
+	grep -P "1.*R PACKAGE INSTALL SUCCESS" $(GMS_HOME)/sw/apps/R/R-2.15.2/test_r_packages.stdout || (echo "R package install failed" && false)
 	touch $@
 
 done-host/exim-config: done-host/pkgs
