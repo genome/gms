@@ -122,31 +122,35 @@ vars:
 
 ##### Behind done-host/vminit: These steps are only run when setting up a VM host.
 
+VAGRANT_DEB:=vagrant_1.4.3_x86_64.deb
+
+VIRTUALBOX_UBUNTU_LUCID_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~lucid_amd64.deb
 done-host/vminstall-Ubuntu10.04:
 	#
 	# $@:
 	#
 	sudo -v
-	cd setup/archive-files; wget http://download.virtualbox.org/virtualbox/4.2.10/virtualbox-4.2_4.2.10-84104~Ubuntu~lucid_amd64.deb 
-	sudo dpkg -i setup/archive-files/virtualbox-4.2_4.2.10-84104~Ubuntu~lucid_amd64.deb || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
+	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_LUCID_DEB) ] || wget http://download.virtualbox.org/virtualbox/4.3.6/$(VIRTUALBOX_UBUNTU_LUCID_DEB)
+	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_LUCID_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
 	sudo apt-get -y install gcc linux-headers-3.0.0-16-server 
-	sudo /etc/init.d/vboxdrv setup
-	cd setup/archive-files; wget http://files.vagrantup.com/packages/87613ec9392d4660ffcb1d5755307136c06af08c/vagrant_x86_64.deb
-	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
+	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
+	cd setup/archive-files; [ -e $(VAGRANT_DEB) ] || wget https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DEB)
+	sudo dpkg -i setup/archive-files/$(VAGRANT_DEB)
 	vagrant plugin install vagrant-vbguest
 	touch $@
 	
+VIRTUALBOX_UBUNTU_PRECISE_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~precise_amd64.deb
 done-host/vminstall-Ubuntu12.04:
 	#
 	# $@:
 	#
 	sudo -v
-	cd setup/archive-files; [ -e virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb ] || wget http://download.virtualbox.org/virtualbox/4.2.10/virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb 
-	sudo dpkg -i setup/archive-files/virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
+	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_PRECISE_DEB) ] || wget http://download.virtualbox.org/virtualbox/4.3.6/$(VIRTUALBOX_UBUNTU_PRECISE_DEB)
+	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_PRECISE_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
 	sudo apt-get -y install gcc linux-headers-generic || (echo "UPDATE THE MAKEFILE FOR UBUNTU PRECISE HEADERS" && false) 
-	sudo /etc/init.d/vboxdrv setup
-	cd setup/archive-files; [ -e vagrant_x86_64.deb ] || wget http://files.vagrantup.com/packages/87613ec9392d4660ffcb1d5755307136c06af08c/vagrant_x86_64.deb
-	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
+	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
+	cd setup/archive-files; [ -e $(VAGRANT_DEB) ] || wget https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DEB)
+	sudo dpkg -i setup/archive-files/$(VAGRANT_DEB)
 	vagrant plugin install vagrant-vbguest
 	touch $@
 
@@ -155,9 +159,9 @@ done-host/vminstall-Darwin:
 	# $@:
 	#
 	sudo -v
-	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/4.2.16/VirtualBox-4.2.16-86992-OSX.dmg -o virtualbox.dmg && open virtualbox.dmg)
+	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/4.3.6/VirtualBox-4.3.6-91406-OSX.dmg -o virtualbox-4.3.6.dmg && open virtualbox-4.3.6.dmg)
 	while [[ ! `which VirtualBox` ]]; do echo "waiting for VirtualBox install to complete..."; sleep 3; done
-	which vagrant || (cd setup/archive-files; curl -L http://files.vagrantup.com/packages/7ec0ee1d00a916f80b109a298bab08e391945243/Vagrant-1.2.7.dmg -o Vagrant.dmg && open Vagrant.dmg)
+	which vagrant || (cd setup/archive-files; curl -L https://dl.bintray.com/mitchellh/vagrant/Vagrant-1.4.3.dmg -o Vagrant-1.4.3.dmg && open Vagrant-1.4.3.dmg)
 	while [[ ! `which vagrant` ]]; do echo "waiting for vagrant install to complete..."; sleep 3; done
 	vagrant plugin install vagrant-vbguest
 	touch $@
@@ -278,7 +282,7 @@ done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS
 	#
 	sudo -v
 	sudo chmod -R o+w $(GMS_HOME)/sw
-	tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
+	sudo tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
 	[ -e $(GMS_HOME)/sw/apps ] || mkdir -p $(GMS_HOME)/sw/apps
 	cd $(GMS_HOME)/sw/apps && ln -s ../../sw/apps-$(APPS_DUMP_VERSION)/* . || true
 	[ -e $(GMS_HOME)/sw/apps ] 
@@ -466,7 +470,7 @@ done-host/git-checkouts:
 	#
 	sudo -v
 	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
-	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout tags/$(GIT_VERSION_UR) -b $(GIT_VERSION_UR)
+	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| (sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout tags/$(GIT_VERSION_UR) -b $(GIT_VERSION_UR)) 
 	cd $(GMS_HOME)/sw/ur/ && git ls-remote --exit-code . $(GIT_VERSION_UR) 1>/dev/null || (echo "failed to clone ur repo" && false)
 	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git $(GMS_HOME)/sw/workflow && cd $(GMS_HOME)/sw/workflow && sudo git checkout $(GIT_VERSION_WORKFLOW) 
 	cd $(GMS_HOME)/sw/workflow/ && git ls-remote --exit-code . $(GIT_VERSION_WORKFLOW) 1>/dev/null || (echo "failed to clone workflow repo" && false)

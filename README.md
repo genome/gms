@@ -37,7 +37,7 @@ on Amazon, OpenStack, VMWare, etc.
 
 NOTE: You must have sudo access on the host machine to use this option.
 
-NOTE: You must install git, ssh, and make on your system before doing the following.
+NOTE: You must install git, make, and ssh on your system before doing the following.
 
 This is the recommended approach for running on Mac OS X.  Be sure to install Xcode first.
 
