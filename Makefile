@@ -253,7 +253,7 @@ done-repo/download-%:
 	cd setup/archive-files; $(FTP) $(DATASERVER)/`basename $@ | sed s/download-//` $(DOWNLOAD_TARGET)
 	touch $@
 
-done-repo/unzip-sw-%: done-repo/download-% 
+done-host/unzip-sw-%: done-repo/download-% 
 	#
 	# $@:
 	#
@@ -262,7 +262,7 @@ done-repo/unzip-sw-%: done-repo/download-%
 	sudo tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/sw
 	touch $@ 
 
-done-repo/unzip-fs-%: done-repo/download-%
+done-host/unzip-fs-%: done-repo/download-%
 	#
 	# $@:
 	#
@@ -271,7 +271,7 @@ done-repo/unzip-fs-%: done-repo/download-%
 	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/fs 
 	touch $@ 
 
-done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS_DUMP_VERSION).tgz
+done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS_DUMP_VERSION).tgz
 	#
 	# $@:
 	# unzip apps which are not packaged as .debs (publicly available from other sources)
@@ -403,7 +403,7 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/custom-r done-host/exim-config'
 	touch $@
 
-done-host/etc: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
+done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
 	#
 	# $@:
 	# copy all data from setup/etc into /etc and configure apt sources
@@ -609,7 +609,7 @@ done-host/db-driver: done-host/pkgs
 	[ `perl -e 'use DBD::Pg; print $$DBD::Pg::VERSION'` = '2.19.3' ] || sudo setup/bin/cpanm DBD::Pg@2.19.3
 	touch $@
 
-stage-software: done-host/pkgs done-host/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
+stage-software: done-host/pkgs done-host/git-checkouts done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-host/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
 
 
 ##### Optional maintenance targets:
