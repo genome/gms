@@ -155,9 +155,9 @@ done-host/vminstall-Darwin:
 	# $@:
 	#
 	sudo -v
-	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/4.2.16/VirtualBox-4.2.16-86992-OSX.dmg -o virtualbox.dmg && open virtualbox.dmg)
+	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/4.3.6/VirtualBox-4.3.6-91406-OSX.dmg -o virtualbox-4.3.6.dmg && open virtualbox-4.3.6.dmg)
 	while [[ ! `which VirtualBox` ]]; do echo "waiting for VirtualBox install to complete..."; sleep 3; done
-	which vagrant || (cd setup/archive-files; curl -L http://files.vagrantup.com/packages/7ec0ee1d00a916f80b109a298bab08e391945243/Vagrant-1.2.7.dmg -o Vagrant.dmg && open Vagrant.dmg)
+	which vagrant || (cd setup/archive-files; curl -L https://dl.bintray.com/mitchellh/vagrant/Vagrant-1.4.3.dmg -o Vagrant-1.4.3.dmg && open Vagrant-1.4.3.dmg)
 	while [[ ! `which vagrant` ]]; do echo "waiting for vagrant install to complete..."; sleep 3; done
 	vagrant plugin install vagrant-vbguest
 	touch $@
