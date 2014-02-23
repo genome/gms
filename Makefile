@@ -122,31 +122,35 @@ vars:
 
 ##### Behind done-host/vminit: These steps are only run when setting up a VM host.
 
+VAGRANT_DEB:=vagrant_1.4.3_x86_64.deb
+
+VIRTUALBOX_UBUNTU_LUCID_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~lucid_amd64.deb
 done-host/vminstall-Ubuntu10.04:
 	#
 	# $@:
 	#
 	sudo -v
-	cd setup/archive-files; wget http://download.virtualbox.org/virtualbox/4.2.10/virtualbox-4.2_4.2.10-84104~Ubuntu~lucid_amd64.deb 
-	sudo dpkg -i setup/archive-files/virtualbox-4.2_4.2.10-84104~Ubuntu~lucid_amd64.deb || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
+	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_LUCID_DEB) ] || wget http://download.virtualbox.org/virtualbox/4.3.6/$(VIRTUALBOX_UBUNTU_LUCID_DEB)
+	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_LUCID_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
 	sudo apt-get -y install gcc linux-headers-3.0.0-16-server 
-	sudo /etc/init.d/vboxdrv setup
-	cd setup/archive-files; wget http://files.vagrantup.com/packages/87613ec9392d4660ffcb1d5755307136c06af08c/vagrant_x86_64.deb
-	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
+	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
+	cd setup/archive-files; [ -e $(VAGRANT_DEB) ] || wget https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DEB)
+	sudo dpkg -i setup/archive-files/$(VAGRANT_DEB)
 	vagrant plugin install vagrant-vbguest
 	touch $@
 	
+VIRTUALBOX_UBUNTU_PRECISE_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~precise_amd64.deb
 done-host/vminstall-Ubuntu12.04:
 	#
 	# $@:
 	#
 	sudo -v
-	cd setup/archive-files; [ -e virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb ] || wget http://download.virtualbox.org/virtualbox/4.2.10/virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb 
-	sudo dpkg -i setup/archive-files/virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
+	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_PRECISE_DEB) ] || wget http://download.virtualbox.org/virtualbox/4.3.6/$(VIRTUALBOX_UBUNTU_PRECISE_DEB)
+	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_PRECISE_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
 	sudo apt-get -y install gcc linux-headers-generic || (echo "UPDATE THE MAKEFILE FOR UBUNTU PRECISE HEADERS" && false) 
-	sudo /etc/init.d/vboxdrv setup
-	cd setup/archive-files; [ -e vagrant_x86_64.deb ] || wget http://files.vagrantup.com/packages/87613ec9392d4660ffcb1d5755307136c06af08c/vagrant_x86_64.deb
-	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
+	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
+	cd setup/archive-files; [ -e $(VAGRANT_DEB) ] || wget https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DEB)
+	sudo dpkg -i setup/archive-files/$(VAGRANT_DEB)
 	vagrant plugin install vagrant-vbguest
 	touch $@
 
