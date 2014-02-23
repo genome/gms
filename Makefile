@@ -454,8 +454,8 @@ done-host/pkgs: done-host/apt-get-update
 	sudo setup/bin/cpanm Getopt::Complete
 	sudo setup/bin/cpanm DBD::Pg@2.19.3
 	# install TGI's instance of Set::IntervalTree. Once the ubuntu precise debian packages are built get it from there instead
-	sudo git clone https://github.com/genome-vendor/libset-intervaltree-perl.git
-	cd libset-intervaltree-perl && sudo perl Makefile.PL && sudo make && sudo make install
+	[ -e libset-intervaltree-perl ] || git clone https://github.com/genome-vendor/libset-intervaltree-perl.git
+	cd libset-intervaltree-perl && perl Makefile.PL && make && sudo make install
 	touch $@
 
 done-host/git-checkouts:
