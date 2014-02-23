@@ -218,18 +218,23 @@ vminit: vmup
 	#
 	# $@:
 	#
+	# Basic configuration, such as the user and group and sysid.
+	#
 	vagrant ssh -c 'cd /vagrant &&  make done-host/vminit'
+	#
+	# Reload so that additinal provisioning can occur
+	# now that the above is complete.
+	#
+	vagrant reload
 
 ##### Steps run on the VM from the host via "vagrant ssh"
 
 done-host/vminit:
 	#
 	# $@:
-	# these steps can be done in parallel with stage-software
+	# These steps occur early on the VM before it is reloaded. 
 	#
 	sudo -v
-	# Since /tmp has been mounted to a new disk make sure the permissions are set correctly immediately
-	sudo chmod -R 1777 /tmp
 	make done-host/user-home-$(USER)
 	make done-host/puppet 
 	make done-host/sysid
