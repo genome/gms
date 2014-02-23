@@ -125,6 +125,7 @@ done-host/vminstall-Ubuntu10.04:
 	sudo /etc/init.d/vboxdrv setup
 	cd setup/archive-files; wget http://files.vagrantup.com/packages/87613ec9392d4660ffcb1d5755307136c06af08c/vagrant_x86_64.deb
 	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
+	vagrant plugin install vagrant-vbguest
 	touch $@
 	
 done-host/vminstall-Ubuntu12.04:
@@ -138,6 +139,7 @@ done-host/vminstall-Ubuntu12.04:
 	sudo /etc/init.d/vboxdrv setup
 	cd setup/archive-files; [ -e vagrant_x86_64.deb ] || wget http://files.vagrantup.com/packages/87613ec9392d4660ffcb1d5755307136c06af08c/vagrant_x86_64.deb
 	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
+	vagrant plugin install vagrant-vbguest
 	touch $@
 
 done-host/vminstall-Darwin:
@@ -149,6 +151,7 @@ done-host/vminstall-Darwin:
 	while [[ ! `which VirtualBox` ]]; do echo "waiting for VirtualBox install to complete..."; sleep 3; done
 	which vagrant || (cd setup/archive-files; curl -L http://files.vagrantup.com/packages/7ec0ee1d00a916f80b109a298bab08e391945243/Vagrant-1.2.7.dmg -o Vagrant.dmg && open Vagrant.dmg)
 	while [[ ! `which vagrant` ]]; do echo "waiting for vagrant install to complete..."; sleep 3; done
+	vagrant plugin install vagrant-vbguest
 	touch $@
 
 done-host/vminstall:  

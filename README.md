@@ -42,7 +42,6 @@ NOTE: You must install git, ssh, and make on your system before doing the follow
 This is the recommended approach for running on Mac OS X.  Be sure to install Xcode first.
 
 ```bash
-vagrant plugin install vagrant-vbguest
 git clone https://github.com/genome/gms.git
 cd gms
 make vminit     # install virtualbox and vagrant, and an Ubuntu 12.04 VM
