@@ -419,8 +419,9 @@ done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$
 	sudo setup/bin/findreplace REPLACE_APT_DUMP_VERSION $(APT_DUMP_VERSION) /etc/apt/sources.list.d/genome.list
 	# Add r-cran source and GPG keys for r-cran and TGI
 	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
-	wget http://apt.genome.wustl.edu/ubuntu/files/genome-institute.asc
+	[ -e genome-institute.asc ] || wget http://apt.genome.wustl.edu/ubuntu/files/genome-institute.asc
 	sudo apt-key add genome-institute.asc
+	rm genome-institute.asc
 	# Remove multi-architecture package support (e.g i386)
 	[ ! -e /etc/dpkg/dpkg.cfg.d/multiarch ] || sudo mv /etc/dpkg/dpkg.cfg.d/multiarch /etc/dpkg/dpkg.cfg.d/multiarch.backup
 	sudo apt-get -y -f install
