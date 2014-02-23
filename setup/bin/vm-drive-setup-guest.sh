@@ -7,8 +7,8 @@
 
 # If we don't have an sdb, nothing to do here
 echo "Checking for needed devices within the vm"
-test -b /dev/sdb || (echo "Could not find device /dev/sdb - aborting"; exit 0)
-test -b /dev/sdc || (echo "Could not find device /dev/sdc - aborting"; exit 0)
+test -b /dev/sdb || (echo "Could not find device /dev/sdb - aborting"; false) || exit 0
+test -b /dev/sdc || (echo "Could not find device /dev/sdc - aborting"; false) || exit 0
 
 # The following assumes that the /vagrant shared path was correctly mounted during 'vagrant up'
 echo "Checking that /vagrant is mounted and the fdisk_input.txt is present"
