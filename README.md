@@ -270,7 +270,9 @@ genome model clin-seq update-analysis --individual "common_name = 'TST1'"
 System Requirements
 -------------------
 
-System requirements for processing the example data through all pipelines:
+To install the GMS you will need root/sudo access and a fast internet connection to download all packages and demonstration datasets (~700 Gb total)
+
+Minimum System requirements for processing the example data through all pipelines:
  * 100 GB for reference-related data used by pipelines
  * 284 GB for test data
  * 1 TB for the results (40x WGS tumor/normal, 1 lane of exome, 1 lane of tumor RNA, processing through MedSeq)
@@ -279,8 +281,19 @@ System requirements for processing the example data through all pipelines:
  * 12+ cores
  * 2 weeks of processing time for full analysis (varies)
 
-One of the systems we used for testing the GMS from within a Virtual Machine looked like this: Mac Pro, Mid 2010, 2 x 2.4 GHz Quad-Core Intel Xeon, 64 GB 800 MHz DDR3 ECC, and three 2TB SATA drives.
+For running on full-sized data we recommend a single high-performance blade with:
+* ~80 processors
+* ~1TB ram
+* High performance storage system
 
+Or, a high performance cluster
+
+For testing or review purposes using the demonstration datasets we recommend (at minimum):
+ * dual quad core @ 2.4GHz (64-bit)
+ * 64GB ram
+ * 1 2TB 7200rpm 6Gb/s hd for operating system
+ * 1 2TB 7200rpm 6Gb/s hd for /tmp
+ * 1 3TB 7200rpm 6Gb/s hd for data (/opt/gms)
    
 Security
 --------
