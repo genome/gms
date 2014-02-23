@@ -101,8 +101,8 @@ else
 fi
 
 ## Exit now unless there is an /etc/genome/conf
-test -e /etc/genome.conf || (echo "Could not find /etc/genome.conf.  Delaying mounting local GMS filesystem."; exit 0)
-source /etc/genome.conf
+test -e /etc/genome/sysid || (echo "Could not find /etc/genome/sysid.  Delaying mounting local GMS filesystem."; false) || exit 0
+GENOME_SYS_ID=`cat /etc/genome/sysid`
 
 # Mount /opt/gms to our third extra drive
 # Note that this will occur with reach reboot because
@@ -116,9 +116,9 @@ else
   sudo mkdir /opt/gms/$GENOME_SYS_ID
   echo "Mounting /dev/sdd1 as /opt/gms/$GENOME_SYS_ID"
   sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdd1 /opt/gms/$GENOME_SYS_ID
-  if [ -e /opt/gms/$GENOME_SYS_ID ]; then
+  if [ -e /opt/gms/tmp-$GENOME_SYS_ID ]; then
     echo "Moving /opt/gms/tmp-$GENOME_SYS_ID to the new disk."
-    sudo mv /opt/gms/tmp-$GENOME_SYS_ID/* /opt/gms/$GENOME_SYS_ID
+    sudo mv /opt/gms/tmp-$GENOME_SYS_ID/* /opt/gms/$GENOME_SYS_ID 2>/dev/null
     sudo rmdir /opt/gms/tmp-$GENOME_SYS_ID
   fi
 fi
