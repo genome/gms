@@ -23,6 +23,7 @@ liblog-dispatch-perl
 libmime-base64-perl
 libmime-types-perl
 libmodule-build-perl
+libmodule-runtime-perl
 libmro-compat-perl
 libplack-perl
 libspreadsheet-writeexcel-perl

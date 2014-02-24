@@ -62,6 +62,14 @@ PWD:=$(shell pwd)
 # ensure the local directory is present for steps with results outside of the directory
 $(shell [ -e `readlink done-host` ] || mkdir -p `readlink done-host`)
 
+# Control the git commit for each of the underlying repos.
+# Git submodules would work for this but they do odd things with storing aboslute paths.
+GIT_VERSION_UR:=gms-pub-tag
+GIT_VERSION_GENOME:=gms-pub
+GIT_VERSION_WORKFLOW:=gms-pub
+GIT_VERSION_RAILS:=gms-pub
+GIT_VERSION_OPENLAVA:=2.2
+
               
 ##### Primary Targets
 
@@ -114,30 +122,36 @@ vars:
 
 ##### Behind done-host/vminit: These steps are only run when setting up a VM host.
 
+VAGRANT_DEB:=vagrant_1.4.3_x86_64.deb
+
+VIRTUALBOX_UBUNTU_LUCID_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~lucid_amd64.deb
 done-host/vminstall-Ubuntu10.04:
 	#
 	# $@:
 	#
 	sudo -v
-	cd setup/archive-files; wget http://download.virtualbox.org/virtualbox/4.2.10/virtualbox-4.2_4.2.10-84104~Ubuntu~lucid_amd64.deb 
-	sudo dpkg -i setup/archive-files/virtualbox-4.2_4.2.10-84104~Ubuntu~lucid_amd64.deb || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
+	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_LUCID_DEB) ] || wget http://download.virtualbox.org/virtualbox/4.3.6/$(VIRTUALBOX_UBUNTU_LUCID_DEB)
+	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_LUCID_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
 	sudo apt-get -y install gcc linux-headers-3.0.0-16-server 
-	sudo /etc/init.d/vboxdrv setup
-	cd setup/archive-files; wget http://files.vagrantup.com/packages/87613ec9392d4660ffcb1d5755307136c06af08c/vagrant_x86_64.deb
-	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
+	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
+	cd setup/archive-files; [ -e $(VAGRANT_DEB) ] || wget https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DEB)
+	sudo dpkg -i setup/archive-files/$(VAGRANT_DEB)
+	vagrant plugin install vagrant-vbguest
 	touch $@
 	
+VIRTUALBOX_UBUNTU_PRECISE_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~precise_amd64.deb
 done-host/vminstall-Ubuntu12.04:
 	#
 	# $@:
 	#
 	sudo -v
-	cd setup/archive-files; [ -e virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb ] || wget http://download.virtualbox.org/virtualbox/4.2.10/virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb 
-	sudo dpkg -i setup/archive-files/virtualbox-4.2_4.2.10-84104~Ubuntu~precise_amd64.deb || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
+	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_PRECISE_DEB) ] || wget http://download.virtualbox.org/virtualbox/4.3.6/$(VIRTUALBOX_UBUNTU_PRECISE_DEB)
+	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_PRECISE_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
 	sudo apt-get -y install gcc linux-headers-generic || (echo "UPDATE THE MAKEFILE FOR UBUNTU PRECISE HEADERS" && false) 
-	sudo /etc/init.d/vboxdrv setup
-	cd setup/archive-files; [ -e vagrant_x86_64.deb ] || wget http://files.vagrantup.com/packages/87613ec9392d4660ffcb1d5755307136c06af08c/vagrant_x86_64.deb
-	sudo dpkg -i setup/archive-files/vagrant_x86_64.deb
+	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
+	cd setup/archive-files; [ -e $(VAGRANT_DEB) ] || wget https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DEB)
+	sudo dpkg -i setup/archive-files/$(VAGRANT_DEB)
+	vagrant plugin install vagrant-vbguest
 	touch $@
 
 done-host/vminstall-Darwin:
@@ -145,10 +159,11 @@ done-host/vminstall-Darwin:
 	# $@:
 	#
 	sudo -v
-	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/4.2.16/VirtualBox-4.2.16-86992-OSX.dmg -o virtualbox.dmg && open virtualbox.dmg)
+	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/4.3.6/VirtualBox-4.3.6-91406-OSX.dmg -o virtualbox-4.3.6.dmg && open virtualbox-4.3.6.dmg)
 	while [[ ! `which VirtualBox` ]]; do echo "waiting for VirtualBox install to complete..."; sleep 3; done
-	which vagrant || (cd setup/archive-files; curl -L http://files.vagrantup.com/packages/7ec0ee1d00a916f80b109a298bab08e391945243/Vagrant-1.2.7.dmg -o Vagrant.dmg && open Vagrant.dmg)
+	which vagrant || (cd setup/archive-files; curl -L https://dl.bintray.com/mitchellh/vagrant/Vagrant-1.4.3.dmg -o Vagrant-1.4.3.dmg && open Vagrant-1.4.3.dmg)
 	while [[ ! `which vagrant` ]]; do echo "waiting for vagrant install to complete..."; sleep 3; done
+	vagrant plugin install vagrant-vbguest
 	touch $@
 
 done-host/vminstall:  
@@ -207,18 +222,23 @@ vminit: vmup
 	#
 	# $@:
 	#
+	# Basic configuration, such as the user and group and sysid.
+	#
 	vagrant ssh -c 'cd /vagrant &&  make done-host/vminit'
+	#
+	# Reload so that additinal provisioning can occur
+	# now that the above is complete.
+	#
+	vagrant reload
 
 ##### Steps run on the VM from the host via "vagrant ssh"
 
 done-host/vminit:
 	#
 	# $@:
-	# these steps can be done in parallel with stage-software
+	# These steps occur early on the VM before it is reloaded. 
 	#
 	sudo -v
-	# Since /tmp has been mounted to a new disk make sure the permissions are set correctly immediately
-	sudo chmod -R 1777 /tmp
 	make done-host/user-home-$(USER)
 	make done-host/puppet 
 	make done-host/sysid
@@ -237,7 +257,7 @@ done-repo/download-%:
 	cd setup/archive-files; $(FTP) $(DATASERVER)/`basename $@ | sed s/download-//` $(DOWNLOAD_TARGET)
 	touch $@
 
-done-repo/unzip-sw-%: done-repo/download-% 
+done-host/unzip-sw-%: done-repo/download-% 
 	#
 	# $@:
 	#
@@ -246,7 +266,7 @@ done-repo/unzip-sw-%: done-repo/download-%
 	sudo tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/sw
 	touch $@ 
 
-done-repo/unzip-fs-%: done-repo/download-%
+done-host/unzip-fs-%: done-repo/download-%
 	#
 	# $@:
 	#
@@ -255,14 +275,14 @@ done-repo/unzip-fs-%: done-repo/download-%
 	tar -zxvf setup/archive-files/`basename $< | sed s/download-//` -C $(GMS_HOME)/fs 
 	touch $@ 
 
-done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS_DUMP_VERSION).tgz
+done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz: done-repo/download-apps-$(APPS_DUMP_VERSION).tgz
 	#
 	# $@:
 	# unzip apps which are not packaged as .debs (publicly available from other sources)
 	#
 	sudo -v
 	sudo chmod -R o+w $(GMS_HOME)/sw
-	tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
+	sudo tar -zxvf setup/archive-files/apps-$(APPS_DUMP_VERSION).tgz -C $(GMS_HOME)/sw
 	[ -e $(GMS_HOME)/sw/apps ] || mkdir -p $(GMS_HOME)/sw/apps
 	cd $(GMS_HOME)/sw/apps && ln -s ../../sw/apps-$(APPS_DUMP_VERSION)/* . || true
 	[ -e $(GMS_HOME)/sw/apps ] 
@@ -387,7 +407,7 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/custom-r done-host/exim-config'
 	touch $@
 
-done-host/etc: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
+done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
 	#
 	# $@:
 	# copy all data from setup/etc into /etc and configure apt sources
@@ -403,8 +423,9 @@ done-host/etc: done-host/puppet done-repo/unzip-sw-apt-mirror-min-ubuntu-12.04-$
 	sudo setup/bin/findreplace REPLACE_APT_DUMP_VERSION $(APT_DUMP_VERSION) /etc/apt/sources.list.d/genome.list
 	# Add r-cran source and GPG keys for r-cran and TGI
 	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
-	wget http://repo.gsc.wustl.edu/ubuntu/files/genome-institute.asc
+	[ -e genome-institute.asc ] || wget http://apt.genome.wustl.edu/ubuntu/files/genome-institute.asc
 	sudo apt-key add genome-institute.asc
+	rm genome-institute.asc
 	# Remove multi-architecture package support (e.g i386)
 	[ ! -e /etc/dpkg/dpkg.cfg.d/multiarch ] || sudo mv /etc/dpkg/dpkg.cfg.d/multiarch /etc/dpkg/dpkg.cfg.d/multiarch.backup
 	sudo apt-get -y -f install
@@ -437,26 +458,28 @@ done-host/pkgs: done-host/apt-get-update
 	sudo setup/bin/cpanm Getopt::Complete
 	sudo setup/bin/cpanm DBD::Pg@2.19.3
 	# install TGI's instance of Set::IntervalTree. Once the ubuntu precise debian packages are built get it from there instead
-	sudo git clone https://github.com/genome-vendor/libset-intervaltree-perl.git
-	cd libset-intervaltree-perl && sudo perl Makefile.PL && sudo make && sudo make install
+	[ -e libset-intervaltree-perl ] || git clone https://github.com/genome-vendor/libset-intervaltree-perl.git
+	cd libset-intervaltree-perl && perl Makefile.PL && make && sudo make install
 	touch $@
 
 done-host/git-checkouts:
 	#
 	# $@:
+	# This is a little complicated b/c old versions of git don't emit a bad exit code
+	# when a required branch does not exist.
 	#
 	sudo -v
 	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
-	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout tags/gms-pub-tag -b gms-pub-tag
-	cd $(GMS_HOME)/sw/ur/ && git ls-remote --exit-code . gms-pub-tag 1>/dev/null || (echo "failed to clone ur repo" && false)
-	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git $(GMS_HOME)/sw/workflow && cd $(GMS_HOME)/sw/workflow && sudo git checkout gms-pub 
-	cd $(GMS_HOME)/sw/workflow/ && git ls-remote --exit-code . gms-pub 1>/dev/null || (echo "failed to clone workflow repo" && false)
-	[ -e $(GMS_HOME)/sw/rails/.git ] 	|| sudo git clone http://github.com/genome/gms-webviews.git $(GMS_HOME)/sw/rails && cd $(GMS_HOME)/sw/rails && sudo git checkout gms-pub 
-	cd $(GMS_HOME)/sw/rails/ && git ls-remote --exit-code . gms-pub 1>/dev/null || (echo "failed to clone gms-webviews repo" && false)	
-	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git $(GMS_HOME)/sw/genome && cd $(GMS_HOME)/sw/genome && sudo git checkout gms-pub	
-	cd $(GMS_HOME)/sw/genome/ && git ls-remote --exit-code . gms-pub 1>/dev/null || (echo "failed to clone gms-core repo" && false)	
-	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git $(GMS_HOME)/sw/openlava && cd $(GMS_HOME)/sw/openlava && sudo git checkout 2.2
-	cd $(GMS_HOME)/sw/openlava/ && git ls-remote --exit-code . 2.2 1>/dev/null || (echo "failed to clone openlava repo" && false)	
+	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| (sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout tags/$(GIT_VERSION_UR) -b $(GIT_VERSION_UR)) 
+	cd $(GMS_HOME)/sw/ur/ && git ls-remote --exit-code . $(GIT_VERSION_UR) 1>/dev/null || (echo "failed to clone ur repo" && false)
+	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git $(GMS_HOME)/sw/workflow && cd $(GMS_HOME)/sw/workflow && sudo git checkout $(GIT_VERSION_WORKFLOW) 
+	cd $(GMS_HOME)/sw/workflow/ && git ls-remote --exit-code . $(GIT_VERSION_WORKFLOW) 1>/dev/null || (echo "failed to clone workflow repo" && false)
+	[ -e $(GMS_HOME)/sw/rails/.git ] 	|| sudo git clone http://github.com/genome/gms-webviews.git $(GMS_HOME)/sw/rails && cd $(GMS_HOME)/sw/rails && sudo git checkout $(GIT_VERSION_RAILS) 
+	cd $(GMS_HOME)/sw/rails/ && git ls-remote --exit-code . $(GIT_VERSION_RAILS) 1>/dev/null || (echo "failed to clone gms-webviews repo" && false)	
+	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git $(GMS_HOME)/sw/genome && cd $(GMS_HOME)/sw/genome && sudo git checkout $(GIT_VERSION_GENOME)	
+	cd $(GMS_HOME)/sw/genome/ && git ls-remote --exit-code . $(GIT_VERSION_GENOME) 1>/dev/null || (echo "failed to clone gms-core repo" && false)	
+	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git $(GMS_HOME)/sw/openlava && cd $(GMS_HOME)/sw/openlava && sudo git checkout $(GIT_VERSION_OPENLAVA)
+	cd $(GMS_HOME)/sw/openlava/ && git ls-remote --exit-code . $(GIT_VERSION_OPENLAVA) 1>/dev/null || (echo "failed to clone openlava repo" && false)	
 	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)/sw
 	sudo chmod -R g+rwxs $(GMS_HOME)/sw
 	touch $@
@@ -591,7 +614,7 @@ done-host/db-driver: done-host/pkgs
 	[ `perl -e 'use DBD::Pg; print $$DBD::Pg::VERSION'` = '2.19.3' ] || sudo setup/bin/cpanm DBD::Pg@2.19.3
 	touch $@
 
-stage-software: done-host/pkgs done-host/git-checkouts done-repo/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-repo/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
+stage-software: done-host/pkgs done-host/git-checkouts done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-host/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
 
 
 ##### Optional maintenance targets:

@@ -50,12 +50,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vagrant_root = File.dirname(__FILE__)
 
   # ensure disk files are present
-  system("setup/vmdisk.sh")
+  system("setup/bin/vm-drive-setup-host.sh")
 
   # If you want your VDIs to be in special locations, change the path as desired in the following two lines
   # You will also need to change the paths in setup/vmdisk.sh to match these.  The size of these disks is also set in setup/vmdisk.sh
   tmp_disk = vagrant_root + '/tmp-disk.vdi'         #Will be '/dev/sdb' partitioned as '/dev/sdb1' within the VM and mounted as '/tmp'
   opt_gms_disk = vagrant_root + '/opt-gms-disk.vdi' #Will be '/dev/sdc' partitioned as '/dev/sdc1' within the VM and mounted as '/opt/gms'
+  opt_gms_local_disk = vagrant_root + '/opt-gms-local-disk.vdi' #Will be '/dev/sdd' partitioned as '/dev/sdd1' within the VM and mounted as '/opt/gms/$GENOME_SYS_ID'
 
   config.vm.provider "virtualbox" do |v|
       v.customize ["modifyvm", :id, "--memory", 55000]          # 55GB: too little memory will prevent some jobs from running.
@@ -64,6 +65,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', tmp_disk]
       v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', opt_gms_disk]
+      v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 3, '--device', 0, '--type', 'hdd', '--medium', opt_gms_local_disk]
   end
 
   # Provisioning:
@@ -75,7 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Simple shell provisioning to set up mounts
   # 'vagrant provision' is run automatically at 'vagrant [up|reload]'
   # Here we set up added block devices.
-  config.vm.provision "shell", path: "setup/drive_setup.sh"
+  config.vm.provision "shell", path: "setup/bin/vm-drive-setup-guest.sh"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
