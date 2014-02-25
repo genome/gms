@@ -182,6 +182,7 @@ done-host/vmaddbox: done-host/vminstall
 	# intializing vagrant (VirtualBox) VM...
 	# these steps occur before the repo is visible on the VM
 	#
+	sudo chown -R `whoami`: ~/.vagrant.d
 	(vagrant box list | grep '^precise64' >/dev/null && echo "found vagrant precise64 box") || (echo "installing vagrant precise64 box" && vagrant box add precise64 http://files.vagrantup.com/precise64.box)
 	touch $@
 
