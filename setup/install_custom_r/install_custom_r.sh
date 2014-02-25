@@ -63,8 +63,8 @@ echo "INSTALLING ALL CRAN DEPENDENCIES FROM ARCHIVES"
 echo $CUSTOM_DIR
 cd $CUSTOM_DIR
 echo "DOWNLOADING ARCHIVES FOR EACH CRAN LIBRARY"
-wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-24.tar.gz
-tar -zxvf r-cran-archives-2014-02-24.tar.gz
+wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-25.tar.gz
+tar -zxvf r-cran-archives-2014-02-25.tar.gz
 
 #Document original location of static archives
 #wget http://cran.r-project.org/src/contrib/$package.tar.gz #latest version
@@ -78,7 +78,6 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library iterators_1.0.3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library multicore_0.1-3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library foreach_1.3.0.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library doMC_1.2.0.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library class_7.3-4.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library e1071_1.6-1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library mclust_3.4.11.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library modeltools_0.2-17.tar.gz
@@ -88,8 +87,6 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library flexmix_2.3-3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library fpc_2.0-3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Hmisc_3.8-3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library intervals_0.13.3.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Matrix_1.0-6.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library mgcv_1.7-19.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library mixdist_0.5-4.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library mixtools_0.4.5.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library filehash_2.2-1.tar.gz
@@ -98,16 +95,22 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library digest_0.4.2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library RColorBrewer_1.0-2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library proto_0.3-10.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library itertools_0.1-1.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plyr_1.7.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plyr_1.8.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library reshape_0.8.4.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library memoise_0.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gtable_0.1.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library stringr_0.6.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library dichromat_2.0-0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library munsell_0.4.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library labeling_0.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library scales_0.2.3.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library reshape2_1.2.2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ggplot2_0.9.2.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library nortest_1.0-2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library h5r_1.2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plotrix_3.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library scatterplot3d_0.3-31.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library SKAT_0.75.tar.gz #unable to find 0.73
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library SKAT_0.75.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library statmod_1.4.9.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library xtable_1.5-5.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library getopt_1.17.tar.gz
@@ -137,5 +140,4 @@ bash -c 'echo options\(bitmapType = \"cairo\"\) > $R_INSTALL_DIR/etc/.Rprofile'
 
 #Display the result of the final test
 cat $R_INSTALL_DIR/test_r_packages.stdout | grep "\[1\]"
-
 
