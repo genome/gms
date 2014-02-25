@@ -64,7 +64,7 @@ echo $CUSTOM_DIR
 cd $CUSTOM_DIR
 echo "DOWNLOADING ARCHIVES FOR EACH CRAN LIBRARY"
 wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-24.tar.gz
-tar -zxvf r-cran-archives-2014-02-15.tar.gz
+tar -zxvf r-cran-archives-2014-02-24.tar.gz
 
 #Document original location of static archives
 #wget http://cran.r-project.org/src/contrib/$package.tar.gz #latest version
