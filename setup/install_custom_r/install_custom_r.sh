@@ -59,57 +59,17 @@ export CUSTOM_DIR="$GENOME_SW/R/$R_VERSION/custom_packages"
 echo "Directory for custom packages is " $CUSTOM_DIR
 
 #Install R CRAN packages from static archives
+#Document original location of static archives
+#wget http://cran.r-project.org/src/contrib/$package.tar.gz #latest version
+#wget http://cran.r-project.org/src/contrib/Archive/$package/$package.tar.gz #archived versions
 echo "INSTALLING ALL CRAN DEPENDENCIES FROM ARCHIVES"
 echo $CUSTOM_DIR
 cd $CUSTOM_DIR
 echo "DOWNLOADING ARCHIVES FOR EACH CRAN LIBRARY"
-wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-15.tar.gz
-tar -zxvf r-cran-archives-2014-02-15.tar.gz
+wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-26.tar.gz
+tar -zxvf r-cran-archives-2014-02-26.tar.gz
 
-#Document original location of static archives
-#wget http://cran.r-project.org/src/contrib/Archive/bitops/bitops_1.0-4.1.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/Cairo/Cairo_1.4-8.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/caTools/caTools_1.11.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/iterators/iterators_1.0.3.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/multicore/multicore_0.1-3.tar.gz 
-#wget http://cran.r-project.org/src/contrib/Archive/foreach/foreach_1.3.0.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/doMC/doMC_1.2.0.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/class/class_7.3-4.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/e1071/e1071_1.6-1.tar.gz 
-#wget http://cran.r-project.org/src/contrib/Archive/mclust/mclust_3.4.11.tar.gz 
-#wget http://cran.r-project.org/src/contrib/Archive/modeltools/modeltools_0.2-17.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/mvtnorm/mvtnorm_0.9-96.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/multcomp/multcomp_1.2-5.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/flexmix/flexmix_2.3-3.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/fpc/fpc_2.0-3.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/Hmisc/Hmisc_3.8-3.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/intervals/intervals_0.13.3.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.0-6.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/mgcv/mgcv_1.7-19.tar.gz
-#wget http://cran.r-project.org/src/contrib/mixdist_0.5-4.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/mixtools/mixtools_0.4.5.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/filehash/filehash_2.2-1.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/colorspace/colorspace_1.0-1.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/digest/digest_0.4.2.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/RColorBrewer/RColorBrewer_1.0-2.tar.gz
-#wget http://cran.r-project.org/src/contrib/proto_0.3-10.tar.gz
-#wget http://cran.r-project.org/src/contrib/itertools_0.1-1.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/plyr/plyr_1.4.tar.gz
-#wget http://cran.r-project.org/src/contrib/reshape_0.8.4.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_0.8.9.tar.gz
-#wget http://cran.r-project.org/src/contrib/nortest_1.0-2.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/h5r/h5r_1.2.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/plotrix/plotrix_3.1.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/scatterplot3d/scatterplot3d_0.3-31.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/SKAT/SKAT_0.75.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/statmod/statmod_1.4.9.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/xtable/xtable_1.5-5.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/getopt/getopt_1.17.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/gtools/gtools_2.6.2.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/gdata/gdata_2.8.1.tar.gz
-#wget http://cran.r-project.org/src/contrib/Archive/gplots/gplots_2.8.0.tar.gz
-
-echo "INSTALLING EACH ARCHIVE"
+echo "INSTALLING CRAN LIBRARIES FROM PACKAGE ARCHIVES"
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library bitops_1.0-4.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Cairo_1.4-8.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library caTools_1.11.tar.gz
@@ -117,7 +77,6 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library iterators_1.0.3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library multicore_0.1-3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library foreach_1.3.0.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library doMC_1.2.0.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library class_7.3-4.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library e1071_1.6-1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library mclust_3.4.11.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library modeltools_0.2-17.tar.gz
@@ -127,8 +86,6 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library flexmix_2.3-3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library fpc_2.0-3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Hmisc_3.8-3.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library intervals_0.13.3.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Matrix_1.0-6.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library mgcv_1.7-19.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library mixdist_0.5-4.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library mixtools_0.4.5.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library filehash_2.2-1.tar.gz
@@ -137,14 +94,22 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library digest_0.4.2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library RColorBrewer_1.0-2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library proto_0.3-10.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library itertools_0.1-1.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plyr_1.4.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plyr_1.8.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library reshape_0.8.4.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ggplot2_0.8.9.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library memoise_0.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gtable_0.1.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library stringr_0.6.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library dichromat_2.0-0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library munsell_0.4.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library labeling_0.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library scales_0.2.3.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library reshape2_1.2.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ggplot2_0.9.3.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library nortest_1.0-2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library h5r_1.2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plotrix_3.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library scatterplot3d_0.3-31.tar.gz
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library SKAT_0.75.tar.gz #unable to find 0.73
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library SKAT_0.75.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library statmod_1.4.9.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library xtable_1.5-5.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library getopt_1.17.tar.gz
@@ -152,36 +117,64 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gtools_2.6.2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gdata_2.8.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gplots_2.8.0.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library pbh5.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library DBI_0.2-7.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library RSQLite_0.11.4.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library fastcluster_1.1.13.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library XML_3.98-1.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library RCurl_1.95-4.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library nleqslv_2.1.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library locfit_1.5-9.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ash_1.0-14.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library rgl_0.93.996.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library misc3d_0.8-4.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ks_1.8.13.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library hdrcde_3.1.tar.gz
+
+echo "DOWNLOADING ARCHIVES FOR EACH BIOCONDUCTOR LIBRARY"
+wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-bioc-archives-2014-02-26.tar.gz
+tar -zxvf r-bioc-archives-2014-02-26.tar.gz
+
+echo "INSTALLING BIOCONDUCTOR LIBRARIES FROM PACKAGE ARCHIVES"
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library BiocGenerics_0.4.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Biobase_2.18.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library BiocInstaller_1.8.3.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library preprocessCore_1.20.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library zlibbioc_1.4.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library affyio_1.26.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library affy_1.36.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library IRanges_1.16.6.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library GenomicRanges_1.10.7.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Biostrings_2.26.3.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Rsamtools_1.10.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library BSgenome_1.26.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library rtracklayer_1.18.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library AnnotationDbi_1.20.7.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library biomaRt_2.14.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library GenomicFeatures_1.10.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library biovizBase_1.6.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Gviz_1.2.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library cummeRbund_2.0.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library DNAcopy_1.32.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library limma_3.14.4.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library edgeR_3.0.8.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library annotate_1.36.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library genefilter_1.40.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library geneplotter_1.36.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library GenomeGraphs_1.18.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library methylumi_2.4.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library lumi_2.10.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library multtest_2.14.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ChemmineR_2.10.9.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gcrma_2.30.0.tar.gz
 
 #Install R libraries needed from within an R session
-echo "INSTALLING R LIBRARIES FROM WITHIN AN R SESSION"
-echo "Script dir is " $DIR
-$R_BIN CMD BATCH $DIR/install_r_packages.R $R_INSTALL_DIR/install_r_packages.stdout
-
-#Reinstall plyr library that for some reason is being upgraded by Bioconductor despite being told not to
-cd $CUSTOM_DIR
-$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plyr_1.4.tar.gz
+#echo "INSTALLING R LIBRARIES FROM WITHIN AN R SESSION"
+#echo "Script dir is " $DIR
+#$R_BIN CMD BATCH $DIR/install_r_packages.R $R_INSTALL_DIR/install_r_packages.stdout
 
 #CopyCat relies on some bioconductor packages
+echo "INSTALLING COPYCAT"
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library copyCat_1.6.2.tar.gz
-
-#Install CopyCat R package manually -> 'copyCat'
-#echo "INSTALLING COPYCAT MANUALLY"
-#echo $CUSTOM_DIR
-#cd $CUSTOM_DIR
-#git clone https://github.com/chrisamiller/copyCat.git
-#cd $CUSTOM_DIR/copyCat
-#export COPYCAT_VERSION=$(grep "Version" copyCat/DESCRIPTION | awk '{print $2}')
-#$R_BIN CMD build copyCat
-#$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library copyCat_$COPYCAT_VERSION.tar.gz
-
-#Install pbh5 package -> 'pbh5'
-#echo "INSTALLING PBH5 MANUALLY"
-#cd $CUSTOM_DIR
-#git clone https://github.com/PacificBiosciences/R-pbh5.git
-#tar -cf pbh5.tar R-pbh5/
-#gzip pbh5.tar
-#$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library pbh5.tar.gz
 
 #Test that all R packages can load
 echo "TESTING THAT ALL R PACKAGES CAN LOAD"
@@ -192,5 +185,4 @@ bash -c 'echo options\(bitmapType = \"cairo\"\) > $R_INSTALL_DIR/etc/.Rprofile'
 
 #Display the result of the final test
 cat $R_INSTALL_DIR/test_r_packages.stdout | grep "\[1\]"
-
 

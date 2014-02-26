@@ -12,25 +12,9 @@ r_package_repo="http://cran.wustl.edu"
 #                      'scatterplot3d', 'SKAT', 'statmod', 'xtable', 'getopt', 'gtools', 'gdata')
 
 #List of Bioconductor packages
-bioc_package_list = c('affy', 'Biobase', 'cummeRbund', 'DNAcopy', 'edgeR', 'limma', 'gcrma', 'genefilter', 
-                      'geneplotter', 'GenomeGraphs', 'lumi', 'methylumi', 'multtest', 'preprocessCore', 'ChemmineR')
+#bioc_package_list = c('affy', 'Biobase', 'cummeRbund', 'DNAcopy', 'edgeR', 'limma', 'gcrma', 'genefilter', 
+#                      'geneplotter', 'GenomeGraphs', 'lumi', 'methylumi', 'multtest', 'preprocessCore', 'ChemmineR')
 
-#package - installed within TGI - installed by BiocLite
-#'affy' - affy_1.28.0 - affy_1.36.1
-#'Biobase' - Biobase_2.18.0 - Biobase_2.18.0
-#'cummeRbund' - cummeRbund_2.0.0 - cummeRbund_2.0.0
-#'DNAcopy' - DNAcopy_1.24.0 - DNAcopy_1.32.0
-#'edgeR' - edgeR_3.4.1 - edgeR_3.0.8
-#'limma' - limma_3.18.3 - limma_3.14.4
-#'genefilter' - genefilter_1.32.0 - genefilter_1.40.0
-#'geneplotter' - geneplotter_1.28.0 - geneplotter_1.36.0
-#'GenomeGraphs' - GenomeGraphs_1.10.0 - GenomeGraphs_1.18.0
-#'lumi' - mgcv_1.7-19 - lumi_2.10.0
-#'methylumi' - methylumi_1.6.1 - methylumi_2.4.0
-#'multtest' - multtest_2.6.0 - multtest_2.14.0
-#'preprocessCore' - preprocessCore_1.12.0 - preprocessCore_1.20.0
-#'ChemmineR' - ChemmineR_2.9.0 - ChemmineR_2.10.9
-#'gcrma' - does not load in TGI... - gcrma_2.30.0
 
 #Create a function to install CRAN packages if they are not already installed (and then test for success)
 pkgTestCran <- function(x){
@@ -55,11 +39,34 @@ pkgTestBioc <- function(x){
 #}
 
 #Installation and test of Bioconductor packages
-source("http://bioconductor.org/biocLite.R")
-for (bioc_package_name in bioc_package_list){
-  pkgTestBioc(bioc_package_name);
-}
+#source("http://bioconductor.org/biocLite.R")
+#for (bioc_package_name in bioc_package_list){
+#  pkgTestBioc(bioc_package_name);
+#}
 
+
+#Detailed Documentation of Bioconductor packages
+#package - installed within TGI - installed by BiocLite
+#'BiocGenerics' - X - BiocGenerics_0.4.0
+#'Biobase' - X - Biobase_2.18.0
+#'BiocInstaller' - X - BiocInstaller_1.8.3
+#'preprocessCore' - preprocessCore_1.12.0 - preprocessCore_1.20.0
+#'zlibbioc' - X - zlibbioc_1.4.0
+#'affio' - X - affyio_1.26.0
+#'affy' - affy_1.28.0 - affy_1.36.1
+#'rtracklayer' - X - 'rtracklayer_1.18.2'
+#'cummeRbund' - cummeRbund_2.0.0 - cummeRbund_2.0.0
+#'DNAcopy' - DNAcopy_1.24.0 - DNAcopy_1.32.0
+#'edgeR' - edgeR_3.4.1 - edgeR_3.0.8
+#'limma' - limma_3.18.3 - limma_3.14.4
+#'genefilter' - genefilter_1.32.0 - genefilter_1.40.0
+#'geneplotter' - geneplotter_1.28.0 - geneplotter_1.36.0
+#'GenomeGraphs' - GenomeGraphs_1.10.0 - GenomeGraphs_1.18.0
+#'lumi' - mgcv_1.7-19 - lumi_2.10.0
+#'methylumi' - methylumi_1.6.1 - methylumi_2.4.0
+#'multtest' - multtest_2.6.0 - multtest_2.14.0
+#'ChemmineR' - ChemmineR_2.9.0 - ChemmineR_2.10.9
+#'gcrma' - does not load in TGI... - gcrma_2.30.0
 
 #Documentation of desired R CRAN and Bioconductor packages
 #r-base (= 2.15.2-1precise0) - already part of R install
