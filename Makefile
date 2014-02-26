@@ -92,6 +92,7 @@ vm: vminit
 	# $@:
 	# log into the vm to finish the make process
 	#
+	sudo -v
 	vagrant ssh -c 'cd /vagrant && make home && DEBIAN_FRONTEND=noninteractive make setup'
 	#
 	# now run "vagrant ssh" to log into the new GMS
@@ -170,6 +171,7 @@ done-host/vminstall:
 	#
 	# $@: (recurses into vminstall-$(OS)
 	#
+	sudo -v
 	[ -e done-host/vminstall-$(OS) ] || sudo make done-host/vminstall-$(OS)
 	(which VirtualBox && which vagrant && touch done-host/vminstall) || echo "**** run one of the following to auto-install for your platform: vminstall-mac, vminstall-10.04, or vminstall-12.04"
 	which VirtualBox || (echo "**** you can install VirtualBox manually from https://www.virtualbox.org/wiki/Downloads")
@@ -182,6 +184,7 @@ done-host/vmaddbox: done-host/vminstall
 	# intializing vagrant (VirtualBox) VM...
 	# these steps occur before the repo is visible on the VM
 	#
+	sudo -v
 	sudo chown -R `whoami`: ~/.vagrant.d
 	(vagrant box list | grep '^precise64' >/dev/null && echo "found vagrant precise64 box") || (echo "installing vagrant precise64 box" && vagrant box add precise64 http://files.vagrantup.com/precise64.box)
 	touch $@
@@ -193,6 +196,7 @@ done-host/vmkernel:
 	# intializing vagrant (VirtualBox) VM...
 	# these steps occur before the repo is visible on the VM
 	#
+	sudo -v
 	( (which apt-get >/dev/null) &&  ( [ -e `dpkg -L nfs-kernel-server | grep changelog` ] || sudo apt-get -y install -q -y nfs-kernel-server gcc ) ) || echo "nothing to do for Mac.."
 	touch $@
 
@@ -203,6 +207,7 @@ vmcreate: done-host/vmaddbox done-host/vmkernel
 	#
 	# the first bootup will fail because the NFS client is not installed 
 	#
+	sudo -v
 	vagrant up || true 
 	sudo chown -R `whoami`: .vagrant
 	#
@@ -217,6 +222,7 @@ vmcreate: done-host/vmaddbox done-host/vmkernel
 	vagrant reload  
 
 vmup: vmcreate
+	sudo -v
 	((vagrant status | grep 'not created') && bash -c 'make vmcreate') || true
 	(vagrant status | grep 'running') || vagrant up
 
@@ -226,6 +232,7 @@ vminit: vmup
 	#
 	# Basic configuration, such as the user and group and sysid.
 	#
+	sudo -v
 	vagrant ssh -c 'cd /vagrant &&  make done-host/vminit'
 	#
 	# Reload so that additinal provisioning can occur
