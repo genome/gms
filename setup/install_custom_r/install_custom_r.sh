@@ -59,18 +59,17 @@ export CUSTOM_DIR="$GENOME_SW/R/$R_VERSION/custom_packages"
 echo "Directory for custom packages is " $CUSTOM_DIR
 
 #Install R CRAN packages from static archives
+#Document original location of static archives
+#wget http://cran.r-project.org/src/contrib/$package.tar.gz #latest version
+#wget http://cran.r-project.org/src/contrib/Archive/$package/$package.tar.gz #archived versions
 echo "INSTALLING ALL CRAN DEPENDENCIES FROM ARCHIVES"
 echo $CUSTOM_DIR
 cd $CUSTOM_DIR
 echo "DOWNLOADING ARCHIVES FOR EACH CRAN LIBRARY"
-wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-25.tar.gz
-tar -zxvf r-cran-archives-2014-02-25.tar.gz
+wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-26.tar.gz
+tar -zxvf r-cran-archives-2014-02-26.tar.gz
 
-#Document original location of static archives
-#wget http://cran.r-project.org/src/contrib/$package.tar.gz #latest version
-#wget http://cran.r-project.org/src/contrib/Archive/$package/$package.tar.gz #archived versions
-
-echo "INSTALLING EACH ARCHIVE"
+echo "INSTALLING CRAN LIBRARIES FROM PACKAGE ARCHIVES"
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library bitops_1.0-4.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Cairo_1.4-8.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library caTools_1.11.tar.gz
@@ -118,17 +117,63 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gtools_2.6.2.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gdata_2.8.1.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gplots_2.8.0.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library pbh5.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library DBI_0.2-7.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library RSQLite_0.11.4.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library fastcluster_1.1.13.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library XML_3.98-1.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library RCurl_1.95-4.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library nleqslv_2.1.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library locfit_1.5-9.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ash_1.0-14.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library rgl_0.93.996.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library misc3d_0.8-4.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ks_1.8.13.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library hdrcde_3.1.tar.gz
+
+echo "DOWNLOADING ARCHIVES FOR EACH BIOCONDUCTOR LIBRARY"
+wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-bioc-archives-2014-02-26.tar.gz
+tar -zxvf r-bioc-archives-2014-02-26.tar.gz
+
+echo "INSTALLING BIOCONDUCTOR LIBRARIES FROM PACKAGE ARCHIVES"
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library BiocGenerics_0.4.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Biobase_2.18.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library BiocInstaller_1.8.3.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library preprocessCore_1.20.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library zlibbioc_1.4.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library affyio_1.26.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library affy_1.36.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library IRanges_1.16.6.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library GenomicRanges_1.10.7.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Biostrings_2.26.3.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Rsamtools_1.10.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library BSgenome_1.26.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library rtracklayer_1.18.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library AnnotationDbi_1.20.7.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library biomaRt_2.14.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library GenomicFeatures_1.10.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library biovizBase_1.6.2.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library Gviz_1.2.1.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library cummeRbund_2.0.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library DNAcopy_1.32.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library limma_3.14.4.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library edgeR_3.0.8.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library annotate_1.36.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library genefilter_1.40.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library geneplotter_1.36.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library GenomeGraphs_1.18.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library methylumi_2.4.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library lumi_2.10.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library multtest_2.14.0.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ChemmineR_2.10.9.tar.gz
+$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library gcrma_2.30.0.tar.gz
 
 #Install R libraries needed from within an R session
-echo "INSTALLING R LIBRARIES FROM WITHIN AN R SESSION"
-echo "Script dir is " $DIR
-$R_BIN CMD BATCH $DIR/install_r_packages.R $R_INSTALL_DIR/install_r_packages.stdout
-
-#Reinstall plyr library that for some reason is being upgraded by Bioconductor despite being told not to
-#cd $CUSTOM_DIR
-#$R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library plyr_1.4.tar.gz
+#echo "INSTALLING R LIBRARIES FROM WITHIN AN R SESSION"
+#echo "Script dir is " $DIR
+#$R_BIN CMD BATCH $DIR/install_r_packages.R $R_INSTALL_DIR/install_r_packages.stdout
 
 #CopyCat relies on some bioconductor packages
+echo "INSTALLING COPYCAT"
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library copyCat_1.6.2.tar.gz
 
 #Test that all R packages can load
