@@ -479,7 +479,7 @@ done-host/git-checkouts:
 	#
 	sudo -v
 	which git || (which apt-get && sudo apt-get install git) || (echo "*** please install git on your system to continue ***" && false)
-	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| (sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout tags/$(GIT_VERSION_UR) -b $(GIT_VERSION_UR)) 
+	[ -e $(GMS_HOME)/sw/ur/.git ] 		|| (sudo git clone http://github.com/genome/UR.git $(GMS_HOME)/sw/ur && cd $(GMS_HOME)/sw/ur && sudo git checkout $(GIT_VERSION_UR)) 
 	cd $(GMS_HOME)/sw/ur/ && git ls-remote --exit-code . $(GIT_VERSION_UR) 1>/dev/null || (echo "failed to clone ur repo" && false)
 	[ -e $(GMS_HOME)/sw/workflow/.git ] || sudo git clone http://github.com/genome/tgi-workflow.git $(GMS_HOME)/sw/workflow && cd $(GMS_HOME)/sw/workflow && sudo git checkout $(GIT_VERSION_WORKFLOW) 
 	cd $(GMS_HOME)/sw/workflow/ && git ls-remote --exit-code . $(GIT_VERSION_WORKFLOW) 1>/dev/null || (echo "failed to clone workflow repo" && false)
