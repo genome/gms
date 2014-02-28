@@ -466,6 +466,7 @@ done-host/pkgs: done-host/apt-get-update
 	# install Getopt::Complete and DBD:Pg directly from CPAN. These should be replaced with debian packages eventually
 	sudo setup/bin/cpanm Getopt::Complete
 	sudo setup/bin/cpanm DBD::Pg@2.19.3
+	sudo setup/bin/cpanm Module::Runtime@0.014
 	# install TGI's instance of Set::IntervalTree. Once the ubuntu precise debian packages are built get it from there instead
 	[ -e libset-intervaltree-perl ] || git clone https://github.com/genome-vendor/libset-intervaltree-perl.git
 	cd libset-intervaltree-perl && perl Makefile.PL && make && sudo make install
