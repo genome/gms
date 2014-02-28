@@ -109,26 +109,20 @@ GENOME_SYS_ID=`cat /etc/genome/sysid`
 if mount | grep -q "^/dev/sdd1" ; then
   echo "/dev/sdd1 is already mounted as /opt/gms"
 else
-  if [ -e /opt/gms/$GENOME_SYS_ID ]; then
-    echo "Moving aside /opt/gms/$GENOME_SYS_ID"
-    sudo mv /opt/gms/$GENOME_SYS_ID /opt/gms/tmp-$GENOME_SYS_ID
-  fi
-  sudo mkdir /opt/gms/$GENOME_SYS_ID
-  echo "Mounting /dev/sdd1 as /opt/gms/$GENOME_SYS_ID"
-  sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdd1 /opt/gms/$GENOME_SYS_ID
-  if [ -e /opt/gms/tmp-$GENOME_SYS_ID ]; then
-    echo "Moving /opt/gms/tmp-$GENOME_SYS_ID to the new disk."
-    sudo mv /opt/gms/tmp-$GENOME_SYS_ID/* /opt/gms/$GENOME_SYS_ID 2>/dev/null
-    sudo rmdir /opt/gms/tmp-$GENOME_SYS_ID
+  if /opt/gms/$GENOME_SYS_ID/*; then
+    echo "Data already in /opt/gms/$GENOME_SYS_ID.  Skipping attachment of local disk for data."
+  else
+    [ -e /opt/gms/$GENOME_SYS_ID ] || sudo mkdir /opt/gms/$GENOME_SYS_ID
+    echo "Mounting /dev/sdd1 as /opt/gms/$GENOME_SYS_ID"
+    sudo mount | grep -q "^/dev/sdd1" || sudo mount -t ext4 /dev/sdd1 /opt/gms/$GENOME_SYS_ID
+    
+    # Now create an fstab entry for /opt/gms/$GENOME_SYS_ID
+    if grep -q "^/dev/sdd1" /etc/fstab ; then 
+      echo "Already found an entry for sdd1 in /etc/fstab"
+    else
+      echo "Adding entry for sdd1 to /etc/fstab"
+      sudo echo /dev/sdd1  /opt/gms/$GENOME_SYS_ID  ext4  defaults  0  0 >> /etc/fstab
+    fi
   fi
 fi
-
-# Now create an fstab entry for /opt/gms/$GENOME_SYS_ID
-if grep -q "^/dev/sdd1" /etc/fstab ; then 
-  echo "Already found an entry for sdd1 in /etc/fstab"
-else
-  echo "Adding entry for sdd1 to /etc/fstab"
-  sudo echo /dev/sdd1  /opt/gms/$GENOME_SYS_ID  ext4  defaults  0  0 >> /etc/fstab
-fi
-
 
