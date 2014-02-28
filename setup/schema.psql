@@ -233,7 +233,8 @@ CREATE TABLE fragment_library (
     transcript_strand character varying(64),
     library_insert_size character varying(64),
     original_insert_size character varying(64),
-    protocol character varying(64)
+    protocol character varying(64),
+    bisulfite_conversion character varying(32)
 );
 
 
