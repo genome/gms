@@ -431,7 +431,8 @@ done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$
 	sudo setup/bin/findreplace REPLACE_GENOME_HOST $(HOSTNAME) /etc/genome.conf
 	sudo setup/bin/findreplace REPLACE_APT_DUMP_VERSION $(APT_DUMP_VERSION) /etc/apt/sources.list.d/genome.list
 	# Add r-cran source and GPG keys for r-cran and TGI
-	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+	sudo gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E084DAB9
+	sudo gpg -a --export E084DAB9 | sudo apt-key add -
 	[ -e genome-institute.asc ] || wget http://apt.genome.wustl.edu/ubuntu/files/genome-institute.asc
 	sudo apt-key add genome-institute.asc
 	rm genome-institute.asc
