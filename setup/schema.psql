@@ -419,6 +419,8 @@ CREATE TABLE model (
     current_running_build_id character varying(32),
     last_complete_build_id character varying(32),
     user_name character varying(64),
+    created_by character varying(64),
+    run_as character varying(64),
     creation_date timestamp(6) without time zone,
     auto_assign_inst_data boolean,
     auto_build_alignments boolean,
