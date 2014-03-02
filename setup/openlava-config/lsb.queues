@@ -158,6 +158,13 @@
 #
 
 Begin Queue
+QUEUE_NAME   = workflow
+PRIORITY     = 30
+NICE         = 20
+DESCRIPTION  = Default queue for analysis pipeline jobs. 
+End Queue
+
+Begin Queue
 QUEUE_NAME   = apipe
 PRIORITY     = 30
 NICE         = 20
