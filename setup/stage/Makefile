@@ -10,7 +10,7 @@ else
   $(info timestamp $(TIMESTAMP))
 endif
 
-# this directory syncs to via cron {ftp,http}://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/
+# this directory syncs to via cron https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/GMS1/setup/archive-files/
 TGI_STAGING_DIR=/gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files
 
 all: mkmirror-$(TIMESTAMP) stage-tgi-$(TIMESTAMP) stage-s3-$(TIMESTAMP)

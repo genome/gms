@@ -66,7 +66,7 @@ echo "INSTALLING ALL CRAN DEPENDENCIES FROM ARCHIVES"
 echo $CUSTOM_DIR
 cd $CUSTOM_DIR
 echo "DOWNLOADING ARCHIVES FOR EACH CRAN LIBRARY"
-wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-26.tar.gz
+wget https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/GMS1/setup/archive-files/r-cran-archives-2014-02-26.tar.gz
 tar -zxvf r-cran-archives-2014-02-26.tar.gz
 
 echo "INSTALLING CRAN LIBRARIES FROM PACKAGE ARCHIVES"
@@ -131,7 +131,7 @@ $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library ks_1.8.13.tar.gz
 $R_BIN CMD INSTALL --library=$R_INSTALL_DIR/lib/R/library hdrcde_3.1.tar.gz
 
 echo "DOWNLOADING ARCHIVES FOR EACH BIOCONDUCTOR LIBRARY"
-wget http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/r-bioc-archives-2014-02-26.tar.gz
+wget https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/GMS1/setup/archive-files/r-bioc-archives-2014-02-26.tar.gz
 tar -zxvf r-bioc-archives-2014-02-26.tar.gz
 
 echo "INSTALLING BIOCONDUCTOR LIBRARIES FROM PACKAGE ARCHIVES"
