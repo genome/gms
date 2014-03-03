@@ -46,7 +46,7 @@ ifeq ('$(FTP)', 'scp')
 endif
 
 # data which is too big to fit in the git repository is staged here
-# /gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files -> http://genome.wustl.edu/pub/software/gms/testdata/GMS1/setup/archive-files/
+# /gscmnt/sata102/info/ftp-staging/pub/software/gms/testdata/GMS1/setup/archive-files -> https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/GMS1/setup/archive-files/
 DATASERVER=https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/GMS1/setup/archive-files
 
 # when tarballs of software and data are updated they are given new names
