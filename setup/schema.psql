@@ -9,6 +9,24 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
+-- Name: config; Type: SCHEMA; Schema: -; Owner: genome
+--
+
+CREATE SCHEMA config;
+
+
+ALTER SCHEMA config OWNER TO genome;
+
+--
+-- Name: cost_analysis; Type: SCHEMA; Schema: -; Owner: genome
+--
+
+CREATE SCHEMA cost_analysis;
+
+
+ALTER SCHEMA cost_analysis OWNER TO genome;
+
+--
 -- Name: disk; Type: SCHEMA; Schema: -; Owner: genome
 --
 
@@ -16,6 +34,15 @@ CREATE SCHEMA disk;
 
 
 ALTER SCHEMA disk OWNER TO genome;
+
+--
+-- Name: gsc; Type: SCHEMA; Schema: -; Owner: genome
+--
+
+CREATE SCHEMA gsc;
+
+
+ALTER SCHEMA gsc OWNER TO genome;
 
 --
 -- Name: instrument; Type: SCHEMA; Schema: -; Owner: genome
@@ -53,7 +80,6 @@ CREATE SCHEMA subject;
 
 ALTER SCHEMA subject OWNER TO genome;
 
-
 --
 -- Name: timeline; Type: SCHEMA; Schema: -; Owner: genome
 --
@@ -62,7 +88,6 @@ CREATE SCHEMA timeline;
 
 
 ALTER SCHEMA timeline OWNER TO genome;
-
 
 --
 -- Name: web; Type: SCHEMA; Schema: -; Owner: genome
@@ -73,7 +98,6 @@ CREATE SCHEMA web;
 
 ALTER SCHEMA web OWNER TO genome;
 
---
 -- Name: workflow; Type: SCHEMA; Schema: -; Owner: genome
 --
 
@@ -83,42 +107,210 @@ CREATE SCHEMA workflow;
 ALTER SCHEMA workflow OWNER TO genome;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 --
--- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner: 
+-- Name: pg_stat_statements; Type: EXTENSION; Schema: -; Owner:
 --
 
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner: 
+-- Name: EXTENSION pg_stat_statements; Type: COMMENT; Schema: -; Owner:
 --
 
 COMMENT ON EXTENSION pg_stat_statements IS 'track execution statistics of all SQL statements executed';
 
 
-SET search_path = disk, pg_catalog;
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner:
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner:
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
+
+SET search_path = config, pg_catalog;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: allocation; Type: TABLE; Schema: disk; Owner: genome; Tablespace: 
+-- Name: analysis_menu_item; Type: TABLE; Schema: config; Owner: genome; Tablespace:
 --
+
+CREATE TABLE analysis_menu_item (
+    id character varying(64) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    name character varying(255) NOT NULL,
+    configuration_set_id character varying(64) NOT NULL,
+    description character varying(255)
+);
+
+
+ALTER TABLE config.analysis_menu_item OWNER TO genome;
+
+--
+-- Name: analysis_project; Type: TABLE; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE TABLE analysis_project (
+    id character varying(64) NOT NULL,
+    configuration_set_id character varying(64),
+    created_by character varying(255) NOT NULL,
+    analysis_menu_item_id character varying(64),
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    name character varying(255) NOT NULL,
+    status character varying(255) NOT NULL,
+    model_group_id character varying(64) NOT NULL,
+    run_as character varying(64),
+    is_cle boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE config.analysis_project OWNER TO genome;
+
+--
+-- Name: analysismenu_item; Type: TABLE; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE TABLE analysismenu_item (
+    id character varying(64) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    created_by character varying(255) NOT NULL,
+    name text NOT NULL,
+    file_path text NOT NULL,
+    description text
+);
+
+
+ALTER TABLE config.analysismenu_item OWNER TO genome;
+
+--
+-- Name: instrument_data_analysis_project_bridge; Type: TABLE; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE TABLE instrument_data_analysis_project_bridge (
+    id character varying(64) NOT NULL,
+    instrument_data_id character varying(64) NOT NULL,
+    analysis_project_id character varying(64) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    status character varying NOT NULL,
+    reason character varying,
+    fail_count integer NOT NULL
+);
+
+
+ALTER TABLE config.instrument_data_analysis_project_bridge OWNER TO genome;
+
+--
+-- Name: profile_item; Type: TABLE; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE TABLE profile_item (
+    id character varying(64) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    created_by character varying(255) NOT NULL,
+    analysismenu_item_id character varying(64),
+    analysis_project_id character varying(64) NOT NULL
+);
+
+
+ALTER TABLE config.profile_item OWNER TO genome;
+
+--
+-- Name: set; Type: TABLE; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE TABLE set (
+    id character varying(64) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    allocation_id character varying(64) NOT NULL
+);
+
+
+ALTER TABLE config.set OWNER TO genome;
+
+--
+-- Name: subject_mapping; Type: TABLE; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE TABLE subject_mapping (
+    id character varying(64) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    created_by character varying(255) NOT NULL,
+    analysis_project_id character varying(64) NOT NULL
+);
+
+
+ALTER TABLE config.subject_mapping OWNER TO genome;
+
+--
+-- Name: subject_mapping_input; Type: TABLE; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE TABLE subject_mapping_input (
+    id character varying(64) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    created_by character varying(255) NOT NULL,
+    subject_mapping_id character varying(64) NOT NULL,
+    key text NOT NULL,
+    value text NOT NULL
+);
+
+
+ALTER TABLE config.subject_mapping_input OWNER TO genome;
+
+--
+-- Name: subject_mapping_subject; Type: TABLE; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE TABLE subject_mapping_subject (
+    id character varying(64) NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    created_by character varying(255) NOT NULL,
+    subject_mapping_id character varying(64) NOT NULL,
+    label text NOT NULL,
+    subject_id character varying(64)
+);
+
+
+ALTER TABLE config.subject_mapping_subject OWNER TO genome;
+
+SET search_path = disk, pg_catalog;
+
+--
+-- Name: allocation; Type: TABLE; Schema: disk; Owner: genome; Tablespace:
+--
+
 CREATE TABLE allocation (
     id character varying(255) NOT NULL,
     allocation_path character varying(4000) NOT NULL,
@@ -138,10 +330,31 @@ CREATE TABLE allocation (
     status character varying(40) NOT NULL
 );
 
+
 ALTER TABLE disk.allocation OWNER TO genome;
 
 --
--- Name: group; Type: TABLE; Schema: disk; Owner: genome; Tablespace: 
+-- Name: file_summary; Type: TABLE; Schema: disk; Owner: genome; Tablespace:
+--
+
+CREATE TABLE file_summary (
+    id character varying NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    created_by character varying NOT NULL,
+    allocation_id character varying NOT NULL,
+    file character varying NOT NULL,
+    digest character varying,
+    size_in_bytes bigint,
+    is_symlink boolean NOT NULL,
+    destination character varying
+);
+
+
+ALTER TABLE disk.file_summary OWNER TO genome;
+
+--
+-- Name: group; Type: TABLE; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE TABLE "group" (
@@ -158,7 +371,7 @@ CREATE TABLE "group" (
 ALTER TABLE disk."group" OWNER TO genome;
 
 --
--- Name: volume; Type: TABLE; Schema: disk; Owner: genome; Tablespace: 
+-- Name: volume; Type: TABLE; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE TABLE volume (
@@ -167,7 +380,7 @@ CREATE TABLE volume (
     physical_path character varying(255) NOT NULL,
     mount_path character varying(255) NOT NULL,
     total_kb bigint NOT NULL,
-    unallocated_kb bigint,
+    unallocated_kb bigint NOT NULL,
     disk_status character varying(15) NOT NULL,
     can_allocate boolean DEFAULT true NOT NULL,
     doubles_space boolean DEFAULT false NOT NULL,
@@ -178,7 +391,7 @@ CREATE TABLE volume (
 ALTER TABLE disk.volume OWNER TO genome;
 
 --
--- Name: volume_group_bridge; Type: TABLE; Schema: disk; Owner: genome; Tablespace: 
+-- Name: volume_group_bridge; Type: TABLE; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE TABLE volume_group_bridge (
@@ -192,7 +405,7 @@ ALTER TABLE disk.volume_group_bridge OWNER TO genome;
 SET search_path = instrument, pg_catalog;
 
 --
--- Name: data; Type: TABLE; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: data; Type: TABLE; Schema: instrument; Owner: genome; Tablespace:
 --
 
 CREATE TABLE data (
@@ -209,7 +422,7 @@ CREATE TABLE data (
 ALTER TABLE instrument.data OWNER TO genome;
 
 --
--- Name: data_attribute; Type: TABLE; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: data_attribute; Type: TABLE; Schema: instrument; Owner: genome; Tablespace:
 --
 
 CREATE TABLE data_attribute (
@@ -223,18 +436,19 @@ CREATE TABLE data_attribute (
 ALTER TABLE instrument.data_attribute OWNER TO genome;
 
 --
--- Name: fragment_library; Type: TABLE; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: fragment_library; Type: TABLE; Schema: instrument; Owner: genome; Tablespace:
 --
 
 CREATE TABLE fragment_library (
     library_id character varying(64) NOT NULL,
     full_name character varying(64) NOT NULL,
     sample_id character varying(64) NOT NULL,
-    transcript_strand character varying(64),
     library_insert_size character varying(64),
     original_insert_size character varying(64),
     protocol character varying(64),
-    bisulfite_conversion character varying(32)
+    transcript_strand character varying(16),
+    bisulfite_conversion character varying(32),
+    CONSTRAINT transcript_strand_check CHECK (((transcript_strand)::text = ANY ((ARRAY[NULL::character varying, 'unstranded'::character varying, 'firststrand'::character varying, 'secondstrand'::character varying])::text[])))
 );
 
 
@@ -243,7 +457,7 @@ ALTER TABLE instrument.fragment_library OWNER TO genome;
 SET search_path = model, pg_catalog;
 
 --
--- Name: build; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: build; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE build (
@@ -258,7 +472,7 @@ CREATE TABLE build (
 ALTER TABLE model.build OWNER TO genome;
 
 --
--- Name: build_input; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_input; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE build_input (
@@ -274,7 +488,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE model.build_input OWNER TO genome;
 
 --
--- Name: build_link; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_link; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE build_link (
@@ -287,7 +501,7 @@ CREATE TABLE build_link (
 ALTER TABLE model.build_link OWNER TO genome;
 
 --
--- Name: build_metric; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_metric; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE build_metric (
@@ -301,21 +515,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE model.build_metric OWNER TO genome;
 
 --
--- Name: build_variant; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
---
-
-CREATE TABLE build_variant (
-    variant_id character varying(32) NOT NULL,
-    build_id character varying(32) NOT NULL,
-    mapping_quality bigint,
-    somatic_quality bigint
-);
-
-
-ALTER TABLE model.build_variant OWNER TO genome;
-
---
--- Name: event; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: event; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE event (
@@ -335,7 +535,7 @@ CREATE TABLE event (
     status_detail character varying(200),
     build_id character varying(32),
     instrument_data_id character varying(64),
-    workflow_instance_id integer
+    workflow_instance_id character varying(32)
 )
 WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 
@@ -343,7 +543,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE model.event OWNER TO genome;
 
 --
--- Name: event_input; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_input; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE event_input (
@@ -357,7 +557,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE model.event_input OWNER TO genome;
 
 --
--- Name: event_metric; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_metric; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE event_metric (
@@ -371,7 +571,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE model.event_metric OWNER TO genome;
 
 --
--- Name: event_output; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_output; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE event_output (
@@ -385,7 +585,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE model.event_output OWNER TO genome;
 
 --
--- Name: feature_list; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: feature_list; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE feature_list (
@@ -405,7 +605,7 @@ CREATE TABLE feature_list (
 ALTER TABLE model.feature_list OWNER TO genome;
 
 --
--- Name: model; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: model; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE model (
@@ -419,13 +619,11 @@ CREATE TABLE model (
     current_running_build_id character varying(32),
     last_complete_build_id character varying(32),
     user_name character varying(64),
-    created_by character varying(64),
-    run_as character varying(64),
     creation_date timestamp(6) without time zone,
     auto_assign_inst_data boolean,
     auto_build_alignments boolean,
     subject_id character varying(32) NOT NULL,
-    subject_class_name character varying(500),
+    subject_class_name character varying(500) NOT NULL,
     keep boolean DEFAULT false,
     build_granularity_unit character varying(20),
     build_granularity_value integer,
@@ -433,14 +631,16 @@ CREATE TABLE model (
     is_default boolean,
     subclass_name character varying(255),
     auto_build boolean,
-    build_requested boolean
+    build_requested boolean,
+    created_by character varying(64),
+    run_as character varying(64)
 );
 
 
 ALTER TABLE model.model OWNER TO genome;
 
 --
--- Name: model_group; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_group; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE model_group (
@@ -454,7 +654,7 @@ CREATE TABLE model_group (
 ALTER TABLE model.model_group OWNER TO genome;
 
 --
--- Name: model_group_bridge; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_group_bridge; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE model_group_bridge (
@@ -466,7 +666,7 @@ CREATE TABLE model_group_bridge (
 ALTER TABLE model.model_group_bridge OWNER TO genome;
 
 --
--- Name: model_input; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_input; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE model_input (
@@ -481,7 +681,7 @@ CREATE TABLE model_input (
 ALTER TABLE model.model_input OWNER TO genome;
 
 --
--- Name: model_link; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_link; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE model_link (
@@ -494,7 +694,7 @@ CREATE TABLE model_link (
 ALTER TABLE model.model_link OWNER TO genome;
 
 --
--- Name: processing_profile; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE processing_profile (
@@ -508,7 +708,7 @@ CREATE TABLE processing_profile (
 ALTER TABLE model.processing_profile OWNER TO genome;
 
 --
--- Name: processing_profile_param; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_param; Type: TABLE; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE TABLE processing_profile_param (
@@ -523,36 +723,10 @@ CREATE TABLE processing_profile_param (
 
 ALTER TABLE model.processing_profile_param OWNER TO genome;
 
---
--- Name: variant; Type: TABLE; Schema: model; Owner: genome; Tablespace: 
---
-
-CREATE TABLE variant (
-    variant_id character varying(32) NOT NULL,
-    chromosome character varying(255) NOT NULL,
-    start_pos bigint NOT NULL,
-    stop_pos bigint NOT NULL,
-    reference_allele character varying(255),
-    variant_allele character varying(255),
-    gene_name character varying(255),
-    transcript_name character varying(255),
-    transcript_source character varying(255),
-    transcript_version character varying(255),
-    strand character varying(255),
-    trv_type character varying(255),
-    c_position character varying(255),
-    amino_acid_change character varying(255),
-    ucsc_cons character varying(255),
-    domain character varying(255)
-);
-
-
-ALTER TABLE model.variant OWNER TO genome;
-
 SET search_path = result, pg_catalog;
 
 --
--- Name: input; Type: TABLE; Schema: result; Owner: genome; Tablespace: 
+-- Name: input; Type: TABLE; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE TABLE input (
@@ -569,12 +743,12 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE result.input OWNER TO genome;
 
 --
--- Name: metric; Type: TABLE; Schema: result; Owner: genome; Tablespace: 
+-- Name: metric; Type: TABLE; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE TABLE metric (
     software_result_id character varying(32) NOT NULL,
-    metric_name character varying(100) NOT NULL,
+    metric_name character varying(1000) NOT NULL,
     metric_value character varying(1000) NOT NULL
 )
 WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
@@ -583,7 +757,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE result.metric OWNER TO genome;
 
 --
--- Name: param; Type: TABLE; Schema: result; Owner: genome; Tablespace: 
+-- Name: param; Type: TABLE; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE TABLE param (
@@ -600,17 +774,17 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE result.param OWNER TO genome;
 
 --
--- Name: software_result; Type: TABLE; Schema: result; Owner: genome; Tablespace: 
+-- Name: software_result; Type: TABLE; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE TABLE software_result (
     id character varying(32) NOT NULL,
     class_name character varying(255) NOT NULL,
-    version character varying(1000),
+    version character varying(64),
     inputs_id character varying(4000),
     params_id character varying(4000),
     outputs_path character varying(1000),
-    lookup_hash character varying(32)
+    lookup_hash character varying(32) NOT NULL
 )
 WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 
@@ -618,7 +792,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE result.software_result OWNER TO genome;
 
 --
--- Name: user; Type: TABLE; Schema: result; Owner: genome; Tablespace: 
+-- Name: user; Type: TABLE; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE TABLE "user" (
@@ -637,7 +811,7 @@ ALTER TABLE result."user" OWNER TO genome;
 SET search_path = subject, pg_catalog;
 
 --
--- Name: misc_attribute; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_attribute; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE misc_attribute (
@@ -651,7 +825,7 @@ CREATE TABLE misc_attribute (
 ALTER TABLE subject.misc_attribute OWNER TO genome;
 
 --
--- Name: misc_note; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_note; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE misc_note (
@@ -669,7 +843,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE subject.misc_note OWNER TO genome;
 
 --
--- Name: project; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE project (
@@ -681,7 +855,7 @@ CREATE TABLE project (
 ALTER TABLE subject.project OWNER TO genome;
 
 --
--- Name: project_part; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project_part; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE project_part (
@@ -697,19 +871,19 @@ CREATE TABLE project_part (
 ALTER TABLE subject.project_part OWNER TO genome;
 
 --
--- Name: role; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: role; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE role (
     id character varying(32) NOT NULL,
-    name character varying(64)
+    name character varying(64) NOT NULL
 );
 
 
 ALTER TABLE subject.role OWNER TO genome;
 
 --
--- Name: role_member; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: role_member; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE role_member (
@@ -721,7 +895,7 @@ CREATE TABLE role_member (
 ALTER TABLE subject.role_member OWNER TO genome;
 
 --
--- Name: subject; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: subject; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE subject (
@@ -734,7 +908,7 @@ CREATE TABLE subject (
 ALTER TABLE subject.subject OWNER TO genome;
 
 --
--- Name: subject_attribute; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: subject_attribute; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE subject_attribute (
@@ -748,7 +922,7 @@ CREATE TABLE subject_attribute (
 ALTER TABLE subject.subject_attribute OWNER TO genome;
 
 --
--- Name: user; Type: TABLE; Schema: subject; Owner: genome; Tablespace: 
+-- Name: user; Type: TABLE; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE TABLE "user" (
@@ -763,7 +937,7 @@ ALTER TABLE subject."user" OWNER TO genome;
 SET search_path = timeline, pg_catalog;
 
 --
--- Name: base; Type: TABLE; Schema: timeline; Owner: genome; Tablespace: 
+-- Name: base; Type: TABLE; Schema: timeline; Owner: genome; Tablespace:
 --
 
 CREATE TABLE base (
@@ -781,7 +955,7 @@ CREATE TABLE base (
 ALTER TABLE timeline.base OWNER TO genome;
 
 --
--- Name: allocation; Type: TABLE; Schema: timeline; Owner: genome; Tablespace: 
+-- Name: allocation; Type: TABLE; Schema: timeline; Owner: genome; Tablespace:
 --
 
 CREATE TABLE allocation (
@@ -795,7 +969,7 @@ INHERITS (base);
 ALTER TABLE timeline.allocation OWNER TO genome;
 
 --
--- Name: allocation_event_type; Type: TABLE; Schema: timeline; Owner: genome; Tablespace: 
+-- Name: allocation_event_type; Type: TABLE; Schema: timeline; Owner: genome; Tablespace:
 --
 
 CREATE TABLE allocation_event_type (
@@ -808,21 +982,22 @@ ALTER TABLE timeline.allocation_event_type OWNER TO genome;
 SET search_path = web, pg_catalog;
 
 --
--- Name: nomenclature; Type: TABLE; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature; Type: TABLE; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE TABLE nomenclature (
     id character varying(255) NOT NULL,
     name character varying(255) NOT NULL,
     default_value character varying(255),
-    accepts_any_field boolean
+    accepts_any_field boolean,
+    empty_equivalent character varying(255)
 );
 
 
 ALTER TABLE web.nomenclature OWNER TO genome;
 
 --
--- Name: nomenclature_enum_value; Type: TABLE; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature_enum_value; Type: TABLE; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE TABLE nomenclature_enum_value (
@@ -835,7 +1010,7 @@ CREATE TABLE nomenclature_enum_value (
 ALTER TABLE web.nomenclature_enum_value OWNER TO genome;
 
 --
--- Name: nomenclature_field; Type: TABLE; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature_field; Type: TABLE; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE TABLE nomenclature_field (
@@ -849,22 +1024,22 @@ CREATE TABLE nomenclature_field (
 ALTER TABLE web.nomenclature_field OWNER TO genome;
 
 --
--- Name: search_index_queue; Type: TABLE; Schema: web; Owner: genome; Tablespace: 
+-- Name: search_index_queue; Type: TABLE; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE TABLE search_index_queue (
     id character varying(32) NOT NULL,
     subject_id character varying(256) NOT NULL,
     subject_class character varying(255) NOT NULL,
-    "timestamp" timestamp without time zone NOT NULL,
-    priority integer
+    "timestamp" timestamp(6) without time zone NOT NULL,
+    priority smallint
 );
 
 
 ALTER TABLE web.search_index_queue OWNER TO genome;
 
 --
--- Name: task; Type: TABLE; Schema: web; Owner: genome; Tablespace: 
+-- Name: task; Type: TABLE; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE TABLE task (
@@ -883,7 +1058,7 @@ CREATE TABLE task (
 ALTER TABLE web.task OWNER TO genome;
 
 --
--- Name: task_params; Type: TABLE; Schema: web; Owner: genome; Tablespace: 
+-- Name: task_params; Type: TABLE; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE TABLE task_params (
@@ -897,7 +1072,7 @@ ALTER TABLE web.task_params OWNER TO genome;
 SET search_path = workflow, pg_catalog;
 
 --
--- Name: execution_metric; Type: TABLE; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: execution_metric; Type: TABLE; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE TABLE execution_metric (
@@ -910,7 +1085,7 @@ CREATE TABLE execution_metric (
 ALTER TABLE workflow.execution_metric OWNER TO genome;
 
 --
--- Name: instance; Type: TABLE; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance; Type: TABLE; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE TABLE instance (
@@ -932,7 +1107,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE workflow.instance OWNER TO genome;
 
 --
--- Name: instance_execution; Type: TABLE; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_execution; Type: TABLE; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE TABLE instance_execution (
@@ -960,7 +1135,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE workflow.instance_execution OWNER TO genome;
 
 --
--- Name: plan; Type: TABLE; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: plan; Type: TABLE; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE TABLE plan (
@@ -973,7 +1148,7 @@ WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
 ALTER TABLE workflow.plan OWNER TO genome;
 
 --
--- Name: service; Type: TABLE; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: service; Type: TABLE; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE TABLE service (
@@ -986,11 +1161,92 @@ CREATE TABLE service (
 
 
 ALTER TABLE workflow.service OWNER TO genome;
+SET search_path = config, pg_catalog;
+
+--
+-- Name: analysis_menu_item_pk; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY analysis_menu_item
+    ADD CONSTRAINT analysis_menu_item_pk PRIMARY KEY (id);
+
+
+--
+-- Name: analysismenu_item_pkey; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY analysismenu_item
+    ADD CONSTRAINT analysismenu_item_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: config_analysis_project_pk; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY analysis_project
+    ADD CONSTRAINT config_analysis_project_pk PRIMARY KEY (id);
+
+
+--
+-- Name: genome_config_set_pk; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY set
+    ADD CONSTRAINT genome_config_set_pk PRIMARY KEY (id);
+
+
+--
+-- Name: instrument_data_analysis_proj_instrument_data_id_analysis_p_key; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY instrument_data_analysis_project_bridge
+    ADD CONSTRAINT instrument_data_analysis_proj_instrument_data_id_analysis_p_key UNIQUE (instrument_data_id, analysis_project_id);
+
+
+--
+-- Name: instrument_data_analysis_project_bridge_pkey; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY instrument_data_analysis_project_bridge
+    ADD CONSTRAINT instrument_data_analysis_project_bridge_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: profile_item_pkey; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY profile_item
+    ADD CONSTRAINT profile_item_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subject_mapping_input_pkey; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY subject_mapping_input
+    ADD CONSTRAINT subject_mapping_input_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subject_mapping_pkey; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY subject_mapping
+    ADD CONSTRAINT subject_mapping_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: subject_mapping_subject_pkey; Type: CONSTRAINT; Schema: config; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY subject_mapping_subject
+    ADD CONSTRAINT subject_mapping_subject_pkey PRIMARY KEY (id);
+
 
 SET search_path = disk, pg_catalog;
 
 --
--- Name: allocation_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace: 
+-- Name: allocation_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY allocation
@@ -998,7 +1254,31 @@ ALTER TABLE ONLY allocation
 
 
 --
--- Name: group_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace: 
+-- Name: d_a_uniq_mount_path; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY allocation
+    ADD CONSTRAINT d_a_uniq_mount_path UNIQUE (mount_path, group_subdirectory, allocation_path);
+
+
+--
+-- Name: file_summary_allocation_id_file_key; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY file_summary
+    ADD CONSTRAINT file_summary_allocation_id_file_key UNIQUE (allocation_id, file);
+
+
+--
+-- Name: file_summary_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY file_summary
+    ADD CONSTRAINT file_summary_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: group_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY "group"
@@ -1006,7 +1286,15 @@ ALTER TABLE ONLY "group"
 
 
 --
--- Name: volume_group_bridge_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace: 
+-- Name: uniq_d_a_apid; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY allocation
+    ADD CONSTRAINT uniq_d_a_apid UNIQUE (allocation_path, id);
+
+
+--
+-- Name: volume_group_bridge_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY volume_group_bridge
@@ -1014,7 +1302,7 @@ ALTER TABLE ONLY volume_group_bridge
 
 
 --
--- Name: volume_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace: 
+-- Name: volume_pkey; Type: CONSTRAINT; Schema: disk; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY volume
@@ -1024,7 +1312,7 @@ ALTER TABLE ONLY volume
 SET search_path = instrument, pg_catalog;
 
 --
--- Name: data_attribute_pkey; Type: CONSTRAINT; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: data_attribute_pkey; Type: CONSTRAINT; Schema: instrument; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY data_attribute
@@ -1032,7 +1320,7 @@ ALTER TABLE ONLY data_attribute
 
 
 --
--- Name: data_pkey; Type: CONSTRAINT; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: data_pkey; Type: CONSTRAINT; Schema: instrument; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY data
@@ -1040,7 +1328,7 @@ ALTER TABLE ONLY data
 
 
 --
--- Name: fragment_library_pkey; Type: CONSTRAINT; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: fragment_library_pkey; Type: CONSTRAINT; Schema: instrument; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY fragment_library
@@ -1050,7 +1338,7 @@ ALTER TABLE ONLY fragment_library
 SET search_path = model, pg_catalog;
 
 --
--- Name: build_input_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_input_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY build_input
@@ -1058,7 +1346,7 @@ ALTER TABLE ONLY build_input
 
 
 --
--- Name: build_link_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_link_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY build_link
@@ -1066,7 +1354,7 @@ ALTER TABLE ONLY build_link
 
 
 --
--- Name: build_metric_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_metric_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY build_metric
@@ -1074,7 +1362,7 @@ ALTER TABLE ONLY build_metric
 
 
 --
--- Name: build_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY build
@@ -1082,15 +1370,7 @@ ALTER TABLE ONLY build
 
 
 --
--- Name: build_variant_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
---
-
-ALTER TABLE ONLY build_variant
-    ADD CONSTRAINT build_variant_pkey PRIMARY KEY (variant_id, build_id);
-
-
---
--- Name: event_input_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_input_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY event_input
@@ -1098,7 +1378,7 @@ ALTER TABLE ONLY event_input
 
 
 --
--- Name: event_metric_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_metric_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY event_metric
@@ -1106,7 +1386,7 @@ ALTER TABLE ONLY event_metric
 
 
 --
--- Name: event_output_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_output_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY event_output
@@ -1114,7 +1394,7 @@ ALTER TABLE ONLY event_output
 
 
 --
--- Name: event_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY event
@@ -1122,7 +1402,7 @@ ALTER TABLE ONLY event
 
 
 --
--- Name: feature_list_name_key; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: feature_list_name_key; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY feature_list
@@ -1130,7 +1410,7 @@ ALTER TABLE ONLY feature_list
 
 
 --
--- Name: feature_list_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: feature_list_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY feature_list
@@ -1138,7 +1418,23 @@ ALTER TABLE ONLY feature_list
 
 
 --
--- Name: model_group_bridge_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: gm_gmi_sn_ppi; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY model
+    ADD CONSTRAINT gm_gmi_sn_ppi UNIQUE (genome_model_id, subclass_name, processing_profile_id);
+
+
+--
+-- Name: gm_pksni; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY model
+    ADD CONSTRAINT gm_pksni UNIQUE (genome_model_id, subclass_name);
+
+
+--
+-- Name: model_group_bridge_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY model_group_bridge
@@ -1146,7 +1442,7 @@ ALTER TABLE ONLY model_group_bridge
 
 
 --
--- Name: model_group_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_group_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY model_group
@@ -1154,7 +1450,7 @@ ALTER TABLE ONLY model_group
 
 
 --
--- Name: model_input_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_input_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY model_input
@@ -1162,7 +1458,7 @@ ALTER TABLE ONLY model_input
 
 
 --
--- Name: model_link_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_link_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY model_link
@@ -1170,7 +1466,7 @@ ALTER TABLE ONLY model_link
 
 
 --
--- Name: model_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY model
@@ -1178,7 +1474,7 @@ ALTER TABLE ONLY model
 
 
 --
--- Name: processing_profile_param_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_param_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY processing_profile_param
@@ -1186,7 +1482,7 @@ ALTER TABLE ONLY processing_profile_param
 
 
 --
--- Name: processing_profile_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY processing_profile
@@ -1194,17 +1490,17 @@ ALTER TABLE ONLY processing_profile
 
 
 --
--- Name: variant_pkey; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace: 
+-- Name: uniq_m_mg_name; Type: CONSTRAINT; Schema: model; Owner: genome; Tablespace:
 --
 
-ALTER TABLE ONLY variant
-    ADD CONSTRAINT variant_pkey PRIMARY KEY (variant_id);
+ALTER TABLE ONLY model_group
+    ADD CONSTRAINT uniq_m_mg_name UNIQUE (name);
 
 
 SET search_path = result, pg_catalog;
 
 --
--- Name: input_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace: 
+-- Name: input_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY input
@@ -1212,7 +1508,7 @@ ALTER TABLE ONLY input
 
 
 --
--- Name: metric_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace: 
+-- Name: metric_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY metric
@@ -1220,7 +1516,7 @@ ALTER TABLE ONLY metric
 
 
 --
--- Name: param_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace: 
+-- Name: param_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY param
@@ -1228,7 +1524,7 @@ ALTER TABLE ONLY param
 
 
 --
--- Name: software_result_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace: 
+-- Name: software_result_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY software_result
@@ -1236,7 +1532,15 @@ ALTER TABLE ONLY software_result
 
 
 --
--- Name: user_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace: 
+-- Name: sr_cni; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY software_result
+    ADD CONSTRAINT sr_cni UNIQUE (id, class_name);
+
+
+--
+-- Name: user_pkey; Type: CONSTRAINT; Schema: result; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY "user"
@@ -1246,7 +1550,7 @@ ALTER TABLE ONLY "user"
 SET search_path = subject, pg_catalog;
 
 --
--- Name: misc_attribute_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_attribute_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY misc_attribute
@@ -1254,7 +1558,7 @@ ALTER TABLE ONLY misc_attribute
 
 
 --
--- Name: misc_note_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_note_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY misc_note
@@ -1262,7 +1566,7 @@ ALTER TABLE ONLY misc_note
 
 
 --
--- Name: project_part_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project_part_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY project_part
@@ -1270,15 +1574,15 @@ ALTER TABLE ONLY project_part
 
 
 --
--- Name: project_part_project_id_part_class_name_part_id_key; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project_part_project_id_part_class_name_part_id_role_key; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY project_part
-    ADD CONSTRAINT project_part_project_id_part_class_name_part_id_key UNIQUE (project_id, part_class_name, part_id);
+    ADD CONSTRAINT project_part_project_id_part_class_name_part_id_role_key UNIQUE (project_id, part_class_name, part_id, role);
 
 
 --
--- Name: project_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY project
@@ -1286,7 +1590,7 @@ ALTER TABLE ONLY project
 
 
 --
--- Name: role_member_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: role_member_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY role_member
@@ -1294,7 +1598,7 @@ ALTER TABLE ONLY role_member
 
 
 --
--- Name: role_name_key; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: role_name_key; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY role
@@ -1302,7 +1606,7 @@ ALTER TABLE ONLY role
 
 
 --
--- Name: role_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: role_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY role
@@ -1310,7 +1614,7 @@ ALTER TABLE ONLY role
 
 
 --
--- Name: subject_attribute_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: subject_attribute_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY subject_attribute
@@ -1318,7 +1622,7 @@ ALTER TABLE ONLY subject_attribute
 
 
 --
--- Name: subject_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: subject_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY subject
@@ -1326,17 +1630,35 @@ ALTER TABLE ONLY subject
 
 
 --
--- Name: user_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace: 
+-- Name: user_pkey; Type: CONSTRAINT; Schema: subject; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY "user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (email);
 
 
+SET search_path = timeline, pg_catalog;
+
+--
+-- Name: allocation_event_type_pkey; Type: CONSTRAINT; Schema: timeline; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY allocation_event_type
+    ADD CONSTRAINT allocation_event_type_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: base_pkey; Type: CONSTRAINT; Schema: timeline; Owner: genome; Tablespace:
+--
+
+ALTER TABLE ONLY base
+    ADD CONSTRAINT base_pkey PRIMARY KEY (id);
+
+
 SET search_path = web, pg_catalog;
 
 --
--- Name: nomenclature_enum_value_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature_enum_value_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY nomenclature_enum_value
@@ -1344,7 +1666,7 @@ ALTER TABLE ONLY nomenclature_enum_value
 
 
 --
--- Name: nomenclature_field_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature_field_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY nomenclature_field
@@ -1352,7 +1674,7 @@ ALTER TABLE ONLY nomenclature_field
 
 
 --
--- Name: nomenclature_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY nomenclature
@@ -1360,7 +1682,7 @@ ALTER TABLE ONLY nomenclature
 
 
 --
--- Name: siq_pk; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace: 
+-- Name: siq_pk; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY search_index_queue
@@ -1368,7 +1690,7 @@ ALTER TABLE ONLY search_index_queue
 
 
 --
--- Name: task_params_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace: 
+-- Name: task_params_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY task_params
@@ -1376,25 +1698,23 @@ ALTER TABLE ONLY task_params
 
 
 --
--- Name: task_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace: 
+-- Name: task_pkey; Type: CONSTRAINT; Schema: web; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY task
     ADD CONSTRAINT task_pkey PRIMARY KEY (id);
 
-
 SET search_path = workflow, pg_catalog;
 
 --
--- Name: execution_metric_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: execution_metric_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY execution_metric
     ADD CONSTRAINT execution_metric_pkey PRIMARY KEY (workflow_execution_id, name);
 
-
 --
--- Name: instance_execution_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_execution_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY instance_execution
@@ -1402,7 +1722,7 @@ ALTER TABLE ONLY instance_execution
 
 
 --
--- Name: instance_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY instance
@@ -1410,7 +1730,7 @@ ALTER TABLE ONLY instance
 
 
 --
--- Name: plan_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: plan_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY plan
@@ -1418,66 +1738,194 @@ ALTER TABLE ONLY plan
 
 
 --
--- Name: service_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: service_pkey; Type: CONSTRAINT; Schema: workflow; Owner: genome; Tablespace:
 --
 
 ALTER TABLE ONLY service
     ADD CONSTRAINT service_pkey PRIMARY KEY (hostname, username, process_id, port, start_time);
 
 
+SET search_path = config, pg_catalog;
+
+--
+-- Name: analysis_menu_config_set_index; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX analysis_menu_config_set_index ON analysis_menu_item USING btree (configuration_set_id);
+
+
+--
+-- Name: analysis_project_name_idx; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX analysis_project_name_idx ON analysis_project USING btree (name);
+
+
+--
+-- Name: analysis_project_status_idx; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX analysis_project_status_idx ON analysis_project USING btree (status);
+
+
+--
+-- Name: analysismenu_item_name_idx; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX analysismenu_item_name_idx ON analysismenu_item USING btree (name);
+
+
+--
+-- Name: analysismenu_item_path_idx; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX analysismenu_item_path_idx ON analysismenu_item USING btree (file_path);
+
+
+--
+-- Name: c_ap_analysis_menu_item_id_index; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX c_ap_analysis_menu_item_id_index ON analysis_project USING btree (analysis_menu_item_id);
+
+
+--
+-- Name: c_ap_configuration_set_id_index; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX c_ap_configuration_set_id_index ON analysis_project USING btree (configuration_set_id);
+
+
+--
+-- Name: c_s_allocation_id_index; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX c_s_allocation_id_index ON set USING btree (allocation_id);
+
+
+--
+-- Name: instrument_data_analysis_project_bridge_analysis_project_id_idx; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX instrument_data_analysis_project_bridge_analysis_project_id_idx ON instrument_data_analysis_project_bridge USING btree (analysis_project_id);
+
+
+--
+-- Name: instrument_data_analysis_project_bridge_fail_count_idx; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX instrument_data_analysis_project_bridge_fail_count_idx ON instrument_data_analysis_project_bridge USING btree (fail_count);
+
+
+--
+-- Name: instrument_data_analysis_project_bridge_instrument_data_id_idx; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX instrument_data_analysis_project_bridge_instrument_data_id_idx ON instrument_data_analysis_project_bridge USING btree (instrument_data_id);
+
+
+--
+-- Name: instrument_data_analysis_project_bridge_status_idx; Type: INDEX; Schema: config; Owner: genome; Tablespace:
+--
+
+CREATE INDEX instrument_data_analysis_project_bridge_status_idx ON instrument_data_analysis_project_bridge USING btree (status);
+
+
 SET search_path = disk, pg_catalog;
 
 --
--- Name: allocation_absolute_path_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
---
-
-CREATE INDEX allocation_absolute_path_index ON allocation USING btree (mount_path, group_subdirectory, allocation_path);
-
-
---
--- Name: allocation_allocation_path_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
+-- Name: allocation_allocation_path_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE INDEX allocation_allocation_path_index ON allocation USING btree (allocation_path);
 
 
 --
--- Name: allocation_creation_reallocation_time_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
+-- Name: allocation_creation_reallocation_time_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE INDEX allocation_creation_reallocation_time_index ON allocation USING btree (creation_time, reallocation_time);
 
 
 --
--- Name: allocation_owner_class_id_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
+-- Name: allocation_owner_class_id_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE INDEX allocation_owner_class_id_index ON allocation USING btree (owner_class_name, owner_id);
 
 
 --
--- Name: group_name_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
+-- Name: allocation_status_idx; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
+--
+
+CREATE INDEX allocation_status_idx ON allocation USING btree (status);
+
+
+--
+-- Name: d_a_kilobytes_used_time_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
+--
+
+CREATE INDEX d_a_kilobytes_used_time_index ON allocation USING btree (kilobytes_used_time);
+
+
+--
+-- Name: d_a_mount_path_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
+--
+
+CREATE INDEX d_a_mount_path_index ON allocation USING btree (mount_path);
+
+
+--
+-- Name: d_a_multi_mount_path_kilobytes_requested_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
+--
+
+CREATE INDEX d_a_multi_mount_path_kilobytes_requested_index ON allocation USING btree (mount_path, kilobytes_requested);
+
+
+--
+-- Name: d_a_owner_id; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
+--
+
+CREATE INDEX d_a_owner_id ON allocation USING btree (owner_id);
+
+
+--
+-- Name: file_summary_allocation_id_idx; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
+--
+
+CREATE INDEX file_summary_allocation_id_idx ON file_summary USING btree (allocation_id);
+
+
+--
+-- Name: group_name_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE INDEX group_name_index ON "group" USING btree (name);
 
 
 --
--- Name: kilobytes_requested_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
+-- Name: idx_allocation_path_like; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_allocation_path_like ON allocation USING btree (allocation_path varchar_pattern_ops);
+
+
+--
+-- Name: kilobytes_requested_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE INDEX kilobytes_requested_index ON allocation USING btree (kilobytes_requested);
 
 
 --
--- Name: kilobytes_used_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
+-- Name: kilobytes_used_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE INDEX kilobytes_used_index ON allocation USING btree (kilobytes_used);
 
 
 --
--- Name: volume_mount_path_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace: 
+-- Name: volume_mount_path_index; Type: INDEX; Schema: disk; Owner: genome; Tablespace:
 --
 
 CREATE INDEX volume_mount_path_index ON volume USING btree (mount_path);
@@ -1486,35 +1934,35 @@ CREATE INDEX volume_mount_path_index ON volume USING btree (mount_path);
 SET search_path = instrument, pg_catalog;
 
 --
--- Name: fragment_library_library_id_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace: 
---
-
-CREATE INDEX fragment_library_library_id_index ON fragment_library USING btree (library_id);
-
-
---
--- Name: fragment_library_sample_id_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: fragment_library_sample_id_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace:
 --
 
 CREATE INDEX fragment_library_sample_id_index ON fragment_library USING btree (sample_id);
 
 
 --
--- Name: instrument_data_attribute_label_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: idx_i_da_al_av; Type: INDEX; Schema: instrument; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_i_da_al_av ON data_attribute USING btree (attribute_label, attribute_value);
+
+
+--
+-- Name: instrument_data_attribute_label_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instrument_data_attribute_label_index ON data_attribute USING btree (attribute_label);
 
 
 --
--- Name: instrument_data_id_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: instrument_data_id_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instrument_data_id_index ON data_attribute USING btree (instrument_data_id);
 
 
 --
--- Name: instrument_data_library_id_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace: 
+-- Name: instrument_data_library_id_index; Type: INDEX; Schema: instrument; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instrument_data_library_id_index ON data USING btree (library_id);
@@ -1523,203 +1971,329 @@ CREATE INDEX instrument_data_library_id_index ON data USING btree (library_id);
 SET search_path = model, pg_catalog;
 
 --
--- Name: build_directory_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_directory_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX build_directory_index ON build USING btree (data_directory);
 
 
 --
--- Name: build_model_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: build_model_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX build_model_index ON build USING btree (model_id);
 
 
 --
--- Name: event_build_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_build_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_build_id_index ON event USING btree (build_id);
 
 
 --
--- Name: event_inst_data_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_inst_data_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_inst_data_index ON event USING btree (instrument_data_id);
 
 
 --
--- Name: event_model_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_model_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_model_id_index ON event USING btree (model_id);
 
 
 --
--- Name: event_parent_event_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_parent_event_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_parent_event_index ON event USING btree (parent_event_id);
 
 
 --
--- Name: event_prior_event_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_prior_event_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_prior_event_index ON event USING btree (prior_event_id);
 
 
 --
--- Name: event_ref_seq_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_ref_seq_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_ref_seq_index ON event USING btree (ref_seq_id);
 
 
 --
--- Name: event_run_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_run_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_run_id_index ON event USING btree (run_id);
 
 
 --
--- Name: event_status_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_status_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_status_index ON event USING btree (event_status);
 
 
 --
--- Name: event_type_model_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_type_model_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_type_model_id_index ON event USING btree (event_type, model_id);
 
 
 --
--- Name: event_user_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: event_user_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX event_user_name_index ON event USING btree (user_name);
 
 
 --
--- Name: feature_list_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: feature_list_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX feature_list_name_index ON feature_list USING btree (name);
 
 
 --
--- Name: metric_build_id_metric_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: idx_m_bi_n_vi; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_m_bi_n_vi ON build_input USING btree (name, value_id);
+
+
+--
+-- Name: idx_m_bi_vcn_vi; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_m_bi_vcn_vi ON build_input USING btree (value_class_name, value_id);
+
+
+--
+-- Name: idx_m_e_bi_dc_et; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_m_e_bi_dc_et ON event USING btree (build_id, date_completed, event_type);
+
+
+--
+-- Name: idx_m_e_bi_es_et_un; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_m_e_bi_es_et_un ON event USING btree (build_id, event_status, event_type, user_name);
+
+
+--
+-- Name: idx_m_e_es_et_mi; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_m_e_es_et_mi ON event USING btree (event_status, event_type, model_id);
+
+
+--
+-- Name: idx_m_e_es_et_un; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_m_e_es_et_un ON event USING btree (event_status, event_type, user_name);
+
+
+--
+-- Name: idx_m_e_es_un; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_m_e_es_un ON event USING btree (event_status, user_name);
+
+
+--
+-- Name: idx_m_e_pei_rsi; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_m_e_pei_rsi ON event USING btree (parent_event_id, ref_seq_id);
+
+
+--
+-- Name: m_bi_build_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX m_bi_build_id_index ON build_input USING btree (build_id);
+
+
+--
+-- Name: m_bi_value_class_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX m_bi_value_class_name_index ON build_input USING btree (value_class_name);
+
+
+--
+-- Name: m_m_build_requested_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX m_m_build_requested_index ON model USING btree (build_requested);
+
+
+--
+-- Name: m_m_current_running_build_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX m_m_current_running_build_id_index ON model USING btree (current_running_build_id);
+
+
+--
+-- Name: m_m_id_subject_class_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX m_m_id_subject_class_name_index ON model USING btree (genome_model_id, subject_class_name);
+
+
+--
+-- Name: m_m_last_complete_build_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX m_m_last_complete_build_id_index ON model USING btree (last_complete_build_id);
+
+
+--
+-- Name: metric_build_id_metric_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX metric_build_id_metric_name_index ON build_metric USING btree (build_id, metric_name);
 
 
 --
--- Name: model_group_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model__created_by_idx; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
-CREATE INDEX model_group_name_index ON model_group USING btree (name);
+CREATE INDEX model__created_by_idx ON model USING btree (created_by);
 
 
 --
--- Name: model_input_model_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model__run_as_idx; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX model__run_as_idx ON model USING btree (run_as);
+
+
+--
+-- Name: model_group_bridge_model_group_id; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX model_group_bridge_model_group_id ON model_group_bridge USING btree (model_group_id);
+
+
+--
+-- Name: model_group_bridge_model_id; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX model_group_bridge_model_id ON model_group_bridge USING btree (model_id);
+
+
+--
+-- Name: model_input_model_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX model_input_model_id_index ON model_input USING btree (model_id);
 
 
 --
--- Name: model_input_value_class_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_input_value_class_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX model_input_value_class_index ON model_input USING btree (value_class_name);
 
 
 --
--- Name: model_input_value_id_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_input_value_id_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX model_input_value_id_name_index ON model_input USING btree (value_id, name);
 
 
 --
--- Name: model_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX model_name_index ON model USING btree (name);
 
 
 --
--- Name: model_processing_profile_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_processing_profile_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX model_processing_profile_index ON model USING btree (processing_profile_id);
 
 
 --
--- Name: model_subclass_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_subclass_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX model_subclass_index ON model USING btree (subclass_name);
 
 
 --
--- Name: model_subject_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_subject_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX model_subject_id_index ON model USING btree (subject_id);
 
 
 --
--- Name: model_subject_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: model_subject_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX model_subject_index ON model USING btree (subject_class_name, subject_id);
 
 
 --
--- Name: processing_profile_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX processing_profile_name_index ON processing_profile USING btree (name);
 
 
 --
--- Name: processing_profile_param_id_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_param_id_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX processing_profile_param_id_name_index ON processing_profile_param USING btree (processing_profile_id, name);
 
 
 --
--- Name: processing_profile_param_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_param_id_param_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
+--
+
+CREATE INDEX processing_profile_param_id_param_name_index ON processing_profile_param USING btree (processing_profile_id, param_name);
+
+
+--
+-- Name: processing_profile_param_name_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX processing_profile_param_name_index ON processing_profile_param USING btree (name);
 
 
 --
--- Name: processing_profile_param_name_value_class_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_param_name_value_class_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX processing_profile_param_name_value_class_id_index ON processing_profile_param USING btree (value_class_name, value_id);
 
 
 --
--- Name: processing_profile_param_value_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_param_value_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX processing_profile_param_value_id_index ON processing_profile_param USING btree (value_id);
 
 
 --
--- Name: processing_profile_subclass_index; Type: INDEX; Schema: model; Owner: genome; Tablespace: 
+-- Name: processing_profile_subclass_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
 CREATE INDEX processing_profile_subclass_index ON processing_profile USING btree (subclass_name);
@@ -1728,331 +2302,588 @@ CREATE INDEX processing_profile_subclass_index ON processing_profile USING btree
 SET search_path = result, pg_catalog;
 
 --
--- Name: lookup_hash_class_name_idx; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: idx_result_metric_metric_name; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_result_metric_metric_name ON metric USING btree (metric_name);
+
+
+--
+-- Name: lookup_hash_class_name_idx; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX lookup_hash_class_name_idx ON software_result USING btree (lookup_hash, class_name);
 
 
 --
--- Name: lookup_hash_idx; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: lookup_hash_idx; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX lookup_hash_idx ON software_result USING btree (lookup_hash);
 
 
 --
--- Name: result_input_id_name; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: result_input_id_name; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX result_input_id_name ON input USING btree (software_result_id, name);
 
 
 --
--- Name: result_input_name_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: result_input_name_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX result_input_name_index ON input USING btree (name);
 
 
 --
--- Name: result_input_value_class_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: result_input_value_class_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX result_input_value_class_id_index ON input USING btree (value_class_name, value_id);
 
 
 --
--- Name: result_input_value_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: result_input_value_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX result_input_value_id_index ON input USING btree (value_id);
 
 
 --
--- Name: result_param_id_name; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: result_param_id_name; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX result_param_id_name ON param USING btree (software_result_id, name);
 
 
 --
--- Name: result_param_name_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: result_param_name_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX result_param_name_index ON param USING btree (name);
 
 
 --
--- Name: result_param_value_class_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: result_param_value_class_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX result_param_value_class_id_index ON param USING btree (value_class_name, value_id);
 
 
 --
--- Name: result_param_value_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: result_param_value_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX result_param_value_id_index ON param USING btree (value_id);
 
 
 --
--- Name: user_id_name_label_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: sr_cname; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX sr_cname ON software_result USING btree (class_name);
+
+
+--
+-- Name: sri_iniv; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX sri_iniv ON input USING btree (input_value, input_name);
+
+
+--
+-- Name: sri_inivsri; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX sri_inivsri ON input USING btree (input_value, input_name, software_result_id);
+
+
+--
+-- Name: srp_pn2; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX srp_pn2 ON param USING btree (param_name);
+
+
+--
+-- Name: srp_pnpv2; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX srp_pnpv2 ON param USING btree (param_name, param_value);
+
+
+--
+-- Name: srp_sri2; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX srp_sri2 ON param USING btree (software_result_id);
+
+
+--
+-- Name: sru_uid_i; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX sru_uid_i ON "user" USING btree (user_id);
+
+
+--
+-- Name: user_id_name_label_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX user_id_name_label_index ON "user" USING btree (user_id, user_class_name, label);
 
 
 --
--- Name: user_result_id_user_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: user_result_id_user_id_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX user_result_id_user_id_index ON "user" USING btree (software_result_id, user_id);
 
 
 --
--- Name: user_result_label_index; Type: INDEX; Schema: result; Owner: genome; Tablespace: 
+-- Name: user_result_label_index; Type: INDEX; Schema: result; Owner: genome; Tablespace:
 --
 
 CREATE INDEX user_result_label_index ON "user" USING btree (software_result_id, label);
 
 
+--
+-- Name: user_software_result_id_idx; Type: INDEX; Schema: result; Owner: genome; Tablespace:
+--
+
+CREATE INDEX user_software_result_id_idx ON "user" USING btree (software_result_id);
+
+
 SET search_path = subject, pg_catalog;
 
 --
--- Name: misc_attribute_entity_class_property_value_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: idx_s_mn_bt_ht_scn_si; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_s_mn_bt_ht_scn_si ON misc_note USING btree (body_text, header_text, subject_class_name, subject_id);
+
+
+--
+-- Name: idx_s_pp_l; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_s_pp_l ON project_part USING btree (label);
+
+
+--
+-- Name: idx_s_rm_ri; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_s_rm_ri ON role_member USING btree (role_id);
+
+
+--
+-- Name: idx_s_rm_ue; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_s_rm_ue ON role_member USING btree (user_email);
+
+
+--
+-- Name: idx_s_sa_al_si; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_s_sa_al_si ON subject_attribute USING btree (attribute_label, subject_id);
+
+
+--
+-- Name: idx_s_sa_av_n; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_s_sa_av_n ON subject_attribute USING btree (attribute_value, nomenclature);
+
+
+--
+-- Name: idx_subject_project_part_part_id; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
+--
+
+CREATE INDEX idx_subject_project_part_part_id ON project_part USING btree (part_id);
+
+
+--
+-- Name: misc_attribute_entity_class_property_value_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX misc_attribute_entity_class_property_value_index ON misc_attribute USING btree (entity_class_name, property_name, value);
 
 
 --
--- Name: misc_note_body_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_note_body_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX misc_note_body_index ON misc_note USING btree (body_text);
 
 
 --
--- Name: misc_note_editor_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_note_editor_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX misc_note_editor_index ON misc_note USING btree (editor_id, entry_date);
 
 
 --
--- Name: misc_note_subject_date_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_note_subject_date_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX misc_note_subject_date_index ON misc_note USING btree (entry_date, subject_class_name, subject_id);
 
 
 --
--- Name: misc_note_subject_id; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_note_subject_id; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX misc_note_subject_id ON misc_note USING btree (subject_id);
 
 
 --
--- Name: misc_note_subject_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: misc_note_subject_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX misc_note_subject_index ON misc_note USING btree (subject_class_name, subject_id, header_text);
 
 
 --
--- Name: project_name_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project_name_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX project_name_index ON project USING btree (name);
 
 
 --
--- Name: project_part_part_role_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project_part_part_role_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX project_part_part_role_index ON project_part USING btree (part_class_name, part_id, role);
 
 
 --
--- Name: project_part_project_label_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project_part_project_label_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX project_part_project_label_index ON project_part USING btree (project_id, label);
 
 
 --
--- Name: project_part_project_role_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: project_part_project_role_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX project_part_project_role_index ON project_part USING btree (project_id, role);
 
 
 --
--- Name: subject_attribute_label_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: subject_attribute_label_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX subject_attribute_label_index ON subject_attribute USING btree (attribute_label);
 
 
 --
--- Name: subject_name_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: subject_name_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX subject_name_index ON subject USING btree (name);
 
 
 --
--- Name: subject_role_name_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
---
-
-CREATE INDEX subject_role_name_index ON role USING btree (name);
-
-
---
--- Name: subject_user_email_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
---
-
-CREATE INDEX subject_user_email_index ON "user" USING btree (email);
-
-
---
--- Name: subject_user_username_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace: 
+-- Name: subject_user_username_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
 --
 
 CREATE INDEX subject_user_username_index ON "user" USING btree (username);
 
 
+SET search_path = timeline, pg_catalog;
+
+--
+-- Name: allocation_absolute_path_idx; Type: INDEX; Schema: timeline; Owner: genome; Tablespace:
+--
+
+CREATE INDEX allocation_absolute_path_idx ON allocation USING btree (absolute_path);
+
+
+--
+-- Name: allocation_name_idx; Type: INDEX; Schema: timeline; Owner: genome; Tablespace:
+--
+
+CREATE INDEX allocation_name_idx ON allocation USING btree (name);
+
+
+--
+-- Name: allocation_object_id_idx; Type: INDEX; Schema: timeline; Owner: genome; Tablespace:
+--
+
+CREATE INDEX allocation_object_id_idx ON allocation USING btree (object_id);
+
+
+--
+-- Name: base_created_by_idx; Type: INDEX; Schema: timeline; Owner: genome; Tablespace:
+--
+
+CREATE INDEX base_created_by_idx ON base USING btree (created_by);
+
+
+--
+-- Name: base_object_id_idx; Type: INDEX; Schema: timeline; Owner: genome; Tablespace:
+--
+
+CREATE INDEX base_object_id_idx ON base USING btree (object_id);
+
+
 SET search_path = web, pg_catalog;
 
 --
--- Name: nomenclature_enum_field_index; Type: INDEX; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature_enum_field_index; Type: INDEX; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE INDEX nomenclature_enum_field_index ON nomenclature_enum_value USING btree (nomenclature_field_id);
 
 
 --
--- Name: nomenclature_field_nomenclature_id_index; Type: INDEX; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature_field_nomenclature_id_index; Type: INDEX; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE INDEX nomenclature_field_nomenclature_id_index ON nomenclature_field USING btree (nomenclature_id);
 
 
 --
--- Name: nomenclature_name_index; Type: INDEX; Schema: web; Owner: genome; Tablespace: 
+-- Name: nomenclature_name_index; Type: INDEX; Schema: web; Owner: genome; Tablespace:
 --
 
 CREATE INDEX nomenclature_name_index ON nomenclature USING btree (name);
 
 
+--
+-- Name: siq_priority; Type: INDEX; Schema: web; Owner: genome; Tablespace:
+--
+
+CREATE INDEX siq_priority ON search_index_queue USING btree (priority);
+
+
 SET search_path = workflow, pg_catalog;
 
 --
--- Name: execution_metric_workflow_execution_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: execution_metric_workflow_execution_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX execution_metric_workflow_execution_id_idx ON execution_metric USING btree (workflow_execution_id);
 
 
 --
--- Name: execution_metric_workflow_execution_id_name_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: execution_metric_workflow_execution_id_name_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX execution_metric_workflow_execution_id_name_idx ON execution_metric USING btree (workflow_execution_id, name);
 
 
 --
--- Name: instance_current_execution_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_current_execution_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_current_execution_id_idx ON instance USING btree (current_execution_id);
 
 
 --
--- Name: instance_execution_workflow_execution_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_execution_workflow_execution_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE UNIQUE INDEX instance_execution_workflow_execution_id_idx ON instance_execution USING btree (workflow_execution_id);
 
 
 --
--- Name: instance_execution_workflow_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_execution_workflow_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_execution_workflow_instance_id_idx ON instance_execution USING btree (workflow_instance_id);
 
 
 --
--- Name: instance_name_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_name_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_name_idx ON instance USING btree (name);
 
 
 --
--- Name: instance_name_workflow_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_name_workflow_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_name_workflow_instance_id_idx ON instance USING btree (name, workflow_instance_id);
 
 
 --
--- Name: instance_name_workflow_instance_id_idx1; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_name_workflow_instance_id_idx1; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_name_workflow_instance_id_idx1 ON instance USING btree (name, workflow_instance_id);
 
 
 --
--- Name: instance_parent_execution_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_parent_execution_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_parent_execution_id_idx ON instance USING btree (parent_execution_id);
 
 
 --
--- Name: instance_parent_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_parent_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_parent_instance_id_idx ON instance USING btree (parent_instance_id);
 
 
 --
--- Name: instance_peer_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_peer_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_peer_instance_id_idx ON instance USING btree (peer_instance_id);
 
 
 --
--- Name: instance_workflow_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_workflow_instance_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE UNIQUE INDEX instance_workflow_instance_id_idx ON instance USING btree (workflow_instance_id);
 
 
 --
--- Name: instance_workflow_plan_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: instance_workflow_plan_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE INDEX instance_workflow_plan_id_idx ON instance USING btree (workflow_plan_id);
 
 
 --
--- Name: plan_workflow_plan_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: plan_workflow_plan_id_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE UNIQUE INDEX plan_workflow_plan_id_idx ON plan USING btree (workflow_plan_id);
 
 
 --
--- Name: service_hostname_port_start_time_process_id_username_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace: 
+-- Name: service_hostname_port_start_time_process_id_username_idx; Type: INDEX; Schema: workflow; Owner: genome; Tablespace:
 --
 
 CREATE UNIQUE INDEX service_hostname_port_start_time_process_id_username_idx ON service USING btree (hostname, port, start_time, process_id, username);
+
+SET search_path = config, pg_catalog;
+
+--
+-- Name: analysis_menu_config_set_fk; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY analysis_menu_item
+    ADD CONSTRAINT analysis_menu_config_set_fk FOREIGN KEY (configuration_set_id) REFERENCES set(id);
+
+
+--
+-- Name: analysis_project_model_group; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY analysis_project
+    ADD CONSTRAINT analysis_project_model_group FOREIGN KEY (model_group_id) REFERENCES model.model_group(id);
+
+
+--
+-- Name: config_analysis_project_analysis_menu_item_fk; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY analysis_project
+    ADD CONSTRAINT config_analysis_project_analysis_menu_item_fk FOREIGN KEY (analysis_menu_item_id) REFERENCES analysis_menu_item(id);
+
+
+--
+-- Name: config_analysis_project_configruation_set_fk; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY analysis_project
+    ADD CONSTRAINT config_analysis_project_configruation_set_fk FOREIGN KEY (configuration_set_id) REFERENCES set(id);
+
+
+--
+-- Name: config_set_allocation_fk; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY set
+    ADD CONSTRAINT config_set_allocation_fk FOREIGN KEY (allocation_id) REFERENCES disk.allocation(id);
+
+
+--
+-- Name: instrument_data_analysis_project_bridg_analysis_project_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY instrument_data_analysis_project_bridge
+    ADD CONSTRAINT instrument_data_analysis_project_bridg_analysis_project_id_fkey FOREIGN KEY (analysis_project_id) REFERENCES analysis_project(id);
+
+
+--
+-- Name: instrument_data_analysis_project_bridge_instrument_data_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY instrument_data_analysis_project_bridge
+    ADD CONSTRAINT instrument_data_analysis_project_bridge_instrument_data_id_fkey FOREIGN KEY (instrument_data_id) REFERENCES instrument.data(id);
+
+
+--
+-- Name: profile_item_analysis_project_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY profile_item
+    ADD CONSTRAINT profile_item_analysis_project_id_fkey FOREIGN KEY (analysis_project_id) REFERENCES analysis_project(id);
+
+
+--
+-- Name: profile_item_analysismenu_item_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY profile_item
+    ADD CONSTRAINT profile_item_analysismenu_item_id_fkey FOREIGN KEY (analysismenu_item_id) REFERENCES analysismenu_item(id);
+
+
+--
+-- Name: subject_mapping_analysis_project_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY subject_mapping
+    ADD CONSTRAINT subject_mapping_analysis_project_id_fkey FOREIGN KEY (analysis_project_id) REFERENCES analysis_project(id);
+
+
+--
+-- Name: subject_mapping_input_subject_mapping_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY subject_mapping_input
+    ADD CONSTRAINT subject_mapping_input_subject_mapping_id_fkey FOREIGN KEY (subject_mapping_id) REFERENCES subject_mapping(id);
+
+
+--
+-- Name: subject_mapping_subject_subject_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY subject_mapping_subject
+    ADD CONSTRAINT subject_mapping_subject_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES subject.subject(subject_id);
+
+
+--
+-- Name: subject_mapping_subject_subject_mapping_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
+--
+
+ALTER TABLE ONLY subject_mapping_subject
+    ADD CONSTRAINT subject_mapping_subject_subject_mapping_id_fkey FOREIGN KEY (subject_mapping_id) REFERENCES subject_mapping(id);
+
+
+SET search_path = disk, pg_catalog;
+
+--
+-- Name: file_summary_allocation_id_fkey; Type: FK CONSTRAINT; Schema: disk; Owner: genome
+--
+
+ALTER TABLE ONLY file_summary
+    ADD CONSTRAINT file_summary_allocation_id_fkey FOREIGN KEY (allocation_id) REFERENCES allocation(id);
 
 
 SET search_path = instrument, pg_catalog;
@@ -2071,6 +2902,14 @@ ALTER TABLE ONLY data_attribute
 
 ALTER TABLE ONLY data
     ADD CONSTRAINT data_library_id_fkey FOREIGN KEY (library_id) REFERENCES fragment_library(library_id);
+
+
+--
+-- Name: fragment_library_sample_id_fkey; Type: FK CONSTRAINT; Schema: instrument; Owner: genome
+--
+
+ALTER TABLE ONLY fragment_library
+    ADD CONSTRAINT fragment_library_sample_id_fkey FOREIGN KEY (sample_id) REFERENCES subject.subject(subject_id);
 
 
 SET search_path = model, pg_catalog;
@@ -2148,6 +2987,46 @@ ALTER TABLE ONLY feature_list
 
 
 --
+-- Name: feature_list_subject_id_fkey; Type: FK CONSTRAINT; Schema: model; Owner: genome
+--
+
+ALTER TABLE ONLY feature_list
+    ADD CONSTRAINT feature_list_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES build(build_id);
+
+
+--
+-- Name: fk_m_e_bi; Type: FK CONSTRAINT; Schema: model; Owner: genome
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT fk_m_e_bi FOREIGN KEY (build_id) REFERENCES build(build_id);
+
+
+--
+-- Name: fk_m_e_mi; Type: FK CONSTRAINT; Schema: model; Owner: genome
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT fk_m_e_mi FOREIGN KEY (model_id) REFERENCES model(genome_model_id);
+
+
+--
+-- Name: fk_m_e_pei; Type: FK CONSTRAINT; Schema: model; Owner: genome
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT fk_m_e_pei FOREIGN KEY (parent_event_id) REFERENCES event(genome_model_event_id);
+
+
+--
+-- Name: fk_m_e_prei; Type: FK CONSTRAINT; Schema: model; Owner: genome
+--
+
+ALTER TABLE ONLY event
+    ADD CONSTRAINT fk_m_e_prei FOREIGN KEY (prior_event_id) REFERENCES event(genome_model_event_id);
+
+
+--
 -- Name: model_group_bridge_model_group_id_fkey; Type: FK CONSTRAINT; Schema: model; Owner: genome
 --
 
@@ -2204,6 +3083,14 @@ ALTER TABLE ONLY processing_profile_param
 
 
 SET search_path = result, pg_catalog;
+
+--
+-- Name: fk_r_u_srid; Type: FK CONSTRAINT; Schema: result; Owner: genome
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT fk_r_u_srid FOREIGN KEY (software_result_id) REFERENCES software_result(id);
+
 
 --
 -- Name: input_software_result_id_fkey; Type: FK CONSTRAINT; Schema: result; Owner: genome
@@ -2263,6 +3150,24 @@ ALTER TABLE ONLY subject_attribute
     ADD CONSTRAINT subject_attribute_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES subject(subject_id);
 
 
+SET search_path = timeline, pg_catalog;
+
+--
+-- Name: allocation_event_allocation_fk; Type: FK CONSTRAINT; Schema: timeline; Owner: genome
+--
+
+ALTER TABLE ONLY allocation
+    ADD CONSTRAINT allocation_event_allocation_fk FOREIGN KEY (object_id) REFERENCES disk.allocation(id) MATCH FULL;
+
+
+--
+-- Name: allocation_event_typ_fk; Type: FK CONSTRAINT; Schema: timeline; Owner: genome
+--
+
+ALTER TABLE ONLY allocation
+    ADD CONSTRAINT allocation_event_typ_fk FOREIGN KEY (name) REFERENCES allocation_event_type(id) MATCH FULL;
+
+
 SET search_path = web, pg_catalog;
 
 --
@@ -2288,7 +3193,6 @@ ALTER TABLE ONLY nomenclature_field
 ALTER TABLE ONLY task_params
     ADD CONSTRAINT task_params_genome_task_id_fkey FOREIGN KEY (genome_task_id) REFERENCES task(id);
 
-
 SET search_path = workflow, pg_catalog;
 
 --
@@ -2306,6 +3210,45 @@ ALTER TABLE ONLY execution_metric
 ALTER TABLE ONLY instance
     ADD CONSTRAINT instance_peer_instance_id_fkey FOREIGN KEY (peer_instance_id) REFERENCES instance(workflow_instance_id);
 
+--
+-- Name: config; Type: ACL; Schema: -; Owner: genome
+--
+
+REVOKE ALL ON SCHEMA config FROM PUBLIC;
+REVOKE ALL ON SCHEMA config FROM genome;
+GRANT ALL ON SCHEMA config TO genome;
+GRANT USAGE ON SCHEMA config TO genome;
+
+
+--
+-- Name: disk; Type: ACL; Schema: -; Owner: genome
+--
+
+REVOKE ALL ON SCHEMA disk FROM PUBLIC;
+REVOKE ALL ON SCHEMA disk FROM genome;
+GRANT ALL ON SCHEMA disk TO genome;
+GRANT USAGE ON SCHEMA disk TO genome;
+
+
+--
+-- Name: instrument; Type: ACL; Schema: -; Owner: genome
+--
+
+REVOKE ALL ON SCHEMA instrument FROM PUBLIC;
+REVOKE ALL ON SCHEMA instrument FROM genome;
+GRANT ALL ON SCHEMA instrument TO genome;
+GRANT USAGE ON SCHEMA instrument TO genome;
+
+
+--
+-- Name: model; Type: ACL; Schema: -; Owner: genome
+--
+
+REVOKE ALL ON SCHEMA model FROM PUBLIC;
+REVOKE ALL ON SCHEMA model FROM genome;
+GRANT ALL ON SCHEMA model TO genome;
+GRANT USAGE ON SCHEMA model TO genome;
+
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
@@ -2315,6 +3258,622 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- Name: result; Type: ACL; Schema: -; Owner: genome
+--
+
+REVOKE ALL ON SCHEMA result FROM PUBLIC;
+REVOKE ALL ON SCHEMA result FROM genome;
+GRANT ALL ON SCHEMA result TO genome;
+GRANT USAGE ON SCHEMA result TO genome;
+
+
+--
+-- Name: subject; Type: ACL; Schema: -; Owner: genome
+--
+
+REVOKE ALL ON SCHEMA subject FROM PUBLIC;
+REVOKE ALL ON SCHEMA subject FROM genome;
+GRANT ALL ON SCHEMA subject TO genome;
+GRANT USAGE ON SCHEMA subject TO genome;
+
+
+--
+-- Name: timeline; Type: ACL; Schema: -; Owner: genome
+--
+
+REVOKE ALL ON SCHEMA timeline FROM PUBLIC;
+REVOKE ALL ON SCHEMA timeline FROM genome;
+GRANT ALL ON SCHEMA timeline TO genome;
+GRANT USAGE ON SCHEMA timeline TO genome;
+
+
+--
+-- Name: web; Type: ACL; Schema: -; Owner: genome
+--
+
+REVOKE ALL ON SCHEMA web FROM PUBLIC;
+REVOKE ALL ON SCHEMA web FROM genome;
+GRANT ALL ON SCHEMA web TO genome;
+GRANT USAGE ON SCHEMA web TO genome;
+
+
+SET search_path = config, pg_catalog;
+
+--
+-- Name: analysis_menu_item; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE analysis_menu_item FROM PUBLIC;
+REVOKE ALL ON TABLE analysis_menu_item FROM genome;
+GRANT ALL ON TABLE analysis_menu_item TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE analysis_menu_item TO genome;
+
+
+--
+-- Name: analysis_project; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE analysis_project FROM PUBLIC;
+REVOKE ALL ON TABLE analysis_project FROM genome;
+GRANT ALL ON TABLE analysis_project TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE analysis_project TO genome;
+
+
+--
+-- Name: analysismenu_item; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE analysismenu_item FROM PUBLIC;
+REVOKE ALL ON TABLE analysismenu_item FROM genome;
+GRANT ALL ON TABLE analysismenu_item TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE analysismenu_item TO genome;
+
+
+--
+-- Name: instrument_data_analysis_project_bridge; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE instrument_data_analysis_project_bridge FROM PUBLIC;
+REVOKE ALL ON TABLE instrument_data_analysis_project_bridge FROM genome;
+GRANT ALL ON TABLE instrument_data_analysis_project_bridge TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE instrument_data_analysis_project_bridge TO genome;
+
+
+--
+-- Name: profile_item; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE profile_item FROM PUBLIC;
+REVOKE ALL ON TABLE profile_item FROM genome;
+GRANT ALL ON TABLE profile_item TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE profile_item TO genome;
+
+
+--
+-- Name: set; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE set FROM PUBLIC;
+REVOKE ALL ON TABLE set FROM genome;
+GRANT ALL ON TABLE set TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE set TO genome;
+
+
+--
+-- Name: subject_mapping; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE subject_mapping FROM PUBLIC;
+REVOKE ALL ON TABLE subject_mapping FROM genome;
+GRANT ALL ON TABLE subject_mapping TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE subject_mapping TO genome;
+
+
+--
+-- Name: subject_mapping_input; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE subject_mapping_input FROM PUBLIC;
+REVOKE ALL ON TABLE subject_mapping_input FROM genome;
+GRANT ALL ON TABLE subject_mapping_input TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE subject_mapping_input TO genome;
+
+
+--
+-- Name: subject_mapping_subject; Type: ACL; Schema: config; Owner: genome
+--
+
+REVOKE ALL ON TABLE subject_mapping_subject FROM PUBLIC;
+REVOKE ALL ON TABLE subject_mapping_subject FROM genome;
+GRANT ALL ON TABLE subject_mapping_subject TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE subject_mapping_subject TO genome;
+
+
+SET search_path = disk, pg_catalog;
+
+--
+-- Name: allocation; Type: ACL; Schema: disk; Owner: genome
+--
+
+REVOKE ALL ON TABLE allocation FROM PUBLIC;
+REVOKE ALL ON TABLE allocation FROM genome;
+GRANT ALL ON TABLE allocation TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE allocation TO genome;
+
+
+--
+-- Name: file_summary; Type: ACL; Schema: disk; Owner: genome
+--
+
+REVOKE ALL ON TABLE file_summary FROM PUBLIC;
+REVOKE ALL ON TABLE file_summary FROM genome;
+GRANT ALL ON TABLE file_summary TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE file_summary TO genome;
+
+
+--
+-- Name: group; Type: ACL; Schema: disk; Owner: genome
+--
+
+REVOKE ALL ON TABLE "group" FROM PUBLIC;
+REVOKE ALL ON TABLE "group" FROM genome;
+GRANT ALL ON TABLE "group" TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "group" TO genome;
+
+
+--
+-- Name: volume; Type: ACL; Schema: disk; Owner: genome
+--
+
+REVOKE ALL ON TABLE volume FROM PUBLIC;
+REVOKE ALL ON TABLE volume FROM genome;
+GRANT ALL ON TABLE volume TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE volume TO genome;
+
+
+--
+-- Name: volume_group_bridge; Type: ACL; Schema: disk; Owner: genome
+--
+
+REVOKE ALL ON TABLE volume_group_bridge FROM PUBLIC;
+REVOKE ALL ON TABLE volume_group_bridge FROM genome;
+GRANT ALL ON TABLE volume_group_bridge TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE volume_group_bridge TO genome;
+
+
+SET search_path = instrument, pg_catalog;
+
+--
+-- Name: data; Type: ACL; Schema: instrument; Owner: genome
+--
+
+REVOKE ALL ON TABLE data FROM PUBLIC;
+REVOKE ALL ON TABLE data FROM genome;
+GRANT ALL ON TABLE data TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE data TO genome;
+
+
+--
+-- Name: data_attribute; Type: ACL; Schema: instrument; Owner: genome
+--
+
+REVOKE ALL ON TABLE data_attribute FROM PUBLIC;
+REVOKE ALL ON TABLE data_attribute FROM genome;
+GRANT ALL ON TABLE data_attribute TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE data_attribute TO genome;
+
+
+--
+-- Name: fragment_library; Type: ACL; Schema: instrument; Owner: genome
+--
+
+REVOKE ALL ON TABLE fragment_library FROM PUBLIC;
+REVOKE ALL ON TABLE fragment_library FROM genome;
+GRANT ALL ON TABLE fragment_library TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE fragment_library TO genome;
+
+
+SET search_path = model, pg_catalog;
+
+--
+-- Name: build; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE build FROM PUBLIC;
+REVOKE ALL ON TABLE build FROM genome;
+GRANT ALL ON TABLE build TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE build TO genome;
+
+
+--
+-- Name: build_input; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE build_input FROM PUBLIC;
+REVOKE ALL ON TABLE build_input FROM genome;
+GRANT ALL ON TABLE build_input TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE build_input TO genome;
+
+
+--
+-- Name: build_link; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE build_link FROM PUBLIC;
+REVOKE ALL ON TABLE build_link FROM genome;
+GRANT ALL ON TABLE build_link TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE build_link TO genome;
+
+
+--
+-- Name: build_metric; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE build_metric FROM PUBLIC;
+REVOKE ALL ON TABLE build_metric FROM genome;
+GRANT ALL ON TABLE build_metric TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE build_metric TO genome;
+
+
+--
+-- Name: event; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE event FROM PUBLIC;
+REVOKE ALL ON TABLE event FROM genome;
+GRANT ALL ON TABLE event TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE event TO genome;
+
+
+--
+-- Name: event_input; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE event_input FROM PUBLIC;
+REVOKE ALL ON TABLE event_input FROM genome;
+GRANT ALL ON TABLE event_input TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE event_input TO genome;
+
+
+--
+-- Name: event_metric; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE event_metric FROM PUBLIC;
+REVOKE ALL ON TABLE event_metric FROM genome;
+GRANT ALL ON TABLE event_metric TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE event_metric TO genome;
+
+
+--
+-- Name: event_output; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE event_output FROM PUBLIC;
+REVOKE ALL ON TABLE event_output FROM genome;
+GRANT ALL ON TABLE event_output TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE event_output TO genome;
+
+
+--
+-- Name: feature_list; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE feature_list FROM PUBLIC;
+REVOKE ALL ON TABLE feature_list FROM genome;
+GRANT ALL ON TABLE feature_list TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE feature_list TO genome;
+
+
+--
+-- Name: model; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE model FROM PUBLIC;
+REVOKE ALL ON TABLE model FROM genome;
+GRANT ALL ON TABLE model TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE model TO genome;
+
+
+--
+-- Name: model_group; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE model_group FROM PUBLIC;
+REVOKE ALL ON TABLE model_group FROM genome;
+GRANT ALL ON TABLE model_group TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE model_group TO genome;
+
+
+--
+-- Name: model_group_bridge; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE model_group_bridge FROM PUBLIC;
+REVOKE ALL ON TABLE model_group_bridge FROM genome;
+GRANT ALL ON TABLE model_group_bridge TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE model_group_bridge TO genome;
+
+
+--
+-- Name: model_input; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE model_input FROM PUBLIC;
+REVOKE ALL ON TABLE model_input FROM genome;
+GRANT ALL ON TABLE model_input TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE model_input TO genome;
+
+
+--
+-- Name: model_link; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE model_link FROM PUBLIC;
+REVOKE ALL ON TABLE model_link FROM genome;
+GRANT ALL ON TABLE model_link TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE model_link TO genome;
+
+
+--
+-- Name: processing_profile; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE processing_profile FROM PUBLIC;
+REVOKE ALL ON TABLE processing_profile FROM genome;
+GRANT ALL ON TABLE processing_profile TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE processing_profile TO genome;
+
+
+--
+-- Name: processing_profile_param; Type: ACL; Schema: model; Owner: genome
+--
+
+REVOKE ALL ON TABLE processing_profile_param FROM PUBLIC;
+REVOKE ALL ON TABLE processing_profile_param FROM genome;
+GRANT ALL ON TABLE processing_profile_param TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE processing_profile_param TO genome;
+
+
+SET search_path = result, pg_catalog;
+
+--
+-- Name: input; Type: ACL; Schema: result; Owner: genome
+--
+
+REVOKE ALL ON TABLE input FROM PUBLIC;
+REVOKE ALL ON TABLE input FROM genome;
+GRANT ALL ON TABLE input TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE input TO genome;
+
+
+--
+-- Name: metric; Type: ACL; Schema: result; Owner: genome
+--
+
+REVOKE ALL ON TABLE metric FROM PUBLIC;
+REVOKE ALL ON TABLE metric FROM genome;
+GRANT ALL ON TABLE metric TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE metric TO genome;
+
+
+--
+-- Name: param; Type: ACL; Schema: result; Owner: genome
+--
+
+REVOKE ALL ON TABLE param FROM PUBLIC;
+REVOKE ALL ON TABLE param FROM genome;
+GRANT ALL ON TABLE param TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE param TO genome;
+
+
+--
+-- Name: software_result; Type: ACL; Schema: result; Owner: genome
+--
+
+REVOKE ALL ON TABLE software_result FROM PUBLIC;
+REVOKE ALL ON TABLE software_result FROM genome;
+GRANT ALL ON TABLE software_result TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE software_result TO genome;
+
+
+--
+-- Name: user; Type: ACL; Schema: result; Owner: genome
+--
+
+REVOKE ALL ON TABLE "user" FROM PUBLIC;
+REVOKE ALL ON TABLE "user" FROM genome;
+GRANT ALL ON TABLE "user" TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "user" TO genome;
+
+
+SET search_path = subject, pg_catalog;
+
+--
+-- Name: misc_attribute; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE misc_attribute FROM PUBLIC;
+REVOKE ALL ON TABLE misc_attribute FROM genome;
+GRANT ALL ON TABLE misc_attribute TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE misc_attribute TO genome;
+
+
+--
+-- Name: misc_note; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE misc_note FROM PUBLIC;
+REVOKE ALL ON TABLE misc_note FROM genome;
+GRANT ALL ON TABLE misc_note TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE misc_note TO genome;
+
+
+--
+-- Name: project; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE project FROM PUBLIC;
+REVOKE ALL ON TABLE project FROM genome;
+GRANT ALL ON TABLE project TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE project TO genome;
+
+
+--
+-- Name: project_part; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE project_part FROM PUBLIC;
+REVOKE ALL ON TABLE project_part FROM genome;
+GRANT ALL ON TABLE project_part TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE project_part TO genome;
+
+
+--
+-- Name: role; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE role FROM PUBLIC;
+REVOKE ALL ON TABLE role FROM genome;
+GRANT ALL ON TABLE role TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE role TO genome;
+
+
+--
+-- Name: role_member; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE role_member FROM PUBLIC;
+REVOKE ALL ON TABLE role_member FROM genome;
+GRANT ALL ON TABLE role_member TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE role_member TO genome;
+
+
+--
+-- Name: subject; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE subject FROM PUBLIC;
+REVOKE ALL ON TABLE subject FROM genome;
+GRANT ALL ON TABLE subject TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE subject TO genome;
+
+
+--
+-- Name: subject_attribute; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE subject_attribute FROM PUBLIC;
+REVOKE ALL ON TABLE subject_attribute FROM genome;
+GRANT ALL ON TABLE subject_attribute TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE subject_attribute TO genome;
+
+
+--
+-- Name: user; Type: ACL; Schema: subject; Owner: genome
+--
+
+REVOKE ALL ON TABLE "user" FROM PUBLIC;
+REVOKE ALL ON TABLE "user" FROM genome;
+GRANT ALL ON TABLE "user" TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE "user" TO genome;
+
+
+SET search_path = timeline, pg_catalog;
+
+--
+-- Name: base; Type: ACL; Schema: timeline; Owner: genome
+--
+
+REVOKE ALL ON TABLE base FROM PUBLIC;
+REVOKE ALL ON TABLE base FROM genome;
+GRANT ALL ON TABLE base TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE base TO genome;
+
+
+--
+-- Name: allocation; Type: ACL; Schema: timeline; Owner: genome
+--
+
+REVOKE ALL ON TABLE allocation FROM PUBLIC;
+REVOKE ALL ON TABLE allocation FROM genome;
+GRANT ALL ON TABLE allocation TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE allocation TO genome;
+
+
+--
+-- Name: allocation_event_type; Type: ACL; Schema: timeline; Owner: genome
+--
+
+REVOKE ALL ON TABLE allocation_event_type FROM PUBLIC;
+REVOKE ALL ON TABLE allocation_event_type FROM genome;
+GRANT ALL ON TABLE allocation_event_type TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE allocation_event_type TO genome;
+
+
+SET search_path = web, pg_catalog;
+
+--
+-- Name: nomenclature; Type: ACL; Schema: web; Owner: genome
+--
+
+REVOKE ALL ON TABLE nomenclature FROM PUBLIC;
+REVOKE ALL ON TABLE nomenclature FROM genome;
+GRANT ALL ON TABLE nomenclature TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE nomenclature TO genome;
+
+
+--
+-- Name: nomenclature_enum_value; Type: ACL; Schema: web; Owner: genome
+--
+
+REVOKE ALL ON TABLE nomenclature_enum_value FROM PUBLIC;
+REVOKE ALL ON TABLE nomenclature_enum_value FROM genome;
+GRANT ALL ON TABLE nomenclature_enum_value TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE nomenclature_enum_value TO genome;
+
+
+--
+-- Name: nomenclature_field; Type: ACL; Schema: web; Owner: genome
+--
+
+REVOKE ALL ON TABLE nomenclature_field FROM PUBLIC;
+REVOKE ALL ON TABLE nomenclature_field FROM genome;
+GRANT ALL ON TABLE nomenclature_field TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE nomenclature_field TO genome;
+
+
+--
+-- Name: search_index_queue; Type: ACL; Schema: web; Owner: genome
+--
+
+REVOKE ALL ON TABLE search_index_queue FROM PUBLIC;
+REVOKE ALL ON TABLE search_index_queue FROM genome;
+GRANT ALL ON TABLE search_index_queue TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE search_index_queue TO genome;
+
+
+--
+-- Name: task; Type: ACL; Schema: web; Owner: genome
+--
+
+REVOKE ALL ON TABLE task FROM PUBLIC;
+REVOKE ALL ON TABLE task FROM genome;
+GRANT ALL ON TABLE task TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE task TO genome;
+
+
+--
+-- Name: task_params; Type: ACL; Schema: web; Owner: genome
+--
+
+REVOKE ALL ON TABLE task_params FROM PUBLIC;
+REVOKE ALL ON TABLE task_params FROM genome;
+GRANT ALL ON TABLE task_params TO genome;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE task_params TO genome;
 
 
 --
