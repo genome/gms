@@ -565,17 +565,30 @@ done-host/apache: done-host/pkgs
 	# 
 	sudo -v
 	echo '<VirtualHost *:80>' >| /tmp/gms-webviews.conf
-	echo 'ServerName localhost' >> /tmp/gms-webviews.conf 
-	echo 'ServerAlias some_hostname some_other_hostname' >> /tmp/gms-webviews.conf 
-	echo 'DocumentRoot /var/www/gms-webviews/public' >> /tmp/gms-webviews.conf
-	echo 'PassengerHighPerformance on' >> /tmp/gms-webviews.conf
-	echo '<Directory /var/www/gms-webviews/public>' >> /tmp/gms-webviews.conf
-	echo '  AllowOverride all' >> /tmp/gms-webviews.conf
-	echo '  Options -MultiViews' >> /tmp/gms-webviews.conf
-	echo '</Directory>' >> /tmp/gms-webviews.conf
-	echo 'AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/json' >> /tmp/gms-webviews.conf
-	echo 'AddOutputFilterByType DEFLATE image/jpeg, image/png, image/gif' >> /tmp/gms-webviews.conf
-	echo '</VirtualHost>' >> /tmp/gms-webviews.conf
+	echo '  ServerName localhost' >> /tmp/gms-webviews.conf
+	echo '  ServerAlias some_hostname some_other_hostname' >> /tmp/gms-webviews.conf
+	echo '  DocumentRoot /opt/gms' >> /tmp/gms-webviews.conf
+	echo '  Alias /data /opt/gms' >> /tmp/gms-webviews.conf
+	echo '  <Directory /opt/gms>' >> /tmp/gms-webviews.conf
+	echo '    Order deny,allow' >> /tmp/gms-webviews.conf
+	echo '    Allow from all' >> /tmp/gms-webviews.conf
+	echo '    Options +Indexes +FollowSymLinks +MultiViews' >> /tmp/gms-webviews.conf
+	echo '  </Directory>' >> /tmp/gms-webviews.conf
+	echo '  <Location /data>' >> /tmp/gms-webviews.conf
+	echo '    PassengerEnabled off' >> /tmp/gms-webviews.conf
+	echo '  </Location>' >> /tmp/gms-webviews.conf
+	echo '  Alias / /var/www/gms-webviews/public' >> /tmp/gms-webviews.conf
+	echo '  <Location />' >> /tmp/gms-webviews.conf
+	echo '    PassengerBaseURI /' >> /tmp/gms-webviews.conf
+	echo '    PassengerAppRoot /var/www/gms-webviews' >> /tmp/gms-webviews.conf
+	echo '  </Location>' >> /tmp/gms-webviews.conf
+	echo '  <Directory /var/www/gms-webviews/public>' >> /tmp/gms-webviews.conf
+	echo '    Allow from all' >> /tmp/gms-webviews.conf
+	echo '    Options -MultiViews' >> /tmp/gms-webviews.conf
+	echo '  </Directory>' >> /tmp/gms-webviews.conf
+	echo '  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/json' >> /tmp/gms-webviews.conf
+	echo '  AddOutputFilterByType DEFLATE image/jpeg, image/png, image/gif' >> /tmp/gms-webviews.conf
+	echo '</VirtualHost>' >> /tmp/gms-webviews.conf 
 	#
 	sudo mv /tmp/gms-webviews.conf /etc/apache2/sites-available/gms-webviews.conf
 	( [ -e /etc/apache2/sites-enabled/000-default ] && sudo rm /etc/apache2/sites-enabled/000-default ) || true 
