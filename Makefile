@@ -208,7 +208,7 @@ vmcreate: done-host/vmaddbox done-host/vmkernel
 	# the first bootup will fail because the NFS client is not installed 
 	#
 	sudo -v
-	sudo chown -R `whoami`: .vagrant
+	[ ! -e .vagrant ] || sudo chown -R `whoami`: .vagrant
 	vagrant up || true 
 	sudo chown -R `whoami`: .vagrant
 	#
