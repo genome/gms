@@ -590,7 +590,8 @@ done-host/db-schema: done-host/db-init done-host/hosts
 	# 
 	sudo -v
 	sudo -u postgres psql -d genome -f setup/schema.psql	
-	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-allocations.pl'
+	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-disk-allocations.pl'
+	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-timeline-allocations.pl'
 	sudo bash -l -c 'source /etc/genome.conf; /usr/bin/perl setup/prime-sqlite.pl'
 	sudo bash -l -c 'source /etc/genome.conf; ($(GMS_HOME)/sw/genome/bin/genome-perl $(GMS_HOME)/sw/genome/bin/genome disk volume list | grep reads >/dev/null)' 
 	touch $@ 
@@ -671,6 +672,7 @@ db-rebuild:
 	sudo -u postgres /usr/bin/createdb -T template0 -O genome genome
 	sudo -u postgres /usr/bin/psql -c "GRANT ALL PRIVILEGES ON database genome TO \"genome\";"
 	sudo -u postgres psql -d genome -f setup/schema.psql	
-	setup/prime-allocations.pl
+	setup/prime-disk-allocations.pl
+	setup/prime-timeline-allocations.pl
 	sudo touch done-host/db-schema
 
