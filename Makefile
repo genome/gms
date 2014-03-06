@@ -656,10 +656,10 @@ update-repos:
 	# $@:
 	#
 	sudo -v
-	cd $(GMS_HOME)/sw/genome; git pull origin gms-pub
-	cd $(GMS_HOME)/sw/ur; git pull origin gms-pub-tag
-	cd $(GMS_HOME)/sw/workflow; git pull origin gms-pub
-	cd $(GMS_HOME)/sw/rails; git pull origin gms-pub
+	cd $(GMS_HOME)/sw/genome; git pull origin $(GIT_VERSION_GENOME) 
+	cd $(GMS_HOME)/sw/ur; git pull origin $(GIT_VERSION_UR)
+	cd $(GMS_HOME)/sw/workflow; git pull origin $(GIT_VERSION_WORKFLOW)
+	cd $(GMS_HOME)/sw/rails; git pull origin $(GIT_VERSION_RAILS) 
 	[ -d /var/www/gms-webviews ] || sudo mkdir /var/www/gms-webviews
 	sudo chown -R www-data:www-data /var/www/gms-webviews/
 	sudo -u www-data rsync -r $(GMS_HOME)/sw/rails/ /var/www/gms-webviews
