@@ -59,8 +59,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   opt_gms_local_disk = vagrant_root + '/opt-gms-local-disk.vdi' #Will be '/dev/sdd' partitioned as '/dev/sdd1' within the VM and mounted as '/opt/gms/$GENOME_SYS_ID'
 
   config.vm.provider "virtualbox" do |v|
-      v.customize ["modifyvm", :id, "--memory", 55000]          # 55GB: too little memory will prevent some jobs from running.
-      v.customize ["modifyvm", :id, "--cpus", 24]               # 24 CPUS: set more CPUs to prevent job deadlocks.
+      v.customize ["modifyvm", :id, "--memory", 5000]          # 55GB: too little memory will prevent some jobs from running.
+      v.customize ["modifyvm", :id, "--cpus", 2]               # 24 CPUS: set more CPUs to prevent job deadlocks.
       v.customize ["modifyvm", :id, "--natnet1", "192.168/16"]  # Use a subnet that prevents prevent collisions with local network.
 
       v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', tmp_disk]
