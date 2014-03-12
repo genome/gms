@@ -52,7 +52,7 @@ DATASERVER=https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/GMS1/setup/
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2014-01-16
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=2014.03.11
+APT_DUMP_VERSION=2014.03.12
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -236,7 +236,7 @@ vminit: vmup
 	sudo -v
 	vagrant ssh -c 'cd /vagrant &&  make done-host/vminit'
 	#
-	# Reload so that additinal provisioning can occur
+	# Reload so that additional provisioning can occur
 	# now that the above is complete.
 	#
 	vagrant reload
