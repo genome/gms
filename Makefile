@@ -566,12 +566,16 @@ done-host/apache: done-host/pkgs
 	echo '  ServerAlias some_hostname some_other_hostname' >> /tmp/gms-webviews.conf
 	echo '  DocumentRoot /opt/gms' >> /tmp/gms-webviews.conf
 	echo '  Alias /data /opt/gms' >> /tmp/gms-webviews.conf
+	echo '  Alias /opt/gms /opt/gms' >> /tmp/gms-webviews.conf
 	echo '  <Directory /opt/gms>' >> /tmp/gms-webviews.conf
 	echo '    Order deny,allow' >> /tmp/gms-webviews.conf
 	echo '    Allow from all' >> /tmp/gms-webviews.conf
 	echo '    Options +Indexes +FollowSymLinks +MultiViews' >> /tmp/gms-webviews.conf
 	echo '  </Directory>' >> /tmp/gms-webviews.conf
 	echo '  <Location /data>' >> /tmp/gms-webviews.conf
+	echo '    PassengerEnabled off' >> /tmp/gms-webviews.conf
+	echo '  </Location>' >> /tmp/gms-webviews.conf
+	echo '  <Location /opt/gms>' >> /tmp/gms-webviews.conf
 	echo '    PassengerEnabled off' >> /tmp/gms-webviews.conf
 	echo '  </Location>' >> /tmp/gms-webviews.conf
 	echo '  Alias / /var/www/gms-webviews/public' >> /tmp/gms-webviews.conf
