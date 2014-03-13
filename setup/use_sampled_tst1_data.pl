@@ -27,7 +27,7 @@ my $subsample_dir;
 if ($ds==100){
   $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1percent/";
 }elsif($ds==1000){
-  $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1tenth_percent_chr_21_22_targeted_v2/";
+  $subsample_dir = "/opt/gms/GMS1/subsampled_bams/hcc1395_1tenth_percent/";
 }else{
   die print "\n\nInvalid ds value\n\n";
 }
