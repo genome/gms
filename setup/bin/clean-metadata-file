@@ -1,0 +1,17 @@
+#!/bin/bash
+
+export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+#Get the new metadata file and place in this directory
+export MDF="18177dd5eca44514a47f367d9804e17a-2014.3.14.dat"
+
+#Replace TGI specific names with generic names to be used in the sGMS
+$DIR/findreplace "Nov 2011 Default Reference Alignment" "Default Reference Alignment" 18177dd5eca44514a47f367d9804e17a-2014.3.14.dat
+$DIR/findreplace "Oct 2012 Default Somatic Variation WGS" "Default Somatic Variation WGS" 18177dd5eca44514a47f367d9804e17a-2014.3.14.dat
+$DIR/findreplace "Oct 2012 Default Somatic Variation Exome" "Default Somatic Variation Exome" 18177dd5eca44514a47f367d9804e17a-2014.3.14.dat
+$DIR/findreplace "October 2012 Default Ovation V2 RNA-seq" "Default Ovation V2 RNA-seq" 18177dd5eca44514a47f367d9804e17a-2014.3.14.dat
+$DIR/findreplace "November 2011 Clinical Sequencing" "Default Clinical Sequencing" 18177dd5eca44514a47f367d9804e17a-2014.3.14.dat
+$DIR/findreplace "infinium wugc" "Default Genotype Microarray" 18177dd5eca44514a47f367d9804e17a-2014.3.14.dat
+$DIR/findreplace "11111001 capture chip set" "NimbleGen v3 Capture Chip Set" 18177dd5eca44514a47f367d9804e17a-2014.3.14.dat
+
+
