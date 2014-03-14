@@ -21,7 +21,7 @@ sudo -i -u gmsuser
 
 #make sure unwanted remnants of last install are not in /tmp (e.g. /tmp/gms-install-done-local/). Clean-up if needed
 cd /tmp
-rm -fr gms-install-done-local/
+sudo rm -fr gms-install-done-local/
 
 #delete previous install from /opt/gms
 cd /opt/gms
