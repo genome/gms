@@ -6,7 +6,7 @@ use Getopt::Long;
 
 my $usage=<<INFO;
 
-./use_sampled_tst1_data.pl --ds=100 
+./use-sampled-tst1-data.pl --ds=100 
 
 Arguments:
 --ds [100|1000] downsampling option to specify 100-fold or 1000-fold downsampling.
