@@ -25,7 +25,7 @@ sudo rm -fr gms-install-done-local/
 
 #delete previous install from /opt/gms
 cd /opt/gms
-ls -1 | grep -v tmp | grep -v GMS1 | perl -ne 'print "sudo rm -fr $_"'
+ls -1 | grep -v tmp | grep -v GMS1 | perl -ne 'print "sudo rm -fr $_"' | sh
 
 #clone the gms repo
 cd ~
