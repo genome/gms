@@ -21,6 +21,11 @@ my $help = '';
 
 GetOptions ('data=s'=>\$data, 'sync=s'=>\$sync, 'help'=>\$help);
 
+#Make sure the user is within the sGMS, install has been run and ENVs are set by checking for $GENOME_SYS_ID
+unless ($ENV{GENOME_SYS_ID}){
+  print "\n\nGENOME_SYS_ID is not set!  Are you logged in and the installation is complete?\n\n";
+  exit();
+}
 if ($help || !$data || !$sync){
   print "$usage";
   exit();
@@ -33,6 +38,7 @@ unless ($sync =~ /^rsync$|^tarball$/){
   print "\n\nMust specify a valid value for --sync: 'tarball', 'rsync'\n\n";
   exit();
 }
+
 
 #Put the latest metadata filename here:
 my $metadata_file = "18177dd5eca44514a47f367d9804e17a-2014.3.14.dat";
