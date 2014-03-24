@@ -52,7 +52,7 @@ DATASERVER=https://xfer.genome.wustl.edu/gxfer1/project/gms/setup/archive-files
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2014-01-16
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=2014.03.17
+APT_DUMP_VERSION=2014.03.24
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -414,7 +414,7 @@ setup: s3fs done-host/gms-home done-host/user-home-$(USER) stage-software
 	# $@: (recurses into all subsequent steps) after sourcing the /etc/genome.conf file
 	#
 	# nesting make ensures that the users and environment are set up before running things that depend on them
-	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/custom-r done-host/exim-config'
+	sudo bash -l -c 'source /etc/genome.conf; make done-host/rails done-host/apache done-host/db-schema done-host/openlava-install done-host/exim-config'
 	touch $@
 
 done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$(APT_DUMP_VERSION).tgz 
@@ -459,7 +459,7 @@ done-host/pkgs: done-host/apt-get-update
 	#
 	sudo -v
 	# install primary dependency packages 
-	sudo apt-get install -q -y --force-yes git-core vim byobu nfs-common perl-doc genome-snapshot-deps `cat setup/packages.lst` `cat setup/install_custom_r/packages.r.lst`
+	sudo apt-get install -q -y --force-yes git-core vim byobu nfs-common perl-doc genome-snapshot-deps `cat setup/packages.lst`
 	# install rails dependency packages
 	sudo apt-get install -q -y --force-yes git ruby1.9.1 ruby1.9.1-dev rubygems1.9.1 irb1.9.1 ri1.9.1 rdoc1.9.1 build-essential apache2 libopenssl-ruby1.9.1 libssl-dev zlib1g-dev libcurl4-openssl-dev apache2-prefork-dev libapr1-dev libaprutil1-dev postgresql postgresql-contrib libpq-dev libxslt-dev libxml2-dev genome-rails-prod
 	# install unpackaged Perl modules
