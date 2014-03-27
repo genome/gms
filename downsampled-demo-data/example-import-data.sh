@@ -255,22 +255,22 @@ genome instrument-data import basic                                             
 
 genome instrument-data import basic                                             \
     --description='tumor wgs 2'                                                 \
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=193216396'           \
+    --import-source-name='TST1ds'                                               \
+    --instrument-data-properties='clusters=193216396'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_2.bam"          \
     --library="$LIBRARY_TUMOR_1"
 
 genome instrument-data import basic                                             \
     --description='tumor wgs 3'                                                 \
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=189430115'           \
+    --import-source-name='TST1ds'                                               
+    --instrument-data-properties='clusters=189430115'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_3.bam"          \
     --library="$LIBRARY_TUMOR_2"
 
 genome instrument-data import basic                                             \
     --description='tumor wgs 4'                                                 \
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=190192103'           \
+    --import-source-name='TST1ds'                                               
+    --instrument-data-properties='clusters=190192103'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_4.bam"          \
     --library="$LIBRARY_TUMOR_2"
 
