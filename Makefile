@@ -124,6 +124,7 @@ vars:
 ##### Behind done-host/vminit: These steps are only run when setting up a VM host.
 
 VAGRANT_DEB:=vagrant_1.4.3_x86_64.deb
+VIRTUALBOX_VERSION:=4.3.6
 
 VIRTUALBOX_UBUNTU_LUCID_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~lucid_amd64.deb
 done-host/vminstall-Ubuntu10.04:
@@ -131,7 +132,7 @@ done-host/vminstall-Ubuntu10.04:
 	# $@:
 	#
 	sudo -v
-	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_LUCID_DEB) ] || wget http://download.virtualbox.org/virtualbox/4.3.6/$(VIRTUALBOX_UBUNTU_LUCID_DEB)
+	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_LUCID_DEB) ] || wget http://download.virtualbox.org/virtualbox/$(VIRTUALBOX_VERSION))/$(VIRTUALBOX_UBUNTU_LUCID_DEB)
 	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_LUCID_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
 	sudo apt-get -y install gcc linux-headers-3.0.0-16-server 
 	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
@@ -146,7 +147,7 @@ done-host/vminstall-Ubuntu12.04:
 	# $@:
 	#
 	sudo -v
-	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_PRECISE_DEB) ] || wget http://download.virtualbox.org/virtualbox/4.3.6/$(VIRTUALBOX_UBUNTU_PRECISE_DEB)
+	cd setup/archive-files; [ -e $(VIRTUALBOX_UBUNTU_PRECISE_DEB) ] || wget http://download.virtualbox.org/virtualbox/$(VIRTUALBOX_VERSION)/$(VIRTUALBOX_UBUNTU_PRECISE_DEB)
 	sudo dpkg -i setup/archive-files/$(VIRTUALBOX_UBUNTU_PRECISE_DEB) || (echo "***fixing deps***" && (sudo apt-get -y update; sudo apt-get -y -f install))
 	sudo apt-get -y install gcc linux-headers-generic || (echo "UPDATE THE MAKEFILE FOR UBUNTU PRECISE HEADERS" && false) 
 	sudo /etc/init.d/virtualbox start|| sudo /etc/init.d/vboxdrv setup
@@ -155,14 +156,16 @@ done-host/vminstall-Ubuntu12.04:
 	vagrant plugin install vagrant-vbguest
 	touch $@
 
+VIRTUALBOX_DMG:=VirtualBox-4.3.6-91406-OSX.dmg
+VAGRANT_DMG:=Vagrant-1.4.3.dmg
 done-host/vminstall-Darwin:
 	#
 	# $@:
 	#
 	sudo -v
-	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/4.3.6/VirtualBox-4.3.6-91406-OSX.dmg -o virtualbox-4.3.6.dmg && open virtualbox-4.3.6.dmg)
+	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/$(VIRTUALBOX_VERSION)/$(VIRTUALBOX_DMG) -o $(VIRTUALBOX_DMG) && open $(VIRTUALBOX_DMG))
 	while [[ ! `which VirtualBox` ]]; do echo "waiting for VirtualBox install to complete..."; sleep 3; done
-	which vagrant || (cd setup/archive-files; curl -L https://dl.bintray.com/mitchellh/vagrant/Vagrant-1.4.3.dmg -o Vagrant-1.4.3.dmg && open Vagrant-1.4.3.dmg)
+	which vagrant || (cd setup/archive-files; curl -L https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DMG) -o $(VAGRANT_DMG) && open $(VAGRANT_DMG))
 	while [[ ! `which vagrant` ]]; do echo "waiting for vagrant install to complete..."; sleep 3; done
 	vagrant plugin install vagrant-vbguest
 	touch $@
