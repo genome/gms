@@ -14,31 +14,24 @@ echo "*"
 echo "*"
 
 
-# Each analysis of a given genome creates a "model" of that genome,
-# with a processing profile describing the exact analysis methods
-# in detail.
+#
+# Each analysis of a given genome sample creates a "model" of that genome,
+# with a processing profile describing the exact analysis methods in detail.
+#
+# The following samples from example-import-data.sh are processed below:
+#
+
+SAMPLE_TUMOR='H_NJ-HCC1395ds-HCC1395'
+SAMPLE_NORMAL='H_NJ-HCC1395ds-HCC1395_BL'
+SAMPLE_RNA_TUMOR='H_NJ-HCC1395ds-HCC1395_RNA'
+SAMPLE_RNA_NORMAL='H_NJ-HCC1395ds-HCC1395_BL_RNA'
+
 #
 # We will define a model for each sample, assign all of the data for
 # to the respective models, then "build" the model.  The result will be our
 # state of belief about the sequence and features of the given genome,
 # according to the processing profile, given the data.
-
 #
-# Other inputs/params used below:
-#
-# Each model we define below will take instrument-data or other inputs.
-# It will also take a processing profile, describing the exact computational
-# workflow.
-
-# The other data sets are identified by the following, and explained below.
-
-GENOME_BUILD_REFERENCE='GRCh37-lite'            #build id 106942997
-GENOME_BUILD_ANNOTATION='NCBI-human.ensembl'    #build id 124434505
-GENOME_BUILD_DBSNP='dbsnp-GRCh37-lite-build37'  #build id 127786607
-ANNOTATION_DB_COSMIC='cosmic/61.1'
-ANNOTATION_DB_TGI_CANCER='tgi/cancer-annotation/human/build37-20130401.1'
-ANNOTATION_DB_TGI_MISC='tgi/misc-annotation/human/build37-20130113.1'
-CAPTURE_TARGET_REGIONS='NimbleGen v3 Capture Chip Set'
 
 # These processing profiles  were imported into the system at installation time:
 
@@ -49,6 +42,24 @@ PROCESSING_PROFILE_DIFF_EXP='cuffcompare/cuffdiff 2.0.2 protein_coding only'
 PROCESSING_PROFILE_SOMATIC_VARIATION_EXOME='Default Somatic Variation Exome'
 PROCESSING_PROFILE_SOMATIC_VARIATION_WGS='Default Somatic Variation WGS'
 PROCESSING_PROFILE_CLININCAL_SEQUENCING='Default Clinical Sequencing'
+
+#
+# Other inputs/params used below:
+#
+# Each model below will take instrument-data from the genome in question
+# as inputs.  The reads are converged with other input data, including
+# reference sequences and annotation, to create a final product.
+#
+
+# The other data sets are identified by the following, and explained below.
+
+GENOME_BUILD_REFERENCE='GRCh37-lite'            #build id 106942997
+GENOME_BUILD_ANNOTATION='NCBI-human.ensembl'    #build id 124434505
+GENOME_BUILD_DBSNP='dbsnp-GRCh37-lite-build37'  #build id 127786607
+ANNOTATION_DB_COSMIC='cosmic/61.1'
+ANNOTATION_DB_TGI_CANCER='tgi/cancer-annotation/human/build37-20130401.1'
+ANNOTATION_DB_TGI_MISC='tgi/misc-annotation/human/build37-20130113.1'
+CAPTURE_TARGET_REGIONS='NimbleGen v3 Capture Chip Set'
 
 # Look at any of these individually, or list them in bulk:
 
@@ -114,7 +125,7 @@ genome model build start "name='$MODEL_TUMOR_REFALIGN_WGS'"
 
 MODEL_NORMAL_REFALIGN_WGS='hcc1395-normal-refalign-wgs-ds'
 genome model define reference-alignment                                         \
-    --model-name="$MODEL_NORMAL_REFALIGN_WGS"                                  \
+    --model-name="$MODEL_NORMAL_REFALIGN_WGS"                                   \
     --subject="$SAMPLE_NORMAL"                                                  \
     --processing-profile-name="$PROCESSING_PROFILE_REFERENCE_ALIGNMENT"         \
     --annotation-reference-build="model_name=$GENOME_BUILD_ANNOTATION"          \
@@ -123,7 +134,7 @@ genome model define reference-alignment                                         
     #--genotype-microarray='TODO: :2891230330'
 
 genome model instrument-data assign                                             \
-    --model="$MODEL_NORMAL_REFALIGN_WGS"                                       \
+    --model="$MODEL_NORMAL_REFALIGN_WGS"                                        \
     --instrument-data="description like 'normal wgs %'"
 
 genome model build start "name='$MODEL_NORMAL_REFALIGN_WGS'"
@@ -142,8 +153,8 @@ genome model define reference-alignment                                         
     --annotation-reference-build="model_name=$GENOME_BUILD_ANNOTATION"          \
     --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
     --dbsnp-build="model_name=$GENOME_BUILD_DBSNP"                              \
-    --region-of-interest-set-name="$CAPTURE_TARGET_REGIONS"                               \
-    --target-region-set-name="$CAPTURE_TARGET_REGIONS"                       \
+    --region-of-interest-set-name="$CAPTURE_TARGET_REGIONS"                     \
+    --target-region-set-name="$CAPTURE_TARGET_REGIONS"                          \
     #--genotype-microarray="$MODEL_MICROARRAY_TUMOR"
 
 genome model instrument-data assign                                             \
@@ -156,18 +167,18 @@ genome model build start "name='$MODEL_TUMOR_REFALIGN_EXOME'"
 
 MODEL_NORMAL_REFALIGN_EXOME='hcc1395-normal-refalign-exome-ds'
 genome model define reference-alignment                                         \
-    --model-name="$MODEL_NORMAL_REFALIGN_EXOME"                                \
+    --model-name="$MODEL_NORMAL_REFALIGN_EXOME"                                 \
     --subject="$SAMPLE_NORMAL"                                                  \
     --processing-profile-name="$PROCESSING_PROFILE_REFERENCE_ALIGNMENT"         \
     --annotation-reference-build="model_name=$GENOME_BUILD_ANNOTATION"          \
     --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
     --dbsnp-build="model_name=$GENOME_BUILD_DBSNP"                              \
-    --region-of-interest-set-name="$CAPTURE_TARGET_REGIONS"                               \
+    --region-of-interest-set-name="$CAPTURE_TARGET_REGIONS"                     \
     --target-region-set-name="$CAPTURE_TARGET_REGIONS"
     #--genotype-microarray='TODO: :2891230330'
 
 genome model instrument-data assign                                             \
-    --model="$MODEL_NORMAL_REFALIGN_EXOME"                                     \
+    --model="$MODEL_NORMAL_REFALIGN_EXOME"                                      \
     --instrument-data="description='normal exome 1'"
 
 genome model build start "name='$MODEL_NORMAL_REFALIGN_EXOME'"
@@ -184,7 +195,7 @@ genome model define rna-seq                                                     
     --instrument-data="sample_name=$SAMPLE_RNA_TUMOR"
 
 genome model instrument-data assign                                             \
-    --model="$MODEL_TUMOR_RNASEQ"                                     \
+    --model="$MODEL_TUMOR_RNASEQ"                                               \
     --instrument-data="description='normal exome 1'"
 
 genome model build start "name='$MODEL_TUMOR_RNASEQ'"
@@ -202,7 +213,7 @@ genome model define rna-seq                                                     
 
 
 genome model instrument-data assign                                             \
-    --model="$MODEL_NORMAL_RNASEQ"                                     \
+    --model="$MODEL_NORMAL_RNASEQ"                                              \
     --instrument-data="description='normal exome 1'"
 
 genome model build start "name='$MODEL_NORMAL_RNASEQ'"
