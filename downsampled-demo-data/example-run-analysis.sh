@@ -81,8 +81,10 @@ genome processing-profile list reference-alignment "name='Default Ovation V2 RNA
 #
 # genome model build start "name in ['$MODEL_MICROARRAY_TUMOR', '$MODEL_MICROARRAY_NORMAL']
 
-
+#
 # Start by defining a model of the tumor DNA using WGS data only.
+# The model of exome data, done below, will use processing tuned for capture.
+#
 
 MODEL_TUMOR_REFALIGN_WGS='hcc1395-tumor-refalign-wgs-ds'
 genome model define reference-alignment                                         \
@@ -105,9 +107,10 @@ genome model instrument-data assign                                             
 
 genome model build start "name='$MODEL_TUMOR_REFALIGN_WGS'"
 
-
+#
 # Now do the same for the normal WGS data.
 # Define, add three lanes of the normal WGS lanes of data, and start building.
+#
 
 MODEL_REF_ALIGN_NORMAL_WGS='hcc1395-normal-refalign-wgs-ds'
 genome model define reference-alignment                                         \
@@ -125,8 +128,11 @@ genome model instrument-data assign                                             
 
 genome model build start "name='$MODEL_REF_ALIGN_NORMAL_WGS'"
 
-
+#
 # Next define the other models that process reads directly.
+# As above, we define a model for the genome of each sample,
+# and assign all of the appropriate data.
+#
 
 MODEL_TUMOR_REFALIGN_EXOME='hcc1395-tumor-refalign-exome-ds'
 genome model define reference-alignment                                         \
@@ -144,6 +150,10 @@ genome model instrument-data assign                                             
     --model="$MODEL_TUMOR_REFALIGN_EXOME"                                       \
     --instrument-data="description='tumor exome 1'"
 
+genome model build start "name='$MODEL_TUMOR_REFALIGN_EXOME'"
+
+#
+
 MODEL_REF_ALIGN_NORMAL_EXOME='hcc1395-normal-refalign-exome-ds'
 genome model define reference-alignment                                         \
     --model-name="$MODEL_REF_ALIGN_NORMAL_EXOME"                                \
@@ -160,6 +170,10 @@ genome model instrument-data assign                                             
     --model="$MODEL_REF_ALIGN_NORMAL_EXOME"                                     \
     --instrument-data="description='normal exome 1'"
 
+genome model build start "name='$MODEL_REF_ALIGN_NORMAL_EXOME'"
+
+#
+
 MODEL_TUMOR_RNASEQ='hcc1395-tumor-rnaseq-ds'
 genome model define rna-seq                                                     \
     --model-name="$MODEL_TUMOR_RNASEQ"                                          \
@@ -168,6 +182,14 @@ genome model define rna-seq                                                     
     --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
     --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
     --instrument-data="sample_name=$SAMPLE_RNA_TUMOR"
+
+genome model instrument-data assign                                             \
+    --model="$MODEL_TUMOR_RNASEQ"                                     \
+    --instrument-data="description='normal exome 1'"
+
+genome model build start "name='$MODEL_TUMOR_RNASEQ'"
+
+#
 
 MODEL_NORMAL_RNASEQ='hcc1395-normal-rnaseq-ds'
 genome model define rna-seq                                                     \
@@ -178,91 +200,88 @@ genome model define rna-seq                                                     
     --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
     --instrument-data="sample_name=$SAMPLE_RNA_NORMAL"
 
-#### RESUME HERE
+
+genome model instrument-data assign                                             \
+    --model="$MODEL_NORMAL_RNASEQ"                                     \
+    --instrument-data="description='normal exome 1'"
+
+genome model build start "name='$MODEL_NORMAL_RNASEQ'"
 
 #
-# 4) DEFINE HIGHER-LEVEL MODELS
+# Now define the higher-order models.
+#
+# These take the above models as inputs, and
+# produce derivative, cross-sample analysis.
 #
 
-function get_genome_model_id {
-    local MODEL_NAME=$1
-    genome model list --show id "name='$MODEL_NAME'"|tail --line=+3
-}
 
+# Somatic variation analysis using tumor+normal WGS data
 
-if (( $DEFINE_MODELS ))
-then
-    MODEL_NORMAL_RNASEQ_ID=$(get_genome_model_id $MODEL_NORMAL_RNASEQ)
-    MODEL_TUMOR_RNASEQ_ID=$(get_genome_model_id $MODEL_TUMOR_RNASEQ)
-    MODEL_DIFFERENTIAL_EXPRESSION='hcc1395-differential-expression-ds'
-    genome model define differential-expression                                     \
-        --model-name="$MODEL_DIFFERENTIAL_EXPRESSION"                               \
-        --subject="$INDIVIDUAL"                                                     \
-        --processing-profile="$PROCESSING_PROFILE_DIFF_EXP"                         \
-        --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
-        --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
-        --condition-labels-string='normal,tumor'                                    \
-        --condition-model-ids-string="$MODEL_NORMAL_RNASEQ_ID $MODEL_TUMOR_RNASEQ_ID"
-    #
-    MODEL_SOMATIC_VARIATION_EXOME='hcc1395-somatic-exome-ds'
-    genome model define somatic-variation                                           \
-        --model-name="$MODEL_SOMATIC_VARIATION_EXOME"                               \
-        --subject="$SAMPLE_TUMOR"                                                   \
-        --processing-profile="$PROCESSING_PROFILE_SOMATIC_VARIATION_EXOME"          \
-        --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
-        --previously-discovered-variations="model_name=$GENOME_BUILD_DBSNP"         \
-        --normal-model="$MODEL_REF_ALIGN_NORMAL_EXOME"                              \
-        --tumor-model="$MODEL_TUMOR_REFALIGN_EXOME"
-    #
-    MODEL_SOMATIC_VARIATION_WGS='hcc1395-somatic-wgs-ds'
-    genome model define somatic-variation                                           \
-        --model-name="$MODEL_SOMATIC_VARIATION_WGS"                                 \
-        --subject="$SAMPLE_TUMOR"                                                   \
-        --processing-profile="$PROCESSING_PROFILE_SOMATIC_VARIATION_WGS"            \
-        --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
-        --previously-discovered-variations="model_name=$GENOME_BUILD_DBSNP"         \
-        --tumor-model="$MODEL_TUMOR_REFALIGN_WGS"                                   \
-        --normal-model="$MODEL_REF_ALIGN_NORMAL_WGS"
-    #
-    genome model define clin-seq                                                    \
-        --name='hcc1395-clinseq-ds'                                                    \
-        --processing-profile="$PROCESSING_PROFILE_CLININCAL_SEQUENCING"             \
-        --cancer-annotation-db="$ANNOTATION_DB_COSMIC"                              \
-        --cancer-annotation-db="$ANNOTATION_DB_TGI_CANCER"                          \
-        --misc-annotation-db="$ANNOTATION_DB_TGI_MISC"                              \
-        --de-model="$MODEL_DIFFERENTIAL_EXPRESSION"                                 \
-        --tumor-rnaseq-model="$MODEL_TUMOR_RNASEQ"                                  \
-        --normal-rnaseq-model="$MODEL_NORMAL_RNASEQ"                                \
-        --exome-model="$MODEL_SOMATIC_VARIATION_EXOME"                              \
-        --wgs-model="$MODEL_SOMATIC_VARIATION_WGS"
-    #
-fi
+MODEL_SOMATIC_VARIATION_EXOME='hcc1395-somatic-exome-ds'
+genome model define somatic-variation                                           \
+    --model-name="$MODEL_SOMATIC_VARIATION_EXOME"                               \
+    --subject="$SAMPLE_TUMOR"                                                   \
+    --processing-profile="$PROCESSING_PROFILE_SOMATIC_VARIATION_EXOME"          \
+    --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
+    --previously-discovered-variations="model_name=$GENOME_BUILD_DBSNP"         \
+    --normal-model="$MODEL_REF_ALIGN_NORMAL_EXOME"                              \
+    --tumor-model="$MODEL_TUMOR_REFALIGN_EXOME"
 
+genome model build start "name='$MODEL_SOMATIC_VARIATION_EXOME'"
 
+# As above, but with only exome data.
+
+MODEL_SOMATIC_VARIATION_WGS='hcc1395-somatic-wgs-ds'
+genome model define somatic-variation                                           \
+    --model-name="$MODEL_SOMATIC_VARIATION_WGS"                                 \
+    --subject="$SAMPLE_TUMOR"                                                   \
+    --processing-profile="$PROCESSING_PROFILE_SOMATIC_VARIATION_WGS"            \
+    --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
+    --previously-discovered-variations="model_name=$GENOME_BUILD_DBSNP"         \
+    --tumor-model="$MODEL_TUMOR_REFALIGN_WGS"                                   \
+    --normal-model="$MODEL_REF_ALIGN_NORMAL_WGS"
+
+genome model build start "name='$MODEL_SOMATIC_VARIATION_WGS'"
+
+# Differential expression analysis.
+# (The API on this currently requires model IDs instead of names.)
+
+MODEL_DIFFERENTIAL_EXPRESSION='hcc1395-differential-expression-ds'
+INPUT_MODEL_TUMOR_RNASEQ_ID=`genome model list name='$MODEL_TUMOR_RNASEQ' --show id --noheaders`
+INPUT_MODEL_NORMAL_RNASEQ_ID=`genome model list name='$MODEL_NORMAL_RNASEQ' --show id --noheaders`
+
+genome model define differential-expression                                     \
+    --model-name="$MODEL_DIFFERENTIAL_EXPRESSION"                               \
+    --subject="$INDIVIDUAL"                                                     \
+    --processing-profile="$PROCESSING_PROFILE_DIFF_EXP"                         \
+    --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
+    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
+    --condition-labels-string='normal,tumor'                                    \
+    --condition-model-ids-string="$INPUT_MODEL_NORMAL_RNASEQ_ID $INPUT_MODEL_TUMOR_RNASEQ_ID"
+
+genome model build start "name='$MODEL_DIFFERENTIAL_EXPRESSION'"
+
+# The final model converges all of the above higher-order models
+# into one that coverges approaches, intersects results, and produces
+# a large number of reports.
+
+genome model define clin-seq                                                    \
+    --name='hcc1395-clinseq-ds'                                                    \
+    --processing-profile="$PROCESSING_PROFILE_CLININCAL_SEQUENCING"             \
+    --cancer-annotation-db="$ANNOTATION_DB_COSMIC"                              \
+    --cancer-annotation-db="$ANNOTATION_DB_TGI_CANCER"                          \
+    --misc-annotation-db="$ANNOTATION_DB_TGI_MISC"                              \
+    --de-model="$MODEL_DIFFERENTIAL_EXPRESSION"                                 \
+    --tumor-rnaseq-model="$MODEL_TUMOR_RNASEQ"                                  \
+    --normal-rnaseq-model="$MODEL_NORMAL_RNASEQ"                                \
+    --exome-model="$MODEL_SOMATIC_VARIATION_EXOME"                              \
+    --wgs-model="$MODEL_SOMATIC_VARIATION_WGS"
+
+genome model build start "name='hcc1395-clinseq-ds'"
 
 #
 # CONCLUSION
 #
-# Now a new individual, four samples, and several models have been created
-# within GMS.  We are now ready to begin processing the data that we have imported
-# by starting builds on the models that we have just defined.
-#
-
-####
-
-# This process happens in a series of steps:
-# 1) Declare database entities setup during `genome model import metadata`.
-# 2) Create a database entity for an individual for which we have
-#    several samples for which we would like instrument data imported.
-# 3) Create database entities for each sample:
-#    a) Create a database entity for the sample itself.
-#    b) Create a database entity for each instrument data file
-#       by importing the instrument data file into GMS.
-#    c) Define models particular to the sample.
-# 4) Define higher-level models which span multiple samples
-#    by referring to lower-level models created for individual samples.
-#
-# When we are done with these steps, GMS will be ready to processes
-# the data by running builds on the models that we have defined.
-#
+# The above commands configure and launch analysis.
+# 
 
