@@ -67,78 +67,6 @@ genome processing-profile list reference-alignment "name='Default Ovation V2 RNA
 #     --instrument-data='2891080777'                                            \
 #     --reference="$GENOME_BUILD_REFERENCE"                                     \
 #     --dbsnp-build="$GENOME_BUILD_DBSNP"
-
-# Start by defining a model of the tumor DNA using WGS data only.
-# We could combine WGS and exome, but we want to use different processing
-# profiles to analyze exome/capture data.
-
-MODEL_TUMOR_REFALIGN_WGS='hcc1395-tumor-refalign-wgs-ds'
-genome model define reference-alignment                                         \
-    --model-name="$MODEL_TUMOR_REFALIGN_WGS"                                    \
-    --subject="$SAMPLE_TUMOR"                                                   \
-    --processing-profile-name="$PROCESSING_PROFILE_REFERENCE_ALIGNMENT"         \
-    --annotation-reference-build="model_name=$GENOME_BUILD_ANNOTATION"          \
-    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
-    --dbsnp-build="model_name=$GENOME_BUILD_DBSNP"
-    #--genotype-microarray="$MODEL_MICROARRAY_TUMOR"
-
-# Now add all five lanes of tumor DNA data intended for WGS.
-
-genome model instrument-data assign                                             \
-    --model="$MODEL_TUMOR_REFALIGN_WGS"                                         \
-    --instrument-data="description ike 'tumor wgs %'"
-
-# This model can start building now.  We will show how to do this below
-# after defining all of the models and assigning inputs.
-
-
-#
-# Feature List
-#
-
-
-MODEL_NORMAL_RNASEQ='hcc1395-normal-rnaseq-ds'
-genome model define rna-seq                                                     \
-    --model-name="$MODEL_NORMAL_RNASEQ"                                         \
-    --subject="$SAMPLE_RNA_NORMAL"                                              \
-    --processing-profile="$PROCESSING_PROFILE_RNA_SEQ"                          \
-    --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
-    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
-    --instrument-data="sample_name=$SAMPLE_RNA_NORMAL"
-    # LATER ON ANOTHER MODEL WILL REFERENCE THIS ONE
-    # 1) that model's id is 18177dd5eca44514a47f367d9804e17a hcc1395-clinseq
-    # 2) that model's id is abeb5a3cddb94374afffd617684fa49a hcc1395-differential-expression
-
-MODEL_TUMOR_RNASEQ='hcc1395-tumor-rnaseq-ds'
-genome model define rna-seq                                                     \
-    --model-name="$MODEL_TUMOR_RNASEQ"                                          \
-    --subject="$SAMPLE_RNA_TUMOR"                                               \
-    --processing-profile="$PROCESSING_PROFILE_RNA_SEQ"                          \
-    --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
-    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
-    --instrument-data="sample_name=$SAMPLE_RNA_TUMOR"
-    # LATER ON ANOTHER MODEL WILL REFERENCE THIS ONE
-    # 1) that model's id is 18177dd5eca44514a47f367d9804e17a hcc1395-clinseq
-    # 2) that model's id is abeb5a3cddb94374afffd617684fa49a hcc1395-differential-expression
-
-MODEL_TUMOR_REFALIGN_EXOME='hcc1395-tumor-refalign-exome-ds'
-genome model define reference-alignment                                         \
-    --model-name="$MODEL_TUMOR_REFALIGN_EXOME"                                  \
-    --subject="$SAMPLE_TUMOR"                                                   \
-    --processing-profile-name="$PROCESSING_PROFILE_REFERENCE_ALIGNMENT"         \
-    --annotation-reference-build="model_name=$GENOME_BUILD_ANNOTATION"          \
-    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
-    --dbsnp-build="model_name=$GENOME_BUILD_DBSNP"                              \
-    --region-of-interest-set-name="$CAPTURE_TARGET_REGIONS"                               \
-    --target-region-set-name="$CAPTURE_TARGET_REGIONS"                       \
-#    --genotype-microarray="$MODEL_MICROARRAY_TUMOR"
-    # LATER ON ANOTHER MODEL WILL REFERENCE THIS ONE
-    # that model's id is 2891407507 hcc1395-somatic-exome
-genome model instrument-data assign                                             \
-    --model="$MODEL_TUMOR_REFALIGN_EXOME"                                       \
-    --instrument-data="description='tumor exome 1'"
-#
-# Normal Tissue Sample
 #
 # MODEL_MICROARRAY_NORMAL='hcc1395-normal-snparray'
 # genome model define genotype-microarray                                       \
@@ -150,6 +78,36 @@ genome model instrument-data assign                                             
 #     --dbsnp-build="$GENOME_BUILD_DBSNP"
 #     #alteratively, can these just point to the model directly (instead of the model's build)?
 #     #or perhaps it doesn't matter since these builds come with the system right now
+#
+# genome model build start "name in ['$MODEL_MICROARRAY_TUMOR', '$MODEL_MICROARRAY_NORMAL']
+
+
+# Start by defining a model of the tumor DNA using WGS data only.
+
+MODEL_TUMOR_REFALIGN_WGS='hcc1395-tumor-refalign-wgs-ds'
+genome model define reference-alignment                                         \
+    --model-name="$MODEL_TUMOR_REFALIGN_WGS"                                    \
+    --subject="$SAMPLE_TUMOR"                                                   \
+    --processing-profile-name="$PROCESSING_PROFILE_REFERENCE_ALIGNMENT"         \
+    --annotation-reference-build="model_name=$GENOME_BUILD_ANNOTATION"          \
+    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
+    --dbsnp-build="model_name=$GENOME_BUILD_DBSNP"
+    #--genotype-microarray="$MODEL_MICROARRAY_TUMOR"
+
+# Now add all five lanes of tumor DNA data intended for WGS analysis.
+# (No capture probes were used, which require special analysis.)
+
+genome model instrument-data assign                                             \
+    --model="$MODEL_TUMOR_REFALIGN_WGS"                                         \
+    --instrument-data="description ike 'tumor wgs %'"
+
+# And start building on the compute cluster, running the associated workflow:
+
+genome model build start "name='$MODEL_TUMOR_REFALIGN_WGS'"
+
+
+# Now do the same for the normal WGS data.
+# Define, add three lanes of the normal WGS lanes of data, and start building.
 
 MODEL_REF_ALIGN_NORMAL_WGS='hcc1395-normal-refalign-wgs-ds'
 genome model define reference-alignment                                         \
@@ -159,18 +117,32 @@ genome model define reference-alignment                                         
     --annotation-reference-build="model_name=$GENOME_BUILD_ANNOTATION"          \
     --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
     --dbsnp-build="model_name=$GENOME_BUILD_DBSNP"                              \
-#    --genotype-microarray='TODO: :2891230330'
-    # LATER ON ANOTHER MODEL WILL REFERENCE THIS ONE
-    # that model's id is 2891454547 hcc1395-somatic-wgs
+    #--genotype-microarray='TODO: :2891230330'
+
 genome model instrument-data assign                                             \
     --model="$MODEL_REF_ALIGN_NORMAL_WGS"                                       \
-    --instrument-data="description='normal wgs 1'"
+    --instrument-data="description like 'normal wgs %'"
+
+genome model build start "name='$MODEL_REF_ALIGN_NORMAL_WGS'"
+
+
+# Next define the other models that process reads directly.
+
+MODEL_TUMOR_REFALIGN_EXOME='hcc1395-tumor-refalign-exome-ds'
+genome model define reference-alignment                                         \
+    --model-name="$MODEL_TUMOR_REFALIGN_EXOME"                                  \
+    --subject="$SAMPLE_TUMOR"                                                   \
+    --processing-profile-name="$PROCESSING_PROFILE_REFERENCE_ALIGNMENT"         \
+    --annotation-reference-build="model_name=$GENOME_BUILD_ANNOTATION"          \
+    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
+    --dbsnp-build="model_name=$GENOME_BUILD_DBSNP"                              \
+    --region-of-interest-set-name="$CAPTURE_TARGET_REGIONS"                               \
+    --target-region-set-name="$CAPTURE_TARGET_REGIONS"                       \
+    #--genotype-microarray="$MODEL_MICROARRAY_TUMOR"
+
 genome model instrument-data assign                                             \
-    --model="$MODEL_REF_ALIGN_NORMAL_WGS"                                       \
-    --instrument-data="description='normal wgs 2'"
-genome model instrument-data assign                                             \
-    --model="$MODEL_REF_ALIGN_NORMAL_WGS"                                       \
-    --instrument-data="description='normal wgs 3'"
+    --model="$MODEL_TUMOR_REFALIGN_EXOME"                                       \
+    --instrument-data="description='tumor exome 1'"
 
 MODEL_REF_ALIGN_NORMAL_EXOME='hcc1395-normal-refalign-exome-ds'
 genome model define reference-alignment                                         \
@@ -182,14 +154,31 @@ genome model define reference-alignment                                         
     --dbsnp-build="model_name=$GENOME_BUILD_DBSNP"                              \
     --region-of-interest-set-name="$CAPTURE_TARGET_REGIONS"                               \
     --target-region-set-name="$CAPTURE_TARGET_REGIONS"
-#    --genotype-microarray='TODO: :2891230330'
-    # LATER ON ANOTHER MODEL WILL REFERENCE THIS ONE
-    # that model's id is 2891407507 hcc1395-somatic-exome
+    #--genotype-microarray='TODO: :2891230330'
+
 genome model instrument-data assign                                             \
     --model="$MODEL_REF_ALIGN_NORMAL_EXOME"                                     \
     --instrument-data="description='normal exome 1'"
 
+MODEL_TUMOR_RNASEQ='hcc1395-tumor-rnaseq-ds'
+genome model define rna-seq                                                     \
+    --model-name="$MODEL_TUMOR_RNASEQ"                                          \
+    --subject="$SAMPLE_RNA_TUMOR"                                               \
+    --processing-profile="$PROCESSING_PROFILE_RNA_SEQ"                          \
+    --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
+    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
+    --instrument-data="sample_name=$SAMPLE_RNA_TUMOR"
 
+MODEL_NORMAL_RNASEQ='hcc1395-normal-rnaseq-ds'
+genome model define rna-seq                                                     \
+    --model-name="$MODEL_NORMAL_RNASEQ"                                         \
+    --subject="$SAMPLE_RNA_NORMAL"                                              \
+    --processing-profile="$PROCESSING_PROFILE_RNA_SEQ"                          \
+    --annotation-build="model_name=$GENOME_BUILD_ANNOTATION"                    \
+    --reference-sequence-build="model_name=$GENOME_BUILD_REFERENCE"             \
+    --instrument-data="sample_name=$SAMPLE_RNA_NORMAL"
+
+#### RESUME HERE
 
 #
 # 4) DEFINE HIGHER-LEVEL MODELS
