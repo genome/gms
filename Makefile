@@ -123,10 +123,10 @@ vars:
 
 ##### Behind done-host/vminit: These steps are only run when setting up a VM host.
 
-VAGRANT_DEB:=vagrant_1.4.3_x86_64.deb
-VIRTUALBOX_VERSION:=4.3.6
+VAGRANT_DEB:=vagrant_1.5.1_x86_64.deb
+VIRTUALBOX_VERSION:=4.3.10
 
-VIRTUALBOX_UBUNTU_LUCID_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~lucid_amd64.deb
+VIRTUALBOX_UBUNTU_LUCID_DEB=virtualbox-4.3_4.3.10-93012~Ubuntu~lucid_amd64.deb
 done-host/vminstall-Ubuntu10.04:
 	#
 	# $@:
@@ -141,7 +141,7 @@ done-host/vminstall-Ubuntu10.04:
 	vagrant plugin install vagrant-vbguest
 	touch $@
 	
-VIRTUALBOX_UBUNTU_PRECISE_DEB=virtualbox-4.3_4.3.6-91406~Ubuntu~precise_amd64.deb
+VIRTUALBOX_UBUNTU_PRECISE_DEB=virtualbox-4.3_4.3.10-93012~Ubuntu~precise_amd64.deb
 done-host/vminstall-Ubuntu12.04:
 	#
 	# $@:
@@ -156,8 +156,8 @@ done-host/vminstall-Ubuntu12.04:
 	vagrant plugin install vagrant-vbguest
 	touch $@
 
-VIRTUALBOX_DMG:=VirtualBox-4.3.6-91406-OSX.dmg
-VAGRANT_DMG:=Vagrant-1.4.3.dmg
+VIRTUALBOX_DMG:=VirtualBox-4.3.10-93012-OSX.dmg
+VAGRANT_DMG:=vagrant_1.5.1.dmg
 done-host/vminstall-Darwin:
 	#
 	# $@:
