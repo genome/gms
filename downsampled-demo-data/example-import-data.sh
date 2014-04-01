@@ -32,7 +32,7 @@ INSTRUMENT_DATA_DIRECTORY='.'
 
 echo Downloading downsampled instrument data to $INSTRUMENT_DATA_DIRECTORY
 wget --no-directories --recursive --continue --no-parent --accept='*.bam' \
-  --directory-profix "$INSTRUMENT_DATA_DIRECTORY" \
+  --directory-prefix "$INSTRUMENT_DATA_DIRECTORY" \
   https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/bams/hcc1395_1tenth_percent/
 
 
@@ -48,8 +48,8 @@ wget --no-directories --recursive --continue --no-parent --accept='*.bam' \
 INDIVIDUAL='H_NJ-HCC1395ds'
 genome individual create                                                        \
     --name="$INDIVIDUAL"                                                        \
-    --upn='HCC1395ds'                                                             \
-    --common-name="TST1ds"                                                        \
+    --upn='HCC1395ds'                                                           \
+    --common-name="TST1ds"                                                      \
     --gender=female                                                             \
     --taxon="name=human"
 
@@ -90,7 +90,7 @@ genome sample create                                                            
     --source="name=$INDIVIDUAL"                                                 \
     --name=$SAMPLE_NORMAL                                                       \
     --common-name='normal'                                                      \
-    --extraction-label='HCC1395 BL' --tissue-desc='b lymphoblast'                                               \
+    --extraction-label='HCC1395 BL' --tissue-desc='b lymphoblast'
 
 SAMPLE_RNA_TUMOR='H_NJ-HCC1395ds-HCC1395_RNA'
 genome sample create                                                            \
@@ -98,8 +98,8 @@ genome sample create                                                            
     --name=$SAMPLE_RNA_TUMOR                                                    \
     --source="name=$INDIVIDUAL"                                                 \
     --common-name='rna tumor'                                                   \
-    --extraction-label='HCC1395_RNA'
-    --tissue-desc='epithelial'                                                  \
+    --extraction-label='HCC1395_RNA'                                            \
+    --tissue-desc='epithelial'
 
 SAMPLE_RNA_NORMAL='H_NJ-HCC1395ds-HCC1395_BL_RNA'
 genome sample create                                                            \
@@ -160,24 +160,24 @@ genome library create                                                           
 
 LIBRARY_NORMAL_1='H_NJ-HCC1395-HCC1395_BL-lig2-lib1ds'
 genome library create                                                           \
-  --name="$LIBRARY_NORMAL_1"                                                     \
-  --sample="$SAMPLE_NORMAL"                                                      \
+  --name="$LIBRARY_NORMAL_1"                                                    \
+  --sample="$SAMPLE_NORMAL"                                                     \
   --protocol='Illumina Library Construction'                                    \
   --original-insert-size='266'                                                  \
   --library-insert-size='385'
 
 LIBRARY_NORMAL_2='H_NJ-HCC1395-HCC1395_BL-lig2-lib2ds'
 genome library create                                                           \
-  --name="$LIBRARY_NORMAL_2"                                                     \
-  --sample="$SAMPLE_NORMAL"                                                      \
+  --name="$LIBRARY_NORMAL_2"                                                    \
+  --sample="$SAMPLE_NORMAL"                                                     \
   --protocol='Illumina Library Construction'                                    \
   --original-insert-size='381'                                                  \
   --library-insert-size='500'
 
 LIBRARY_NORMAL_3='H_NJ-HCC1395-HCC1395_BL-lig2-lib3ds'
 genome library create                                                           \
-  --name="$LIBRARY_NORMAL_3"                                                     \
-  --sample="$SAMPLE_NORMAL"                                                      \
+  --name="$LIBRARY_NORMAL_3"                                                    \
+  --sample="$SAMPLE_NORMAL"                                                     \
   --protocol='Illumina Library Construction'                                    \
   --original-insert-size='557'                                                  \
   --library-insert-size='676'
@@ -195,8 +195,8 @@ genome library create                                                           
 
 CAPTURE_LIBRARY_NORMAL='libgroup-2891242742ds'
 genome library create                                                           \
-  --name="$CAPTURE_LIBRARY_NORMAL"                                               \
-  --sample="$SAMPLE_NORMAL"                                                      \
+  --name="$CAPTURE_LIBRARY_NORMAL"                                              \
+  --sample="$SAMPLE_NORMAL"                                                     \
   --protocol='Illumina Library Construction'                                    \
   --library-insert-size='364-400'
 
@@ -224,7 +224,7 @@ genome library create                                                           
 
 # Each is listable once created:
 
-genome library list "patient.common_name='TST1ds'"
+genome library list "sample.patient.common_name='TST1ds'"
 genome library list "sample.name='$SAMPLE_TUMOR' and original_insert_size > 300"
 
 #
@@ -248,8 +248,8 @@ genome library list "sample.name='$SAMPLE_TUMOR' and original_insert_size > 300"
 
 genome instrument-data import basic                                             \
     --description='tumor wgs 1'                                                 \
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=188429464'           \
+    --import-source-name='TST1ds'                                               \
+    --instrument-data-properties='clusters=188429464'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_1.bam"          \
     --library="$LIBRARY_TUMOR_1"
 
@@ -262,14 +262,14 @@ genome instrument-data import basic                                             
 
 genome instrument-data import basic                                             \
     --description='tumor wgs 3'                                                 \
-    --import-source-name='TST1ds'                                               
+    --import-source-name='TST1ds'                                               \
     --instrument-data-properties='clusters=189430115'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_3.bam"          \
     --library="$LIBRARY_TUMOR_2"
 
 genome instrument-data import basic                                             \
     --description='tumor wgs 4'                                                 \
-    --import-source-name='TST1ds'                                               
+    --import-source-name='TST1ds'                                               \
     --instrument-data-properties='clusters=190192103'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_4.bam"          \
     --library="$LIBRARY_TUMOR_2"
@@ -280,43 +280,43 @@ genome instrument-data import basic                                             
 
 genome instrument-data import basic                                             \
     --description='tumor wgs 5'                                                 \
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=180487649'           \
+    --import-source-name='TST1ds'                                               \
+    --instrument-data-properties='clusters=180487649'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_5.bam"          \
     --library="$LIBRARY_TUMOR_3"
 
 genome instrument-data import basic                                             \
     --description='normal wgs 1'                                                \
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=168472676'           \
+    --import-source-name='TST1ds'                                               \
+    --instrument-data-properties='clusters=168472676'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_6.bam"          \
     --library="$LIBRARY_NORMAL_1"
 
 genome instrument-data import basic                                             \
     --description='normal wgs 2'                                                \
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=175170815'           \
+    --import-source-name='TST1ds'                                               \
+    --instrument-data-properties='clusters=175170815'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_7.bam"          \
     --library="$LIBRARY_NORMAL_2"
 
 genome instrument-data import basic                                             \
     --description='normal wgs 3'                                                \
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=171892537'           \
+    --import-source-name='TST1ds'                                               \
+    --instrument-data-properties='clusters=171892537'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_D1VCPACXX_8.bam"          \
     --library="$LIBRARY_NORMAL_3"
 
-genome instrument-data import basic
-    --description='tumor rna 1'
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=156248832'           \
+genome instrument-data import basic                                             \
+    --description='tumor rna 1'                                                 \
+    --import-source-name='TST1ds'                                               \
+    --instrument-data-properties='clusters=156248832'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_C1TD1ACXX_8_ACAGTG.bam"   \
     --library="$LIBRARY_RNA_TUMOR"
 
 genome instrument-data import basic                                             \
-    --description='normal rna 1'
-    --import-source-name='TST1ds'                                                  \
-    --instrument-data-properties='clusters=170049877'           \
+    --description='normal rna 1'                                                \
+    --import-source-name='TST1ds'                                               \
+    --instrument-data-properties='clusters=170049877'                           \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_C2DBEACXX_3.bam"          \
     --library="$LIBRARY_RNA_NORMAL"
 
@@ -330,18 +330,18 @@ genome instrument-data import basic                                             
 
 TARGET_SET='NimbleGen v3 Capture Chip Set'
 
-genome instrument-data import basic                                             \
-    --description='tumor exome 1'                                               \
-    --import-source-name='TST1ds'                                                  \
+genome instrument-data import basic                                                       \
+    --description='tumor exome 1'                                                         \
+    --import-source-name='TST1ds'                                                         \
     --instrument-data-properties='clusters=96056889,target_region_set_name="$TARGET_SET"' \
-    --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_C1TD1ACXX_7_ATCACG.bam"   \
+    --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_C1TD1ACXX_7_ATCACG.bam"             \
     --library="$CAPTURE_LIBRARY_TUMOR"
 
-genome instrument-data import basic                                             \
-    --description='normal exome 1'                                                \
-    --import-source-name='TST1ds'                                                  \
+genome instrument-data import basic                                                       \
+    --description='normal exome 1'                                                        \
+    --import-source-name='TST1ds'                                                         \
     --instrument-data-properties='clusters=77667085,target_region_set_name="$TARGET_SET"' \
-    --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_C1TD1ACXX_7_CGATGT.bam"   \
+    --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_C1TD1ACXX_7_CGATGT.bam"             \
     --library="$CAPTURE_LIBRARY_NORMAL"
 
 # All instrument-data is listable as above, and can be filtered by params.
