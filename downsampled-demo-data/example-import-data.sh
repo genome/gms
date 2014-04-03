@@ -90,7 +90,8 @@ genome sample create                                                            
     --source="name=$INDIVIDUAL"                                                 \
     --name=$SAMPLE_NORMAL                                                       \
     --common-name='normal'                                                      \
-    --extraction-label='HCC1395 BL' --tissue-desc='b lymphoblast'
+    --extraction-label='HCC1395 BL'                                             \
+    --tissue-desc='b lymphoblast'
 
 SAMPLE_RNA_TUMOR='H_NJ-HCC1395ds-HCC1395_RNA'
 genome sample create                                                            \
