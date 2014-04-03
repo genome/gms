@@ -346,10 +346,8 @@ genome instrument-data import basic                                             
     --library="$CAPTURE_LIBRARY_NORMAL"
 
 # All instrument-data is listable as above, and can be filtered by params.
-# (The "solexa" sub-command is a holdever from the original Illumina instrument.) 
-
-genome instrument-data list solexa "flow_cell_id='C1TD1ACXX' and lane=7 and index_sequence ='ATCACG'"
-genome instrument-data list solexa "sample.patient.common_name='TST1ds' and sample.extraction_type = 'rna'"
+genome instrument-data list imported "sample.patient.common_name='TST1ds' and sample.extraction_type = 'genomic dna'"
+genome instrument-data list imported "sample.patient.common_name='TST1ds' and sample.extraction_type = 'rna'"
 
 #
 # CONCLUSION
