@@ -21,5 +21,6 @@ if [ "$VERSION" != 12.04 ]; then
 fi
 
 [ `which make` ] || sudo apt-get install -q -y make || echo "*** Failed to install 'make'!!!!" 
+[ `which ssh` ] || sudo apt-get install -q -y ssh|| echo "*** Failed to install 'ssh'!!!!"
 time make
 
