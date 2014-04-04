@@ -51,7 +51,8 @@ genome individual create                                                        
     --upn='HCC1395ds'                                                           \
     --common-name="TST1ds"                                                      \
     --gender=female                                                             \
-    --taxon="name=human"
+    --taxon="name=human"                                                        \
+    --age=43
 
 #
 # The individual can now be found by the command line and web interfaces.
@@ -82,7 +83,7 @@ genome sample create                                                            
     --name=$SAMPLE_TUMOR                                                        \
     --common-name='tumor'                                                       \
     --extraction-label='HCC1395'                                                \
-    --tissue-desc='epithelial'                                                  
+    --tissue-desc='epithelial'
 
 SAMPLE_NORMAL='H_NJ-HCC1395ds-HCC1395_BL'
 genome sample create                                                            \
@@ -96,9 +97,9 @@ genome sample create                                                            
 SAMPLE_RNA_TUMOR='H_NJ-HCC1395ds-HCC1395_RNA'
 genome sample create                                                            \
     --extraction-type='rna'                                                     \
-    --name=$SAMPLE_RNA_TUMOR                                                    \
     --source="name=$INDIVIDUAL"                                                 \
-    --common-name='rna tumor'                                                   \
+    --name=$SAMPLE_RNA_TUMOR                                                    \
+    --common-name='tumor'                                                       \
     --extraction-label='HCC1395_RNA'                                            \
     --tissue-desc='epithelial'
 
@@ -107,10 +108,9 @@ genome sample create                                                            
   --extraction-type='rna'                                                       \
   --source="name=$INDIVIDUAL"                                                   \
   --name=$SAMPLE_RNA_NORMAL                                                     \
-  --common-name='rna normal'                                                    \
-  --tissue-desc='b lymphoblast'                                                 \
+  --common-name='normal'                                                        \
   --extraction-label='HCC1395 BL_RNA'                                           \
-  --age=43
+  --tissue-desc='b lymphoblast'
 
 # All of these are visible by the command line now:
 
