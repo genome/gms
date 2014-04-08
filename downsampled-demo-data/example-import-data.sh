@@ -51,8 +51,7 @@ genome individual create                                                        
     --upn='HCC1395ds'                                                           \
     --common-name="TST1ds"                                                      \
     --gender=female                                                             \
-    --taxon="name=human"                                                        \
-    --age=43
+    --taxon="name=human"
 
 #
 # The individual can now be found by the command line and web interfaces.
