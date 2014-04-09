@@ -86,6 +86,11 @@ all:
 	# *** LOG OUT and log back in to ensure your environment is properly initialized! ***
 	#
 
+#steps to run before installing on a docker image
+dockerinit:
+	sudo addgroup fuse
+	sudo umount /etc/hosts
+
 # in a VM environment, the staging occurs on the host, and the rest on the VM
 vm: vminit
 	#
