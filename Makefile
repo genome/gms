@@ -2,7 +2,7 @@
 
 ##### Configuration
 
-# the identify of each GMS install is unique
+# the identity of each GMS install is unique
 RUBY:=$(shell bash -c '(which ruby) || (echo installing ruby ... && sudo apt-get -y -f install ruby1.9.1 >/dev/null 2>&1)')
 GMS_ID:=$(shell cat /etc/genome/sysid 2>/dev/null)
 ifeq ('$(GMS_ID)','') 
@@ -62,8 +62,8 @@ PWD:=$(shell pwd)
 # ensure the local directory is present for steps with results outside of the directory
 $(shell [ -e `readlink done-host` ] || mkdir -p `readlink done-host`)
 
-# Control the git commit for each of the underlying repos.
-# Git submodules would work for this but they do odd things with storing aboslute paths.
+# control the git commit for each of the underlying repos.
+# git submodules would work for this but they do odd things with storing absolute paths.
 GIT_VERSION_UR:=gms-pub-tag-2
 GIT_VERSION_GENOME:=gms-pub
 GIT_VERSION_WORKFLOW:=gms-pub
