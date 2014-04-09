@@ -426,7 +426,9 @@ done-host/etc: done-host/puppet done-host/unzip-sw-apt-mirror-min-ubuntu-12.04-$
 	# copy all data from setup/etc into /etc and configure apt sources
 	# 
 	sudo -v
-	[ -d /etc/facter/facts.d ] || sudo mkdir -p /etc/facter/facts.d 
+	[ -d /etc/facter/facts.d ] || sudo mkdir -p /etc/facter/facts.d
+	# Make a backup of the apt sources file in /etc
+	[ ! -e /etc/apt/sources.list ] || sudo mv -f /etc/apt/sources.list /etc/apt/sources.list.backup
 	# Copy apt sources files from setup/etc in /etc/
 	/bin/ls setup/etc/ | perl -ne 'chomp; $$o = $$_; s|\+|/|g; $$c = "sudo cp setup/etc/$$o /etc/$$_\n"; print STDERR $$c; print STDOUT $$c' | sudo bash
 	# perform various system specific findreplace commands on genome.conf and genome.list
