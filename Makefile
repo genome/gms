@@ -534,6 +534,7 @@ done-host/db-init: done-host/pkgs
 	# 
 	# setup the database and user "genome"
 	sudo -v
+	sudo /etc/init.d/postgresql restart
 	sudo -u postgres /usr/bin/createuser -A -D -R -E genome || echo 
 	sudo -u postgres /usr/bin/createdb -T template0 -O genome genome || echo 
 	sudo -u postgres /usr/bin/psql postgres -tAc "ALTER USER \"genome\" WITH PASSWORD 'changeme'"
