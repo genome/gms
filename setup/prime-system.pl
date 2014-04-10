@@ -42,6 +42,7 @@ unless ($sync =~ /^rsync$|^tarball$/){
   print "\n\nMust specify a valid value for --sync: 'tarball', 'rsync'\n\n";
   exit();
 }
+
 #Check resource config options
 my $slots = 80;
 my $memory_mb;
@@ -60,9 +61,61 @@ if ($memory || $low_resources){
     print "\n\nFormat of --memory not recognized. Specify available system memory in Gb (e.g. --memory=8GB or --memory=8192MB)\n\n";
     exit();
   }
+  $memory_mb = sprintf("%.0f", ($memory_mb/$slots));
   print "\n\nWARNING: The system will be configured for low resource usage based on an available memory of $memory_mb MB";
-}
 
+  #Set MXJ value for 'default' host to a larger number (e.g., to 64) instead of '!' in /opt/openlava-2.2/etc/lsb.hosts.
+  my $lsb_hosts_name = "lsb.hosts";
+  my $lsb_hosts_path = "/opt/openlava-2.2/etc/";
+  my $tmp_path = "/tmp/";
+  open (LSBHOSTS1, "$lsb_hosts_path"."$lsb_hosts_name") || die "\n\nCan not open lsb hosts file: $lsb_hosts_path"."$lsb_hosts_name\n\n";
+  open (LSBHOSTS2, ">$tmp_path"."$lsb_hosts_name") || die "\n\nCan not open temp lsb hosts file: $tmp_path"."$lsb_hosts_name\n\n";
+  while(<LSBHOSTS1>){
+    if ($_ =~ /^default\s+\!/){
+      $_ =~ s/\!/80/;
+      print LSBHOSTS2 $_;
+    }else{
+      print LSBHOSTS2 $_;
+    }
+  }
+  close(LSBHOSTS1);
+  close(LSBHOSTS2);
+  my $mv_cmd = "sudo mv -f $tmp_path"."$lsb_hosts_name $lsb_hosts_path" . "$lsb_hosts_name";
+  print "\n\nRUN: $mv_cmd";
+  system($mv_cmd);
+  my $restart_cmd = "sudo $lsb_hosts_path"."openlava restart";
+  print "\n\nRUN: $restart_cmd";
+  system($restart_cmd);
+
+  #Set WF_LOW_MEMORY=$memory_mb in /etc/genome.conf
+  #Set WF_LOW_RESOURCES=1 in /etc/genome.conf
+  my $wf_low_resources_found = 0;
+  my $wf_low_memory_found = 0;
+  open (GENOME_CONF1, "/etc/genome.conf") || die "\n\nCan not open genome conf file: /etc/genome.conf\n\n";
+  open (GENOME_CONF2, ">/tmp/genome.conf") || die "\n\nCan not open temp genome conf file: /tmp/genome.conf\n\n"; 
+  while(<GENOME_CONF1>){
+    if ($_ =~ /export\s+WF\_LOW\_RESOURCES\=0/){
+      print GENOME_CONF2 "export WF_LOW_RESOURCES=1\n";
+      $wf_low_resources_found = 1;
+    }elsif ($_ =~ /export\s+WF\_LOW\_MEMORY=\d+/){
+      print GENOME_CONF2 $_;
+      $wf_low_memory_found = 1;
+    }else{
+      print GENOME_CONF2 $_;
+    }
+  }
+  print GENOME_CONF2 "export WF_LOW_RESOURCES=1\n" unless ($wf_low_resources_found);
+  print GENOME_CONF2 "export WF_LOW_MEMORY="."$memory_mb\n" unless ($wf_low_memory_found);
+  close(GENOME_CONF1);
+  close(GENOME_CONF2);
+ 
+  $mv_cmd = "sudo mv -f /tmp/genome.conf /etc/genome.conf";
+  print "\n\nRUN: $mv_cmd";
+  system($mv_cmd);
+  my $source_cmd = "source /etc/genome.conf";
+  print "\n\nRUN: $source_cmd";
+  system($source_cmd);
+}
 
 #Put the latest metadata filename here:
 my $metadata_file = "18177dd5eca44514a47f367d9804e17a-2014.3.14.dat";
@@ -181,10 +234,10 @@ unless ($data eq "none"){
 #Perform some automatic sanity checks of the system and report problems to the user
 
 
+#If this config has modified /etc/genome.conf 
+print "\n\nYour config file (/etc/genome.conf) may have been modified, to be safe you should logout and login again" if ($memory || $low_resources);
+
 print "\n\n";
 
 exit;
-
-
-
 
