@@ -9,17 +9,21 @@ my $usage=<<INFO;
 ./prime-system.pl --data=hcc1395_1tenth_percent --sync=tarball 
 
 Arguments:
---data          data set to download ('hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'none')
---sync          syncing method ('rsync', 'tarball')
---help          display this documentation
+--data            Data set to download ('hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'none')
+--sync            Syncing method ('rsync', 'tarball')
+--low_resources   Configure the system for a low resources test (e.g. if you have memory < 64Gb).  For demonstration purposes only  
+--memory          Specify how many GB of memory you have available on your physical system or allocated in a VM. (e.g. --memory=8GB or --memory=8192MB)  
+--help            Display this documentation
 
 INFO
 
 my $data = '';
 my $sync = '';
-my $help = '';
+my $low_resources;
+my $memory = '';
+my $help;
 
-GetOptions ('data=s'=>\$data, 'sync=s'=>\$sync, 'help'=>\$help);
+GetOptions ('data=s'=>\$data, 'sync=s'=>\$sync, 'low_resources'=>\$low_resources, 'memory=s'=>\$memory, 'help'=>\$help);
 
 #Make sure the user is within the sGMS, install has been run and ENVs are set by checking for $GENOME_SYS_ID
 unless ($ENV{GENOME_SYS_ID}){
@@ -37,6 +41,26 @@ unless ($data =~ /^hcc1395$|^hcc1395_1percent$|^hcc1395_1tenth_percent$|^none$/)
 unless ($sync =~ /^rsync$|^tarball$/){
   print "\n\nMust specify a valid value for --sync: 'tarball', 'rsync'\n\n";
   exit();
+}
+#Check resource config options
+my $slots = 80;
+my $memory_mb;
+if ($memory || $low_resources){
+  unless ($memory){
+    print "\n\nIf --low_resources is specified, you must also specify the memory available in your system (e.g. --memory=8GB or --memory=8192MB)\n\n" unless ($memory);
+    exit();
+  }
+  $low_resources = 1;
+  chomp($memory);
+  if ($memory =~ /^(\d+)gb$/i){
+    $memory_mb = sprintf("%.0f", ($1 * 1000));
+  }elsif($memory =~ /^(\d+)mb$/i){
+    $memory_mb = $1;    
+  }else{
+    print "\n\nFormat of --memory not recognized. Specify available system memory in Gb (e.g. --memory=8GB or --memory=8192MB)\n\n";
+    exit();
+  }
+  print "\n\nWARNING: The system will be configured for low resource usage based on an available memory of $memory_mb MB";
 }
 
 
