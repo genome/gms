@@ -91,7 +91,7 @@ dockerinit:
 	sudo chmod 1777 /tmp/
 	sudo addgroup fuse
 	sudo umount /etc/hosts
-	make done-host/hosts
+	echo "$(IP) GMS_HOST" | setup/bin/findreplace-gms | sudo bash -c 'cat - >>/etc/hosts'
 
 # in a VM environment, the staging occurs on the host, and the rest on the VM
 vm: vminit
