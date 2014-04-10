@@ -88,6 +88,7 @@ all:
 
 #steps to run before installing on a docker image
 dockerinit:
+	sudo chmod 1777 /tmp/
 	sudo addgroup fuse
 	sudo umount /etc/hosts
 	make done-host/hosts
