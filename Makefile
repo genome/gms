@@ -90,9 +90,8 @@ all:
 dockerinit:
 	sudo addgroup fuse
 	sudo umount /etc/hosts
-	IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
-	echo "${IP} GMS_HOST" | sudo bash -c 'cat - >>/etc/hosts'
-	
+	make done-host/hosts
+
 # in a VM environment, the staging occurs on the host, and the rest on the VM
 vm: vminit
 	#
