@@ -354,6 +354,6 @@ genome instrument-data list imported "sample.patient.common_name='TST1ds' and sa
 # We now have imported a variety of sets of reads from the Illumina sequencer,
 # along with background metadata.
 #
-# See the next script: example-run-analysis.sh to run analysis.
+# See the next script: example-run-initial-analysis.sh to run analysis.
 #
 
