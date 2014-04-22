@@ -355,5 +355,5 @@ genome instrument-data list imported "sample.patient.common_name='TST1ds' and sa
 # along with background metadata.
 #
 # See the next script: example-run-initial-analysis.sh to run analysis.
-# Or, use genome model clin-seq advise --allow-imported --individual='TST1ds'
+# Or, use the helper tool: genome model clin-seq advise --allow-imported --individual='TST1ds'
 
