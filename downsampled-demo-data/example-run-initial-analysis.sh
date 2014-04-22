@@ -222,13 +222,11 @@ genome model build start "name='$MODEL_NORMAL_RNASEQ'"
 #
 # CONCLUSION
 #
-# The above commands configure and launch direct analysis of
-# instrument data.
+# The above commands define models and start builds 
+# to configure and launch direct analysis of instrument data. 
 #
-# Next we will monitor the build process, and then use
-# those models as inputs to higher-order models:
+# Next we will use those models as inputs to higher-order models:
 #
-# example-monitor-builds.sh
 # example-run-downstream-analysis.sh
 # 
 
