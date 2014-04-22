@@ -12,7 +12,7 @@
 # 
 # This example uses a downsampled copy of the "TST1" patient data
 # described in the paper.  To avoid collision with the full test data,
-# the patient has"ds1" appended to the name.  All other data embeds
+# the patient has "ds1" appended to the name.  All other data embeds
 # the patient identifier at the beginning.
 #
 
