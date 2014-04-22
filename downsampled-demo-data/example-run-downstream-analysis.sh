@@ -106,7 +106,7 @@ genome model build start "name='hcc1395-clinseq-ds'"
 #
 # The above commands configure and launch analysis.
 # 
-# An alternative is to use the helper tool: genome model clin-seq advise --allow-imported --individual='TST1ds'
+# An alternative is to use the helper tool: genome model clin-seq advise --allow-imported --individual='common_name=TST1ds'
 #
 # See the instructions on the web site to understand the data produced:
 # http://github.com/genome/gms
