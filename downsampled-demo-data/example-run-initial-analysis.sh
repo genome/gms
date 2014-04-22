@@ -229,6 +229,6 @@ genome model build start "name='$MODEL_NORMAL_RNASEQ'"
 #
 # example-run-downstream-analysis.sh
 # 
-# An alternative is to use the helper tool: genome model clin-seq advise --allow-imported --individual='TST1ds'
+# An alternative is to use the helper tool: genome model clin-seq advise --allow-imported --individual='common_name=TST1ds'
 #
 
