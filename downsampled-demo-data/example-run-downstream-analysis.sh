@@ -106,7 +106,7 @@ genome model build start "name='hcc1395-clinseq-ds'"
 #
 # The above commands configure and launch analysis.
 # 
-# For details on job monitoring, see example-monitoring.sh
+# An alternative is to use the helper tool: genome model clin-seq advise --allow-imported --individual='TST1ds'
 #
 # See the instructions on the web site to understand the data produced:
 # http://github.com/genome/gms
