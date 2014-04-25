@@ -1,5 +1,5 @@
 #to re-image the system 
-# sudo wget -q -O - http://puppetmaster2:3001/precise_image=10.0.70.20 && sudo /sbin/reboot
+# sudo wget -q -O - http://tftp:3001/precise_image=10.0.70.20 && sudo /sbin/reboot
 
 #once the system comes on line login with ldap credentials
 ssh clia1
