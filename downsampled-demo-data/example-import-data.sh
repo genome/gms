@@ -333,14 +333,14 @@ TARGET_SET='NimbleGen v3 Capture Chip Set'
 genome instrument-data import basic                                                       \
     --description='tumor exome 1'                                                         \
     --import-source-name='TST1ds'                                                         \
-    --instrument-data-properties='clusters=96056889,target_region_set_name="$TARGET_SET"' \
+    --instrument-data-properties="clusters=96056889,target_region_set_name=$TARGET_SET" \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_C1TD1ACXX_7_ATCACG.bam"             \
     --library="$CAPTURE_LIBRARY_TUMOR"
 
 genome instrument-data import basic                                                       \
     --description='normal exome 1'                                                        \
     --import-source-name='TST1ds'                                                         \
-    --instrument-data-properties='clusters=77667085,target_region_set_name="$TARGET_SET"' \
+    --instrument-data-properties="clusters=77667085,target_region_set_name=$TARGET_SET" \
     --source-files="$INSTRUMENT_DATA_DIRECTORY/gerald_C1TD1ACXX_7_CGATGT.bam"             \
     --library="$CAPTURE_LIBRARY_NORMAL"
 
