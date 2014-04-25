@@ -12,7 +12,7 @@
 # 
 # This example uses a downsampled copy of the "TST1" patient data
 # described in the paper.  To avoid collision with the full test data,
-# the patient has "ds1" appended to the name.  All other data embeds
+# the patient has "ds" appended to the name.  All other data embeds
 # the patient identifier at the beginning.
 #
 
@@ -148,7 +148,7 @@ genome library create                                                           
   --original-insert-size='390'                                                  \
   --library-insert-size='509'
 
-LIBRARY_TUMOR_3='H_NJ-HCC1395-HCC1395-lig2-lib3ds'
+LIBRARY_TUMOR_3='H_NJ-HCC1395ds-HCC1395-lig2-lib3'
 genome library create                                                           \
   --name="$LIBRARY_TUMOR_3"                                                     \
   --sample="$SAMPLE_TUMOR"                                                      \
@@ -158,7 +158,7 @@ genome library create                                                           
 
 # Three libraries of normal DNA used for WGS sequencing.
 
-LIBRARY_NORMAL_1='H_NJ-HCC1395-HCC1395_BL-lig2-lib1ds'
+LIBRARY_NORMAL_1='H_NJ-HCC1395ds-HCC1395_BL-lig2-lib1'
 genome library create                                                           \
   --name="$LIBRARY_NORMAL_1"                                                    \
   --sample="$SAMPLE_NORMAL"                                                     \
@@ -166,7 +166,7 @@ genome library create                                                           
   --original-insert-size='266'                                                  \
   --library-insert-size='385'
 
-LIBRARY_NORMAL_2='H_NJ-HCC1395-HCC1395_BL-lig2-lib2ds'
+LIBRARY_NORMAL_2='H_NJ-HCC1395ds-HCC1395_BL-lig2-lib2'
 genome library create                                                           \
   --name="$LIBRARY_NORMAL_2"                                                    \
   --sample="$SAMPLE_NORMAL"                                                     \
@@ -174,7 +174,7 @@ genome library create                                                           
   --original-insert-size='381'                                                  \
   --library-insert-size='500'
 
-LIBRARY_NORMAL_3='H_NJ-HCC1395-HCC1395_BL-lig2-lib3ds'
+LIBRARY_NORMAL_3='H_NJ-HCC1395ds-HCC1395_BL-lig2-lib3'
 genome library create                                                           \
   --name="$LIBRARY_NORMAL_3"                                                    \
   --sample="$SAMPLE_NORMAL"                                                     \
@@ -184,7 +184,7 @@ genome library create                                                           
 
 # One library of tumor DNA used for exome sequencing.
 
-CAPTURE_LIBRARY_TUMOR='libgroup-2891242741ds'
+CAPTURE_LIBRARY_TUMOR='H_NJ-HCC1395ds-HCC1395-capture-lib1'
 genome library create                                                           \
   --name="$CAPTURE_LIBRARY_TUMOR"                                               \
   --sample="$SAMPLE_TUMOR"                                                      \
@@ -193,7 +193,7 @@ genome library create                                                           
 
 # One library of normal DNA used for exome sequencing.
 
-CAPTURE_LIBRARY_NORMAL='libgroup-2891242742ds'
+CAPTURE_LIBRARY_NORMAL='H_NJ-HCC1395ds-HCC1395_BL-capture-lib1'
 genome library create                                                           \
   --name="$CAPTURE_LIBRARY_NORMAL"                                              \
   --sample="$SAMPLE_NORMAL"                                                     \
@@ -202,7 +202,7 @@ genome library create                                                           
 
 # Oner libarary of tumor RNA.
 
-LIBRARY_RNA_TUMOR='H_NJ-HCC1395ds-HCC1395_RNAds-lib1'
+LIBRARY_RNA_TUMOR='H_NJ-HCC1395ds-HCC1395_RNA-lib1'
 genome library create                                                           \
   --name="$LIBRARY_RNA_TUMOR"                                                   \
   --sample="$SAMPLE_RNA_TUMOR"                                                  \
