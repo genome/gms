@@ -24,7 +24,7 @@ MANIFEST:='standalone.pp'
 LSB_RELEASE:=$(shell which lsb_release)
 ifeq ("$(LSB_RELEASE)","")
   OS_VENDOR:=$(shell uname) 
-  OS_RELASE:=
+  OS_RELEASE:=
 else
   OS_VENDOR:=$(shell lsb_release -i 2>/dev/null | awk '{ print $$3 }')
   OS_RELEASE:=$(shell lsb_release -a 2>/dev/null | grep Release | awk '{ print $$2 }')
