@@ -175,6 +175,14 @@ done-host/vminstall:
 	# $@: (recurses into vminstall-$(OS)
 	#
 	sudo -v
+ifneq ("$(OS)" , "Darwin")
+ifneq ("$(OS)" , "Ubuntu10.04")
+ifneq ("$(OS)" , "Ubuntu12.04")
+	echo "unknown OS $(OS), the GMS installer can install VMs only on Ubuntu10.04, Ubuntu12.04 or Darwin. Please install a UbuntuPrecise VM manually or modify the VM to support your OS. See target done-host/vminstall-Ubuntu12.04 for an example."
+	exit 1
+endif
+endif
+endif
 	[ -e done-host/vminstall-$(OS) ] || sudo make done-host/vminstall-$(OS)
 	(which VirtualBox && which vagrant && touch done-host/vminstall) || echo "**** run one of the following to auto-install for your platform: vminstall-mac, vminstall-10.04, or vminstall-12.04"
 	which VirtualBox || (echo "**** you can install VirtualBox manually from https://www.virtualbox.org/wiki/Downloads")
