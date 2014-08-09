@@ -5,7 +5,7 @@ sudo mkfs /dev/xvdb
 sudo mount /dev/xvdb /opt
 
 sudo mkfs /dev/xvdc
-sudo mount /dev/xvdc /opt
+sudo mount /dev/xvdc /tmp
 
 cd /opt; mkdir src; cd src
 sudo chown -R ubuntu:ubuntu /opt
