@@ -11,3 +11,6 @@ cd /opt; mkdir src; cd src
 sudo chown -R ubuntu:ubuntu /opt
 
 sudo apt-get update
+
+mv ~/gms/ /opt/src/
+cd /opt/src
