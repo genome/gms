@@ -7,9 +7,10 @@ sudo mount /dev/xvdb /opt
 sudo mkfs /dev/xvdc
 sudo mount /dev/xvdc /tmp
 
-cd /opt; mkdir src; cd src
 sudo chown -R ubuntu:ubuntu /opt
+mkdir /opt/src
 
 sudo apt-get update
 
 mv ~/gms /opt/src/gms
+cd /opt/src/gms
