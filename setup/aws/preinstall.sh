@@ -12,5 +12,4 @@ sudo chown -R ubuntu:ubuntu /opt
 
 sudo apt-get update
 
-mv ~/gms/ /opt/src/
-cd /opt/src
+mv ~/gms /opt/src/
