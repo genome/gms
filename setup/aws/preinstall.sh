@@ -8,6 +8,7 @@ sudo mkfs /dev/xvdc
 sudo mount /dev/xvdc /tmp
 
 sudo chown -R ubuntu:ubuntu /opt
+sudo chown -R ubuntu:ubuntu /tmp
 mkdir /opt/src
 
 sudo apt-get update
