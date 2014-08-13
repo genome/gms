@@ -9,7 +9,7 @@ my $usage=<<INFO;
 ./prime-system.pl --data=hcc1395_1tenth_percent --sync=tarball 
 
 Arguments:
---data            Data set to download ('hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'none')
+--data            Data set to download ('hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'hcc1395_exome_only', 'none')
 --sync            Syncing method ('rsync', 'tarball')
 --low_resources   Configure the system for a low resources test (e.g. if you have memory < 64Gb).  For demonstration purposes only  
 --memory          Specify how many GB of memory you have available on your physical system or allocated in a VM. (e.g. --memory=8GB or --memory=8192MB)  
@@ -34,7 +34,7 @@ if ($help || !$data || !$sync){
   print "$usage";
   exit();
 }
-unless ($data =~ /^hcc1395$|^hcc1395_1percent$|^hcc1395_1tenth_percent$|^none$/){
+unless ($data =~ /^hcc1395$|^hcc1395_1percent$|^hcc1395_1tenth_percent$|^hcc1395_exome_only$|^none$/){
   print "\n\nMust specify a valid value for --data: 'hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'none'\n\n";
   exit();
 }
@@ -112,8 +112,8 @@ if ($memory || $low_resources){
   $mv_cmd = "sudo mv -f /tmp/genome.conf /etc/genome.conf";
   print "\n\nRUN: $mv_cmd";
   system($mv_cmd);
-  my $source_cmd = "source /etc/genome.conf";
-  print "\n\nRUN: $source_cmd";
+  my $source_cmd = "bash /etc/genome.conf";
+  print "\n\nRUN: $source_cmd\n";
   system($source_cmd);
 }
 
@@ -185,7 +185,12 @@ if ($sync eq 'rsync'){
 
 #Download the separate batch of BAM files indicated by the user and store in /opt/gms/bams
 unless ($data eq "none"){
+  #all data
   my $bam_list = "gerald_D1VCPACXX_6.bam gerald_D1VCPACXX_7.bam gerald_D1VCPACXX_8.bam gerald_D1VCPACXX_1.bam gerald_D1VCPACXX_2.bam gerald_D1VCPACXX_3.bam gerald_D1VCPACXX_4.bam gerald_D1VCPACXX_5.bam gerald_C1TD1ACXX_7_CGATGT.bam gerald_C1TD1ACXX_7_ATCACG.bam gerald_C2DBEACXX_3.bam gerald_C1TD1ACXX_8_ACAGTG.bam";
+  if ($data eq "hcc1395_exome_only"){
+    $bam_list = "gerald_C1TD1ACXX_7_CGATGT.bam gerald_C1TD1ACXX_7_ATCACG.bam";
+  }
+
   my $bam_base_dir = '/opt/gms/bams/';
   mkdir $bam_base_dir unless (-e $bam_base_dir);
   my $bam_dir = $bam_base_dir . $data . "/";
@@ -221,10 +226,13 @@ unless ($data eq "none"){
   my $mv_cmd10 = "$op $bam_base/$data/gerald_C1TD1ACXX_7_ATCACG.bam $fs_base/csf_135417932/gerald_C1TD1ACXX_7_ATCACG.bam";
   my $mv_cmd11 = "$op $bam_base/$data/gerald_C2DBEACXX_3.bam $fs_base/csf_142880229/gerald_C2DBEACXX_3.bam";
   my $mv_cmd12 = "$op $bam_base/$data/gerald_C1TD1ACXX_8_ACAGTG.bam $fs_base/csf_135450623/gerald_C1TD1ACXX_8_ACAGTG.bam";
+  my @op_cmds = ($mv_cmd1,$mv_cmd2,$mv_cmd3,$mv_cmd4,$mv_cmd5,$mv_cmd6,$mv_cmd7,$mv_cmd8,$mv_cmd9,$mv_cmd10,$mv_cmd11,$mv_cmd12);
+  if ($data eq "hcc1395_exome_only"){
+    @op_cmds = ($mv_cmd9,$mv_cmd10); 
+  }
 
   #Make sure the /opt/gms/GMS1 symlink is in place
   print "\n\nPlace BAM files into expected system paths within GMS1";
-  my @op_cmds = ($mv_cmd1,$mv_cmd2,$mv_cmd3,$mv_cmd4,$mv_cmd5,$mv_cmd6,$mv_cmd7,$mv_cmd8,$mv_cmd9,$mv_cmd10,$mv_cmd11,$mv_cmd12);
   foreach my $op_cmd (@op_cmds){
     print "\nRUN: $op_cmd";
     system($op_cmd);
