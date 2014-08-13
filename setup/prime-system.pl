@@ -149,19 +149,11 @@ if ($sync eq 'rsync'){
   if (-e $tarball || -e $tardir){
     print "\n\nWARNING: $tarball and/or $tardir are already present, delete these if you want to download GMS1 from scratch\n";
   }else{
-    #Get the GMS1 tarball
-    my $gms1_lftp_cmd = "
-    lftp -c \"set ftp:list-options -a; 
-    set mirror:parallel-directories true; 
-    set ftp:use-mdtm false; 
-    set net:limit-rate 0; 
-    open 'ftp://xfer.genome.wustl.edu'; 
-    lcd /opt/gms/;
-    cd gms/testdata;
-    get $tarname\"";
-    print "\n\nRUN: $gms1_lftp_cmd\n";
-    system($gms1_lftp_cmd);
-
+    my $got_tarball = 1;
+    while ($got_tarball){
+      $got_tarball = &get_tarball('-tarname'=>$tarname);
+    }
+    
     #Unpack the GMS1 tarball to /opt/gms/.GMS1.tarball
     my $unpack_cmd = "mkdir $tardir; mv $tarball $tardir; cd $tardir; tar -zxvf $tardir/$tarname";
     print "\n\nRUN: $unpack_cmd\n";
@@ -248,4 +240,34 @@ print "\n\nYour config file (/etc/genome.conf) may have been modified, to be saf
 print "\n\n";
 
 exit;
+
+sub get_tarball{
+  my %args = @_;
+  my $tarname = $args{'-tarname'};
+
+  #If there is already a tarball present, delete it
+  my $rm_cmd = "rm -fr /opt/gms/$tarname";
+
+  #Get the GMS1 tarball
+  my $gms1_lftp_cmd = "
+  lftp -c \"set ftp:list-options -a; 
+  set mirror:parallel-directories true; 
+  set ftp:use-mdtm false; 
+  set net:limit-rate 0; 
+  open 'ftp://xfer.genome.wustl.edu'; 
+  lcd /opt/gms/;
+  cd gms/testdata;
+  get $tarname\"";
+  print "\n\nRUN: $gms1_lftp_cmd\n";
+  system($gms1_lftp_cmd);
+  my $error_code = $?;
+
+  if ($error_code){
+    print "\n\nWarning failed to download tarball!";
+  }
+
+  return $error_code;
+}
+
+
 
