@@ -8,8 +8,7 @@ sudo mkfs /dev/xvdc
 sudo mount /dev/xvdc /tmp
 
 #Make ephemeral storage mounts persistent
-echo -e "LABEL=cloudimg-rootfs /  ext4 defaults  0 0\n/dev/xvdb /opt  auto  defaults,nobootwait,comment=cloudconfig 0 2\n/dev/xvdc /tmp  auto  defaults,nobootwait,comment=c
-loudconfig 0 2" | sudo tee  ~/fstab
+echo -e "LABEL=cloudimg-rootfs /  ext4 defaults  0 0\n/dev/xvdb /opt  auto  defaults,nobootwait,comment=cloudconfig 0 2\n/dev/xvdc /tmp  auto  defaults,nobootwait,comment=cloudconfig 0 2" | sudo tee  /etc/fstab
 
 #change permissions on required drives
 sudo chown -R ubuntu:ubuntu /opt
@@ -21,4 +20,3 @@ sudo apt-get update
 #setup install-dir
 mkdir /opt/src
 mv ~/gms /opt/src/gms
-cd /opt/src/gms
