@@ -8,7 +8,7 @@ sudo mkfs /dev/xvdc
 sudo mount /dev/xvdc /tmp
 
 #Make ephemeral storage mounts persistent
-echo -e "/dev/xvdb /opt  auto  defaults,nobootwait,comment=cloudconfig 0 2\n/dev/xvdc /tmp  auto  defaults,nobootwait,comment=c
+echo -e "LABEL=cloudimg-rootfs /  ext4 defaults  0 0\n/dev/xvdb /opt  auto  defaults,nobootwait,comment=cloudconfig 0 2\n/dev/xvdc /tmp  auto  defaults,nobootwait,comment=c
 loudconfig 0 2" | sudo tee  ~/fstab
 
 #change permissions on required drives
