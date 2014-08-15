@@ -26,5 +26,14 @@ Some of the tools made available through the GMS can be downloaded individually 
 The raw data and reference files needed for the GMS tutorial are made available through our <a href="https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/">FTP</a> and as an <a href="https://gmsdata.s3.amazonaws.com/">Amazon Public Dataset</a>.
 
 
+#### Quick navigation:
+
+| [[Install]] | [[Docs]] | [[Tutorials]] | [[FAQ]]|
+|----------------------------|----------------------------|----------------------------|----------------------------|
+| [<img src="https://github.com/genome/gms/wiki/Images/Gnome-system-software-installer.png">](https://github.com/genome/gms/wiki/Install) | [<img src="https://github.com/genome/gms/wiki/Images/Gnome-emblem-documents.png">](https://github.com/genome/gms/wiki/Docs) | [<img src="https://github.com/genome/gms/wiki/Images/DNA_sequence.png">](https://github.com/genome/gms/wiki/Tutorials) | [<img src="https://github.com/genome/gms/wiki/Images/Faq-icon.png">](https://github.com/genome/gms/wiki/FAQ) |
+| Step-by-step instructions for installing the sGMS | Technical documentation about the internals of the sGMS | Tutorials for running different analyses using the sGMS | Frequently asked questions about the sGMS |
+
+
+
 | [Home] (https://github.com/genome/gms/wiki/Home) | [Install] (https://github.com/genome/gms/wiki/Install) | [Docs]  (https://github.com/genome/gms/wiki/Docs) | [Tutorials] (https://github.com/genome/gms/wiki/Tutorials) | [FAQ] (https://github.com/genome/gms/wiki/FAQ) |
 |----------------------------|----------------------------|----------------------------|----------------------------|----------------------------|
