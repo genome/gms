@@ -3,15 +3,12 @@ GMS
 
 The Genome Modeling System (GMS)
 
-For a default single-node installation, run `./install.sh`.
-
 A paper describing the GMS is under review.
 
 For a brief demonstration of the GMS please start with the: 
 <a href="https://github.com/genome/gms/wiki/Quick-VM-Tour">Quick Tour in a Pre-configured Virtual Machine</a>.
 
 More detailed documentation and tutorials are available in the home page: <big><a href="https://github.com/genome/gms/wiki">GMS Home</a></big>
-
 
 This documentation includes:
 the <a href="https://github.com/genome/gms/wiki/Install">Installation Guide</a>, 
