@@ -200,7 +200,7 @@ genome library create                                                           
   --protocol='Illumina Library Construction'                                    \
   --library-insert-size='364-400'
 
-# Oner libarary of tumor RNA.
+# One library of tumor RNA.
 
 LIBRARY_RNA_TUMOR='H_NJ-HCC1395ds-HCC1395_RNA-lib1'
 genome library create                                                           \
