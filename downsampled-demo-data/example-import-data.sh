@@ -238,7 +238,7 @@ genome library list "sample.name='$SAMPLE_TUMOR' and original_insert_size > 300"
 # flow cell + lane + index. For unindexed data, there is one per
 # flow cell + lane.
 #
-# The GMS prefers reads to be in BAM format (pre alignmnet), for efficiency.
+# The GMS prefers reads to be in BAM format (pre alignment), for efficiency.
 # Note that the flow_cell_id, lane, and index sequence are extracted from
 # the BAM name automatically.
 #
