@@ -1,6 +1,13 @@
 #! /bin/bash
 #Preinstall priming script for AWS installs.
 
+#This script assumes you are logged into an Amazon AWS instance with two ephemeral volumes present (in this case '/dev/xvdb' and '/dev/xvdc')
+#For example, this will work with instance types: c3.8xlarge, r3.8xlarge, i2.2xlarge
+#You may need to customize this code for your specific instance type
+
+#Unmount the current /mnt mount point that is attached to /dev/xvdb by default
+sudo umount /mnt
+
 #Mount ephemeral storage
 sudo mkfs /dev/xvdb
 sudo mount /dev/xvdb /opt
