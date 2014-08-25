@@ -16,7 +16,7 @@ the <a href="https://github.com/genome/gms/wiki/Beginner%27s-Guide-to-the-Demons
 the <a href="https://github.com/genome/gms/wiki/Useful-GMS-Commands">Reference Manual for useful Genome Commands</a>, 
 the <a href="https://github.com/genome/gms/wiki/Beginner%27s-Guide-to-the-Demonstration-Analysis">Beginners Guide to Demonstration analysis</a>, and much more.
 
-Installation fo the GMS is possible by many avenues.  The following approaches have been tested and have associated tutorials and other documentation:
+Installation of the GMS is possible by many avenues.  The following approaches have been tested and have associated tutorials and other documentation:
 On dedicated hardware, as a preconfigured VirtualBox virtual machine, using Vagrant to create a virtual machine, using Docker, on an Amazon (AWS) EC2 instance, using an OpenStack instance.  Refer to the <a href="https://github.com/genome/gms/wiki/Installation-Types-Overview">installation types overview</a> for more details.   
 
 Some of the tools made available through the GMS can be downloaded individually from <a href="http://gmt.genome.wustl.edu/">Genome Modeling Tools</a>.
