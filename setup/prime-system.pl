@@ -11,8 +11,9 @@ my $usage=<<INFO;
 Arguments:
 --data            Data set to download ('hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'hcc1395_exome_only', 'none')
 --sync            Syncing method ('rsync', 'tarball')
---low_resources   Configure the system for a low resources test (e.g. if you have memory < 64Gb).  For demonstration purposes only  
---memory          Specify how many GB of memory you have available on your physical system or allocated in a VM. (e.g. --memory=8GB or --memory=8192MB)  
+--low_resources   Configure the system for a low resources test (e.g., if you have memory < 64Gb).  For demonstration purposes only  
+--memory          Specify how many GB of memory you have available on your physical system or allocated in a VM. (e.g., --memory=8GB or --memory=8192MB)  
+--cpus            Specify how many cpus you have available on your physical system or allocated in a VM (e.g., --cpus=8)
 --help            Display this documentation
 
 INFO
@@ -21,9 +22,10 @@ my $data = '';
 my $sync = '';
 my $low_resources;
 my $memory = '';
+my $cpus;
 my $help;
 
-GetOptions ('data=s'=>\$data, 'sync=s'=>\$sync, 'low_resources'=>\$low_resources, 'memory=s'=>\$memory, 'help'=>\$help);
+GetOptions ('data=s'=>\$data, 'sync=s'=>\$sync, 'low_resources'=>\$low_resources, 'memory=s'=>\$memory, 'cpus=s'=>\$cpus, 'help'=>\$help);
 
 #Make sure the user is within the sGMS, install has been run and ENVs are set by checking for $GENOME_SYS_ID
 unless ($ENV{GENOME_SYS_ID}){
@@ -64,7 +66,13 @@ if ($memory || $low_resources){
   $memory_mb = sprintf("%.0f", ($memory_mb/$slots));
   print "\n\nWARNING: The system will be configured for low resource usage based on an available memory of $memory_mb MB";
 
-  #Set MXJ value for 'default' host to a larger number (e.g., to 64) instead of '!' in /opt/openlava-2.2/etc/lsb.hosts.
+  #Set MXJ value for 'default' host to a larger number (e.g., to 80) instead of '!' in /opt/openlava-2.2/etc/lsb.hosts.
+  #For larger numbers of cpus increased jobs slots are possible, otherwise default to 80
+  if ($cpus){
+    if ($cpus>8){
+      $slots = $cpus * 10;
+    }
+  }
   my $lsb_hosts_name = "lsb.hosts";
   my $lsb_hosts_path = "/opt/openlava-2.2/etc/";
   my $tmp_path = "/tmp/";
@@ -72,7 +80,7 @@ if ($memory || $low_resources){
   open (LSBHOSTS2, ">$tmp_path"."$lsb_hosts_name") || die "\n\nCan not open temp lsb hosts file: $tmp_path"."$lsb_hosts_name\n\n";
   while(<LSBHOSTS1>){
     if ($_ =~ /^default\s+\!/){
-      $_ =~ s/\!/80/;
+      $_ =~ s/\!/$slots/;
       print LSBHOSTS2 $_;
     }else{
       print LSBHOSTS2 $_;
