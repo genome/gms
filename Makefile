@@ -156,14 +156,15 @@ done-host/vminstall-Ubuntu12.04:
 	vagrant plugin install vagrant-vbguest
 	touch $@
 
-VIRTUALBOX_DMG:=VirtualBox-4.3.8-92456-OSX.dmg
-VAGRANT_DMG:=vagrant_1.5.1.dmg
+VIRTUALBOX_DMG:=VirtualBox-4.3.16-95972-OSX.dmg
+VAGRANT_DMG:=vagrant_1.6.5.dmg
+VIRTUALBOX_VERSION_DARWIN:=4.3.16
 done-host/vminstall-Darwin:
 	#
 	# $@:
 	#
 	sudo -v
-	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/$(VIRTUALBOX_VERSION)/$(VIRTUALBOX_DMG) -o $(VIRTUALBOX_DMG) && open $(VIRTUALBOX_DMG))
+	which VirtualBox || (cd setup/archive-files; curl -L http://download.virtualbox.org/virtualbox/$(VIRTUALBOX_VERSION_DARWIN)/$(VIRTUALBOX_DMG) -o $(VIRTUALBOX_DMG) && open $(VIRTUALBOX_DMG))
 	while [[ ! `which VirtualBox` ]]; do echo "waiting for VirtualBox install to complete..."; sleep 3; done
 	which vagrant || (cd setup/archive-files; curl -L https://dl.bintray.com/mitchellh/vagrant/$(VAGRANT_DMG) -o $(VAGRANT_DMG) && open $(VAGRANT_DMG))
 	while [[ ! `which vagrant` ]]; do echo "waiting for vagrant install to complete..."; sleep 3; done
