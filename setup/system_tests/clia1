@@ -1,6 +1,15 @@
 #to re-image the system 
 # sudo wget -q -O - http://tftp:3001/precise_image=10.0.70.20 && sudo /sbin/reboot
 
+#to tell if the re-image process is done:
+#sudo tail -f /var/log/syslog
+# … log messages ...
+# Nov 20 21:56:39 clia1 puppet-agent[25063]: Finished catalog run in 14.61 seconds
+# You're looking for that "finished catalog run" line.
+# root@clia1:~# /etc/init.d/puppet status && grep -A1 Failure /var/lib/puppet/state/last_run_report.yaml
+#If you want to see what puppet is doing, take a look at the manifest here:
+#http://git.gsc.wustl.edu/gitweb/?p=puppet-modules.git;a=tree;f=site/systems_clia1_server/manifests;h=eed29a61b7f71a925a0d53f83fcfc31a3d22f2d4;hb=HEAD
+
 #once the system comes on line login with ldap credentials
 ssh clia1
 
