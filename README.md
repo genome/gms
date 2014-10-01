@@ -24,6 +24,9 @@ Some of the tools made available through the GMS can be downloaded individually 
 The raw data and reference files needed for the GMS tutorial are made available through our <a href="https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/">FTP</a> and as an <a href="https://gmsdata.s3.amazonaws.com/">Amazon Public Dataset</a>.
 
 
+Installation of the GMS involves installation of many commonly used bioinformatics tools, a postgres database, other services and use of the following git repositories: <a href="https://github.com/genome/genome">genome</a>, <a href="https://github.com/genome/UR">UR</a>, <a href="https://github.com/genome/gms-webviews">gms-webviews</a>, and <a href="https://github.com/genome/tgi-workflow">tgi-workflow</a>
+
+
 #### Quick navigation:
 
 | [Install] (https://github.com/genome/gms/wiki/Install) | [Docs] (https://github.com/genome/gms/wiki/Docs) | [Tutorials] (https://github.com/genome/gms/wiki/Tutorials) | [FAQ] (https://github.com/genome/gms/wiki/FAQ) |
