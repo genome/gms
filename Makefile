@@ -35,7 +35,7 @@ OS:=$(shell echo $(OS_VENDOR)$(OS_RELEASE))
 FTP:=ftp
 ifeq ('$(OS_VENDOR)','Ubuntu')
  # FTP:=$(shell which ncftpget || (sudo apt-get install -q -y ncftp && which ncftpget))
- FTP:=wget -v -c
+ FTP:=wget -v -c --no-check-certificate
 endif
 
 # this value is empty for tools that automatically download to the PWD (ftp, ncftpget, wget)

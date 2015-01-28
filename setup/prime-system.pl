@@ -132,7 +132,7 @@ my $metadata_url = $export_url . $metadata_file;
 
 #Download meta-data .dat file
 unless (-e $metadata_file){
-  my $wget_cmd = "wget $metadata_url";
+  my $wget_cmd = "wget --no-check-certificate $metadata_url";
   print "\n\nRUN: $wget_cmd\n";
   system($wget_cmd);
 }
