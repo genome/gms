@@ -564,7 +564,7 @@ done-host/rails: done-host/pkgs
 	sudo /usr/bin/gem1.9.1 install bundler --no-ri --no-rdoc
 	sudo -u www-data  mv /var/www/gms-webviews/config/database.yml.template /var/www/gms-webviews/config/database.yml
 	cd /var/www/gms-webviews && sudo bundle install && cd -
-	cd /var/www/gms-webviews &&  sudo -u www-data bundle exec bundle exec rake assets:precompile && cd -
+	cd /var/www/gms-webviews &&  sudo -u www-data bundle exec rake assets:precompile && cd -
 	[ -e /var/www/gms-webviews/tmp ] || sudo -u www-data mkdir /var/www/gms-webviews/tmp
 	sudo -u www-data touch /var/www/gms-webviews/tmp/restart.txt
 	touch $@
