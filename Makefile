@@ -156,9 +156,9 @@ done-host/vminstall-Ubuntu12.04:
 	vagrant plugin install vagrant-vbguest
 	touch $@
 
-VIRTUALBOX_DMG:=VirtualBox-4.3.16-95972-OSX.dmg
-VAGRANT_DMG:=vagrant_1.6.5.dmg
-VIRTUALBOX_VERSION_DARWIN:=4.3.16
+VIRTUALBOX_DMG:=VirtualBox-4.3.22-98236-OSX.dmg
+VAGRANT_DMG:=vagrant_1.7.2.dmg
+VIRTUALBOX_VERSION_DARWIN:=4.3.22
 done-host/vminstall-Darwin:
 	#
 	# $@:
