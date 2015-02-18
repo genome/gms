@@ -497,8 +497,8 @@ done-host/git-checkouts:
 	cd $(GMS_HOME)/sw/workflow/ && git ls-remote --exit-code . $(GIT_VERSION_WORKFLOW) 1>/dev/null || (echo "failed to clone workflow repo" && false)
 	[ -e $(GMS_HOME)/sw/rails/.git ] 	|| sudo git clone http://github.com/genome/gms-webviews.git $(GMS_HOME)/sw/rails && cd $(GMS_HOME)/sw/rails && sudo git checkout $(GIT_VERSION_RAILS) 
 	cd $(GMS_HOME)/sw/rails/ && git ls-remote --exit-code . $(GIT_VERSION_RAILS) 1>/dev/null || (echo "failed to clone gms-webviews repo" && false)	
-	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/gms-core.git $(GMS_HOME)/sw/genome && cd $(GMS_HOME)/sw/genome && sudo git checkout $(GIT_VERSION_GENOME)	
-	cd $(GMS_HOME)/sw/genome/ && git ls-remote --exit-code . $(GIT_VERSION_GENOME) 1>/dev/null || (echo "failed to clone gms-core repo" && false)	
+	[ -e $(GMS_HOME)/sw/genome/.git ] 	|| sudo git clone http://github.com/genome/genome.git $(GMS_HOME)/sw/genome && cd $(GMS_HOME)/sw/genome && sudo git checkout $(GIT_VERSION_GENOME)	
+	cd $(GMS_HOME)/sw/genome/ && git ls-remote --exit-code . $(GIT_VERSION_GENOME) 1>/dev/null || (echo "failed to clone genome repo" && false)	
 	[ -e $(GMS_HOME)/sw/openlava/.git ] || sudo git clone http://github.com/openlava/openlava.git $(GMS_HOME)/sw/openlava && cd $(GMS_HOME)/sw/openlava && sudo git checkout $(GIT_VERSION_OPENLAVA)
 	cd $(GMS_HOME)/sw/openlava/ && git ls-remote --exit-code . $(GIT_VERSION_OPENLAVA) 1>/dev/null || (echo "failed to clone openlava repo" && false)	
 	sudo chown -R $(GMS_USER):$(GMS_GROUP) $(GMS_HOME)/sw
