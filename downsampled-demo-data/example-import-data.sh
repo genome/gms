@@ -31,7 +31,7 @@ echo "*"
 INSTRUMENT_DATA_DIRECTORY='.'
 
 echo Downloading downsampled instrument data to $INSTRUMENT_DATA_DIRECTORY
-wget --no-directories --recursive --continue --no-parent --accept='*.bam' \
+wget --no-check-certificate --no-directories --recursive --continue --no-parent --accept='*.bam' \
   --directory-prefix "$INSTRUMENT_DATA_DIRECTORY" \
   https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/bams/hcc1395_1tenth_percent/
 
