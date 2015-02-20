@@ -112,7 +112,7 @@ genome model define reference-alignment                                         
 
 genome model instrument-data assign                                             \
     --model="$MODEL_TUMOR_REFALIGN_WGS"                                         \
-    --instrument-data="description ike 'tumor wgs %'"
+    --instrument-data="description like 'tumor wgs %'"
 
 # And start building on the compute cluster, running the associated workflow:
 
