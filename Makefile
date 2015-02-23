@@ -65,8 +65,8 @@ $(shell [ -e `readlink done-host` ] || mkdir -p `readlink done-host`)
 # control the git commit for each of the underlying repos.
 # git submodules would work for this but they do odd things with storing absolute paths.
 GIT_VERSION_UR:=gms-pub-2015.02.22
-GIT_VERSION_GENOME:=gms-pub
-GIT_VERSION_WORKFLOW:=gms-pub
+GIT_VERSION_GENOME:=gms-pub-2015.02.22
+GIT_VERSION_WORKFLOW:=gms-pub-2015.02.22
 GIT_VERSION_RAILS:=gms-pub
 GIT_VERSION_OPENLAVA:=2.2
 
