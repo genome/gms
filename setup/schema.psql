@@ -361,7 +361,7 @@ CREATE TABLE "group" (
     id character varying(255) NOT NULL,
     name character varying(40) NOT NULL,
     permissions integer NOT NULL,
-    sticky boolean NOT NULL,
+    sticky boolean,
     subdirectory character varying(255) NOT NULL,
     unix_uid integer NOT NULL,
     unix_gid integer NOT NULL
@@ -383,7 +383,8 @@ CREATE TABLE volume (
     unallocated_kb bigint NOT NULL,
     disk_status character varying(15) NOT NULL,
     can_allocate boolean DEFAULT true NOT NULL,
-    doubles_space boolean DEFAULT false NOT NULL
+    doubles_space boolean DEFAULT false NOT NULL,
+    creation_event_id character varying(1024)
 );
 
 
@@ -464,14 +465,7 @@ CREATE TABLE build (
     data_directory character varying(1000),
     model_id character varying(64) NOT NULL,
     software_revision character varying(1000),
-    subclass_name character varying(255),
-    status text,
-    date_scheduled timestamp(6) without time zone,
-    date_completed timestamp(6) without time zone,
-    run_by text,
-    created_by text,
-    created_at timestamp(6) without time zone,
-    updated_at timestamp(6) without time zone
+    subclass_name character varying(255)
 );
 
 
@@ -596,11 +590,12 @@ ALTER TABLE model.event_output OWNER TO genome;
 
 CREATE TABLE feature_list (
     id character varying(64) NOT NULL,
-    name character varying(1500) NOT NULL,
+    name character varying(200) NOT NULL,
     source character varying(64),
     format character varying(64) NOT NULL,
     reference_id character varying(32),
     subject_id character varying(32),
+    file_id bigint,
     file_content_hash character varying(32) NOT NULL,
     content_type character varying(255),
     description character varying(255)
@@ -616,7 +611,7 @@ ALTER TABLE model.feature_list OWNER TO genome;
 CREATE TABLE model (
     genome_model_id character varying(32) NOT NULL,
     id character varying(32),
-    name text NOT NULL,
+    name character varying(255) NOT NULL,
     sample_name character varying(255),
     processing_profile_id character varying(32) NOT NULL,
     data_directory character varying(1000),
@@ -728,58 +723,6 @@ CREATE TABLE processing_profile_param (
 
 ALTER TABLE model.processing_profile_param OWNER TO genome;
 
-SET search_path = process, pg_catalog;
-
---
--- Name: input; Type: TABLE; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE TABLE input (
-    id character varying(64) NOT NULL,
-    process_id character varying(64) NOT NULL,
-    value_class_name text,
-    value_id text NOT NULL,
-    name text NOT NULL,
-    array_index integer NOT NULL
-);
-
-
-ALTER TABLE process.input OWNER TO genome;
-
---
--- Name: process; Type: TABLE; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE TABLE process (
-    id character varying(64) NOT NULL,
-    disk_allocation_id character varying(255) NOT NULL,
-    subclass_name text NOT NULL,
-    created_by text NOT NULL,
-    created_at timestamp(6) without time zone NOT NULL,
-    started_at timestamp(6) without time zone,
-    ended_at timestamp(6) without time zone,
-    status text,
-    software_revision text
-);
-
-
-ALTER TABLE process.process OWNER TO genome;
-
---
--- Name: status_event; Type: TABLE; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE TABLE status_event (
-    id character varying(64) NOT NULL,
-    process_id character varying(64) NOT NULL,
-    old_status text,
-    new_status text NOT NULL,
-    "timestamp" timestamp(6) without time zone NOT NULL
-);
-
-
-ALTER TABLE process.status_event OWNER TO genome;
-
 SET search_path = result, pg_catalog;
 
 --
@@ -837,7 +780,9 @@ ALTER TABLE result.param OWNER TO genome;
 CREATE TABLE software_result (
     id character varying(32) NOT NULL,
     class_name character varying(255) NOT NULL,
-    version character varying(64),
+    version character varying(1000),
+    inputs_id character varying(4000),
+    params_id character varying(4000),
     outputs_path character varying(1000),
     lookup_hash character varying(32) NOT NULL
 )
@@ -855,7 +800,7 @@ CREATE TABLE "user" (
     software_result_id character varying(32) NOT NULL,
     user_id character varying(255) NOT NULL,
     user_class_name character varying(255),
-    label text,
+    label character varying(100),
     active boolean DEFAULT true NOT NULL
 )
 WITH (autovacuum_enabled=false, toast.autovacuum_enabled=false);
@@ -1033,31 +978,6 @@ CREATE TABLE allocation_event_type (
 
 
 ALTER TABLE timeline.allocation_event_type OWNER TO genome;
-
---
--- Name: analysis_project; Type: TABLE; Schema: timeline; Owner: genome; Tablespace:
---
-
-CREATE TABLE analysis_project (
-    status character varying(255) NOT NULL,
-    is_cle boolean NOT NULL,
-    run_as character varying(64) NOT NULL
-)
-INHERITS (base);
-
-
-ALTER TABLE timeline.analysis_project OWNER TO genome;
-
---
--- Name: analysis_project_event_type; Type: TABLE; Schema: timeline; Owner: genome; Tablespace:
---
-
-CREATE TABLE analysis_project_event_type (
-    id character varying NOT NULL
-);
-
-
-ALTER TABLE timeline.analysis_project_event_type OWNER TO genome;
 
 SET search_path = web, pg_catalog;
 
@@ -1414,12 +1334,6 @@ ALTER TABLE ONLY data
 ALTER TABLE ONLY fragment_library
     ADD CONSTRAINT fragment_library_pkey PRIMARY KEY (library_id);
 
---
--- Name: fragment_library_unique_full_name; Type: CONSTRAINT; Schema: instrument; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY fragment_library
-    ADD CONSTRAINT fragment_library_unique_full_name UNIQUE (full_name);
 
 SET search_path = model, pg_catalog;
 
@@ -1582,48 +1496,6 @@ ALTER TABLE ONLY processing_profile
 ALTER TABLE ONLY model_group
     ADD CONSTRAINT uniq_m_mg_name UNIQUE (name);
 
-SET search_path = process, pg_catalog;
-
---
--- Name: input_pkey; Type: CONSTRAINT; Schema: process; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY input
-    ADD CONSTRAINT input_pkey PRIMARY KEY (id);
-
-
---
--- Name: process_disk_allocation_id_key; Type: CONSTRAINT; Schema: process; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY process
-    ADD CONSTRAINT process_disk_allocation_id_key UNIQUE (disk_allocation_id);
-
-
---
--- Name: process_input_unique_name_index; Type: CONSTRAINT; Schema: process; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY input
-    ADD CONSTRAINT process_input_unique_name_index UNIQUE (process_id, name, array_index);
-
-
---
--- Name: process_pkey; Type: CONSTRAINT; Schema: process; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY process
-    ADD CONSTRAINT process_pkey PRIMARY KEY (id);
-
-
---
--- Name: status_event_pkey; Type: CONSTRAINT; Schema: process; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY status_event
-    ADD CONSTRAINT status_event_pkey PRIMARY KEY (id);
-
-
 
 SET search_path = result, pg_catalog;
 
@@ -1773,30 +1645,6 @@ SET search_path = timeline, pg_catalog;
 
 ALTER TABLE ONLY allocation_event_type
     ADD CONSTRAINT allocation_event_type_pkey PRIMARY KEY (id);
-
-
---
--- Name: allocation_pkey; Type: CONSTRAINT; Schema: timeline; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY allocation
-    ADD CONSTRAINT allocation_pkey PRIMARY KEY (id);
-
-
---
--- Name: analysis_project_pkey; Type: CONSTRAINT; Schema: timeline; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY analysis_project
-    ADD CONSTRAINT analysis_project_pkey PRIMARY KEY (id);
-
-
---
--- Name: anp_event_type_pk; Type: CONSTRAINT; Schema: timeline; Owner: genome; Tablespace:
---
-
-ALTER TABLE ONLY analysis_project_event_type
-    ADD CONSTRAINT anp_event_type_pk PRIMARY KEY (id);
 
 
 --
@@ -2123,20 +1971,6 @@ CREATE INDEX instrument_data_library_id_index ON data USING btree (library_id);
 SET search_path = model, pg_catalog;
 
 --
--- Name: build_date_completed_idx; Type: INDEX; Schema: model; Owner: genome; Tablespace:
---
-
-CREATE INDEX build_date_completed_idx ON build USING btree (date_completed);
-
-
---
--- Name: build_date_scheduled_idx; Type: INDEX; Schema: model; Owner: genome; Tablespace:
---
-
-CREATE INDEX build_date_scheduled_idx ON build USING btree (date_scheduled);
-
-
---
 -- Name: build_directory_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
 --
 
@@ -2152,20 +1986,6 @@ CREATE INDEX build_model_index ON build USING btree (model_id);
 
 --
 -- Name: event_build_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
-
-CREATE INDEX build_run_by_idx ON build USING btree (run_by);
-
-
---
--- Name: build_status_idx; Type: INDEX; Schema: model; Owner: genome; Tablespace:
---
-
-CREATE INDEX build_status_idx ON build USING btree (status);
-
-
---
--- Name: event_build_id_index; Type: INDEX; Schema: model; Owner: genome; Tablespace:
---
 --
 
 CREATE INDEX event_build_id_index ON event USING btree (build_id);
@@ -2479,56 +2299,6 @@ CREATE INDEX processing_profile_param_value_id_index ON processing_profile_param
 CREATE INDEX processing_profile_subclass_index ON processing_profile USING btree (subclass_name);
 
 
-
---
--- Name: process_created_at_idx; Type: INDEX; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE INDEX process_created_at_idx ON process USING btree (created_at);
-
-
---
--- Name: process_created_by_idx; Type: INDEX; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE INDEX process_created_by_idx ON process USING btree (created_by);
-
-
---
--- Name: process_ended_at_idx; Type: INDEX; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE INDEX process_ended_at_idx ON process USING btree (ended_at);
-
-
---
--- Name: process_started_at_idx; Type: INDEX; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE INDEX process_started_at_idx ON process USING btree (started_at);
-
-
---
--- Name: process_status_event_timestamp_idx; Type: INDEX; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE INDEX process_status_event_timestamp_idx ON status_event USING btree ("timestamp");
-
-
---
--- Name: process_status_idx; Type: INDEX; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE INDEX process_status_idx ON process USING btree (status);
-
-
---
--- Name: process_subclass_name_idx; Type: INDEX; Schema: process; Owner: genome; Tablespace:
---
-
-CREATE INDEX process_subclass_name_idx ON process USING btree (subclass_name);
-
-
 SET search_path = result, pg_catalog;
 
 --
@@ -2606,13 +2376,6 @@ CREATE INDEX result_param_value_class_id_index ON param USING btree (value_class
 --
 
 CREATE INDEX result_param_value_id_index ON param USING btree (value_id);
-
-
---
--- Name: result_user_label_idx; Type: INDEX; Schema: result; Owner: genome; Tablespace:
---
-
-CREATE INDEX result_user_label_idx ON "user" USING btree (label);
 
 
 --
@@ -2832,13 +2595,6 @@ CREATE INDEX subject_name_index ON subject USING btree (name);
 --
 
 CREATE INDEX subject_user_username_index ON "user" USING btree (username);
-
---
--- Name: unique_sample_name_index; Type: INDEX; Schema: subject; Owner: genome; Tablespace:
---
-
-CREATE UNIQUE INDEX unique_sample_name_index ON subject USING btree (name) WHERE ((subclass_name)::text = 'Genome::Sample'::text);
-
 
 
 SET search_path = timeline, pg_catalog;
@@ -3118,38 +2874,6 @@ ALTER TABLE ONLY subject_mapping_subject
 
 ALTER TABLE ONLY subject_mapping_subject
     ADD CONSTRAINT subject_mapping_subject_subject_mapping_id_fkey FOREIGN KEY (subject_mapping_id) REFERENCES subject_mapping(id);
-
---
--- Name: tag_profile_item_profile_item_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
---
-
-ALTER TABLE ONLY tag_profile_item
-    ADD CONSTRAINT tag_profile_item_profile_item_id_fkey FOREIGN KEY (profile_item_id) REFERENCES profile_item(id);
-
-
---
--- Name: tag_profile_item_tag_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
---
-
-ALTER TABLE ONLY tag_profile_item
-    ADD CONSTRAINT tag_profile_item_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES tag(id);
-
-
---
--- Name: tag_subject_mapping_subject_mapping_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
---
-
-ALTER TABLE ONLY tag_subject_mapping
-    ADD CONSTRAINT tag_subject_mapping_subject_mapping_id_fkey FOREIGN KEY (subject_mapping_id) REFERENCES subject_mapping(id);
-
-
---
--- Name: tag_subject_mapping_tag_id_fkey; Type: FK CONSTRAINT; Schema: config; Owner: genome
---
-
-ALTER TABLE ONLY tag_subject_mapping
-    ADD CONSTRAINT tag_subject_mapping_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES tag(id);
-
 
 
 SET search_path = disk, pg_catalog;
@@ -3444,22 +3168,6 @@ ALTER TABLE ONLY allocation
     ADD CONSTRAINT allocation_event_typ_fk FOREIGN KEY (name) REFERENCES allocation_event_type(id) MATCH FULL;
 
 
---
--- Name: anp_event_anp_fk; Type: FK CONSTRAINT; Schema: timeline; Owner: genome
---
-
-ALTER TABLE ONLY analysis_project
-    ADD CONSTRAINT anp_event_anp_fk FOREIGN KEY (object_id) REFERENCES config.analysis_project(id) MATCH FULL;
-
-
---
--- Name: anp_event_type_fk; Type: FK CONSTRAINT; Schema: timeline; Owner: genome
---
-
-ALTER TABLE ONLY analysis_project
-    ADD CONSTRAINT anp_event_type_fk FOREIGN KEY (name) REFERENCES analysis_project_event_type(id) MATCH FULL;
-
-
 SET search_path = web, pg_catalog;
 
 --
@@ -3541,15 +3249,6 @@ REVOKE ALL ON SCHEMA model FROM genome;
 GRANT ALL ON SCHEMA model TO genome;
 GRANT USAGE ON SCHEMA model TO genome;
 
-
---
--- Name: process; Type: ACL; Schema: -; Owner: genome
---
-
-REVOKE ALL ON SCHEMA process FROM PUBLIC;
-REVOKE ALL ON SCHEMA process FROM genome;
-GRANT ALL ON SCHEMA process TO genome;
-GRANT USAGE ON SCHEMA process TO genome;
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
@@ -3938,38 +3637,6 @@ REVOKE ALL ON TABLE processing_profile_param FROM genome;
 GRANT ALL ON TABLE processing_profile_param TO genome;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE processing_profile_param TO genome;
 
-SET search_path = process, pg_catalog;
-
---
--- Name: input; Type: ACL; Schema: process; Owner: genome
---
-
-REVOKE ALL ON TABLE input FROM PUBLIC;
-REVOKE ALL ON TABLE input FROM genome;
-GRANT ALL ON TABLE input TO genome;
-GRANT SELECT,INSERT ON TABLE input TO genome;
-
-
---
--- Name: process; Type: ACL; Schema: process; Owner: genome
---
-
-REVOKE ALL ON TABLE process FROM PUBLIC;
-REVOKE ALL ON TABLE process FROM genome;
-GRANT ALL ON TABLE process TO genome;
-GRANT SELECT,INSERT,UPDATE ON TABLE process TO genome;
-
-
---
--- Name: status_event; Type: ACL; Schema: process; Owner: genome
---
-
-REVOKE ALL ON TABLE status_event FROM PUBLIC;
-REVOKE ALL ON TABLE status_event FROM genome;
-GRANT ALL ON TABLE status_event TO genome;
-GRANT SELECT,INSERT ON TABLE status_event TO genome;
-
-
 
 SET search_path = result, pg_catalog;
 
@@ -4145,25 +3812,6 @@ REVOKE ALL ON TABLE allocation_event_type FROM PUBLIC;
 REVOKE ALL ON TABLE allocation_event_type FROM genome;
 GRANT ALL ON TABLE allocation_event_type TO genome;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE allocation_event_type TO genome;
-
---
--- Name: analysis_project; Type: ACL; Schema: timeline; Owner: genome
---
-
-REVOKE ALL ON TABLE analysis_project FROM PUBLIC;
-REVOKE ALL ON TABLE analysis_project FROM genome;
-GRANT ALL ON TABLE analysis_project TO genome;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE analysis_project TO genome;
-
-
---
--- Name: analysis_project_event_type; Type: ACL; Schema: timeline; Owner: genome
---
-
-REVOKE ALL ON TABLE analysis_project_event_type FROM PUBLIC;
-REVOKE ALL ON TABLE analysis_project_event_type FROM genome;
-GRANT ALL ON TABLE analysis_project_event_type TO genome;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE analysis_project_event_type TO genome;
 
 
 SET search_path = web, pg_catalog;
