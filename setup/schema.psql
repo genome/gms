@@ -787,7 +787,7 @@ ALTER TABLE result.param OWNER TO genome;
 CREATE TABLE software_result (
     id character varying(32) NOT NULL,
     class_name character varying(255) NOT NULL,
-    version character varying(64),
+    version character varying(1000),
     outputs_path character varying(1000),
     lookup_hash character varying(32) NOT NULL
 )
