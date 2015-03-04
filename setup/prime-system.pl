@@ -6,10 +6,11 @@ use Getopt::Long;
 
 my $usage=<<INFO;
 
-./prime-system.pl --data=hcc1395_1tenth_percent --sync=tarball 
+./prime-system.pl --data=hcc1395_1tenth_percent --sync=tarball --metadata=./metadata/18177dd5eca44514a47f367d9804e17a.dat
 
 Arguments:
 --data            Data set to download ('hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'hcc1395_exome_only', 'none')
+--metadata        Metadata file to be imported
 --sync            Syncing method ('rsync', 'tarball')
 --low_resources   Configure the system for a low resources test (e.g., if you have memory < 64Gb).  For demonstration purposes only  
 --memory          Specify how many GB of memory you have available on your physical system or allocated in a VM. (e.g., --memory=8GB or --memory=8192MB)  
@@ -19,13 +20,22 @@ Arguments:
 INFO
 
 my $data = '';
+my $metadata = '';
 my $sync = '';
 my $low_resources;
 my $memory = '';
 my $cpus;
 my $help;
 
-GetOptions ('data=s'=>\$data, 'sync=s'=>\$sync, 'low_resources'=>\$low_resources, 'memory=s'=>\$memory, 'cpus=s'=>\$cpus, 'help'=>\$help);
+GetOptions (
+  'data=s'=>\$data,
+  'metadata=s'=>\$metadata,
+  'sync=s'=>\$sync,
+  'low_resources'=>\$low_resources,
+  'memory=s'=>\$memory,
+  'cpus=s'=>\$cpus,
+  'help'=>\$help
+);
 
 #Make sure the user is within the sGMS, install has been run and ENVs are set by checking for $GENOME_SYS_ID
 unless ($ENV{GENOME_SYS_ID}){
@@ -125,21 +135,14 @@ if ($memory || $low_resources){
   system($source_cmd);
 }
 
-#Put the latest metadata filename here:
-my $metadata_file = "18177dd5eca44514a47f367d9804e17a-2014.3.14.dat";
-my $export_url = "https://xfer.genome.wustl.edu/gxfer1/project/gms/testdata/GMS1/export/";
-my $metadata_url = $export_url . $metadata_file; 
-
 #Download meta-data .dat file
-unless (-e $metadata_file){
-  my $wget_cmd = "wget --no-check-certificate $metadata_url";
-  print "\n\nRUN: $wget_cmd\n";
-  system($wget_cmd);
+unless (-e $metadata){
+  die print STDERR "Unable to find metadata file $metadata";
 }
 
 #Import the meta-data using 'genome model import metadata'
 #File based databases from github will also be installed during this step
-my $import_cmd = "genome model import metadata $metadata_file";
+my $import_cmd = "genome model import metadata $metadata";
 print "\n\nRUN: $import_cmd\n";
 system($import_cmd);
 
