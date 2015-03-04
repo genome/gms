@@ -54,6 +54,9 @@ unless ($sync =~ /^rsync$|^tarball$/){
   print "\n\nMust specify a valid value for --sync: 'tarball', 'rsync'\n\n";
   exit();
 }
+unless (-e $metadata){
+  die print STDERR "Unable to find metadata file $metadata";
+}
 
 #Check resource config options
 my $slots = 80;
@@ -133,11 +136,6 @@ if ($memory || $low_resources){
   my $source_cmd = "bash /etc/genome.conf";
   print "\n\nRUN: $source_cmd\n";
   system($source_cmd);
-}
-
-#Download meta-data .dat file
-unless (-e $metadata){
-  die print STDERR "Unable to find metadata file $metadata";
 }
 
 #Import the meta-data using 'genome model import metadata'
