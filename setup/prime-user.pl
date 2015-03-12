@@ -61,7 +61,7 @@ sub assign_role_user {
 }
 
 sub main {
-  #create_admin_role();
+  create_admin_role();
   my ($name, $username, $email) = get_user_info();
   add_user($name, $email, $username);
   add_user("Genome", "genome\@temp.com", "genome");
