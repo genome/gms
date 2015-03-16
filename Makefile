@@ -52,7 +52,7 @@ DATASERVER=https://xfer.genome.wustl.edu/gxfer1/project/gms/setup/archive-files
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2014-01-16
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=2014.04.02
+APT_DUMP_VERSION=2015.03.09
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -65,7 +65,7 @@ $(shell [ -e `readlink done-host` ] || mkdir -p `readlink done-host`)
 # control the git commit for each of the underlying repos.
 # git submodules would work for this but they do odd things with storing absolute paths.
 GIT_VERSION_UR:=gms-pub-2015.02.22
-GIT_VERSION_GENOME:=gms-pub-2015.02.22
+GIT_VERSION_GENOME:=gms-pub-2015.03.04
 GIT_VERSION_WORKFLOW:=gms-pub-2015.02.22
 GIT_VERSION_RAILS:=gms-pub
 GIT_VERSION_OPENLAVA:=2.2
