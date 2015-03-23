@@ -2,6 +2,7 @@
 
 use warnings;
 use strict;
+use Genome;
 use Getopt::Long;
 
 my $usage=<<INFO;
@@ -15,6 +16,9 @@ Arguments:
 --low_resources   Configure the system for a low resources test (e.g., if you have memory < 64Gb).  For demonstration purposes only  
 --memory          Specify how many GB of memory you have available on your physical system or allocated in a VM. (e.g., --memory=8GB or --memory=8192MB)  
 --cpus            Specify how many cpus you have available on your physical system or allocated in a VM (e.g., --cpus=8)
+--username        Username to add to the users table. [pwuid]
+--name            Name of the user to add to the users table. [username]
+--email           Email of the user to add to the users table. [username\@temp.com]
 --help            Display this documentation
 
 INFO
@@ -245,6 +249,12 @@ unless ($data eq "none"){
 
 #Perform some automatic sanity checks of the system and report problems to the user
 
+#create necessary users for the SGMS. defaults to genome and current user.
+create_admin_role();
+my ($name, $username, $email) = get_user_info();
+add_user($name, $email, $username);
+add_user("Genome", "genome\@temp.com", "genome");
+assign_role_user("admin", "genome\@temp.com");
 
 #If this config has modified /etc/genome.conf 
 print "\n\nYour config file (/etc/genome.conf) may have been modified, to be safe you should logout and login again" if ($memory || $low_resources);
@@ -252,6 +262,52 @@ print "\n\nYour config file (/etc/genome.conf) may have been modified, to be saf
 print "\n\n";
 
 exit;
+
+#get info for current user
+sub get_user_info {
+  my ($name, $username, $email);
+  GetOptions (
+    'name=s'=>\$name,
+    'username=s'=>\$username,
+    'email=s'=>\$email,
+    'help'=>\&usage
+  );
+  $username //= getpwuid($<);
+  $name //= $username;
+  $email //= $username . "\@temp.com";
+  printf "\nFound user: %s\t%s\t%s", $name, $username, $email;
+  return ($name, $username, $email);
+}
+
+#create a role called admin
+sub create_admin_role {
+  print "\nCreating role admin";
+  my $dbh = Genome::Sys::User::Role->__meta__->data_source->get_default_handle;
+  my $sth = $dbh->prepare('INSERT INTO subject.role (id, name) VALUES (?,?)');
+  $sth->execute("4AAB87D4743D11E1AD77BD4F3B8842A7", "admin");
+}
+
+#add a new user
+sub add_user {
+  my $name = shift;
+  my $email = shift;
+  my $username = shift;
+  print "\nAdding user $username";
+  my $dbh = Genome::Sys::User->__meta__->data_source->get_default_handle;
+  my $sth = $dbh->prepare('INSERT INTO subject.user (name, email, username) VALUES (?,?,?)');
+  $sth->execute($name, $email, $username);
+}
+
+#assign role to user
+sub assign_role_user {
+  my $role = shift;
+  my $email = shift;
+  print "\nMaking user $email into role $role";
+  my $role_id = Genome::Sys::User::Role->get(name => $role)->id;
+  my $dbh = Genome::Sys::User::RoleMember->__meta__->data_source->get_default_handle;
+  my $sth = $dbh->prepare('INSERT INTO subject.role_member (user_email, role_id) VALUES (?,?)');
+  $sth->execute($email, $role_id);
+}
 
 sub get_tarball{
   my %args = @_;
@@ -280,6 +336,4 @@ sub get_tarball{
 
   return $error_code;
 }
-
-
 
