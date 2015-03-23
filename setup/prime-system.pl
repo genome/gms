@@ -5,8 +5,8 @@ use strict;
 use Getopt::Long;
 
 my $usage=<<INFO;
-
-./prime-system.pl --data=hcc1395_1tenth_percent --sync=tarball --metadata=./metadata/18177dd5eca44514a47f367d9804e17a.dat
+Example Usage:
+./prime-system.pl --data=hcc1395_1tenth_percent --sync=tarball --metadata=gms/setup/metadata/18177dd5eca44514a47f367d9804e17a.dat
 
 Arguments:
 --data            Data set to download ('hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'hcc1395_exome_only', 'none')
@@ -47,14 +47,17 @@ if ($help || !$data || !$sync){
   exit();
 }
 unless ($data =~ /^hcc1395$|^hcc1395_1percent$|^hcc1395_1tenth_percent$|^hcc1395_exome_only$|^none$/){
+  print $usage;
   print "\n\nMust specify a valid value for --data: 'hcc1395', 'hcc1395_1percent', 'hcc1395_1tenth_percent', 'none'\n\n";
   exit();
 }
 unless ($sync =~ /^rsync$|^tarball$/){
+  print $usage;
   print "\n\nMust specify a valid value for --sync: 'tarball', 'rsync'\n\n";
   exit();
 }
 unless (-e $metadata){
+  print $usage;
   die print STDERR "Unable to find metadata file $metadata";
 }
 
