@@ -27,6 +27,13 @@ my $help;
 
 GetOptions ('data=s'=>\$data, 'sync=s'=>\$sync, 'low_resources'=>\$low_resources, 'memory=s'=>\$memory, 'cpus=s'=>\$cpus, 'help'=>\$help);
 
+#Do not prime if the data is already primed
+my $primed_file = "/opt/gms/primed";
+if (-e $primed_file){
+  print "\n\nThis system appears to already be primed (i.e. /opt/gms/primed exists). There is no need to do this step again\n\n";
+  exit();
+}
+
 #Make sure the user is within the sGMS, install has been run and ENVs are set by checking for $GENOME_SYS_ID
 unless ($ENV{GENOME_SYS_ID}){
   print "\n\nGENOME_SYS_ID is not set!  Are you logged in and the installation is complete?\n\n";
@@ -244,6 +251,11 @@ unless ($data eq "none"){
 
 #If this config has modified /etc/genome.conf 
 print "\n\nYour config file (/etc/genome.conf) may have been modified, to be safe you should logout and login again" if ($memory || $low_resources);
+
+#mark the system as primed
+my $primed_cmd = "touch $primed_file";
+print "\nRUN: $primed_cmd";
+system($primed_cmd);
 
 print "\n\n";
 
