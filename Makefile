@@ -641,6 +641,8 @@ done-host/exim-config: done-host/pkgs
 	sudo cp setup/etc/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf
 	sudo setup/bin/findreplace HOST_NAME $(HOSTNAME) /etc/exim4/update-exim4.conf.conf
 	sudo update-exim4.conf
+	sudo invoke-rc.d exim4 stop
+	sudo invoke-rc.d exim4 start
 	touch $@
 
 stage-software: done-host/pkgs done-host/git-checkouts done-host/unzip-sw-apps-$(APPS_DUMP_VERSION).tgz done-host/unzip-sw-java-$(JAVA_DUMP_VERSION).tgz 
