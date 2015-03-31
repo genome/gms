@@ -50,7 +50,7 @@ endif
 DATASERVER=https://xfer.genome.wustl.edu/gxfer1/project/gms/setup/archive-files
 
 # when tarballs of software and data are updated they are given new names
-APPS_DUMP_VERSION=2014-01-16
+APPS_DUMP_VERSION=2015-03-31
 JAVA_DUMP_VERSION=2013-08-27
 APT_DUMP_VERSION=2015.03.23
 
