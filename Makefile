@@ -52,7 +52,7 @@ DATASERVER=https://xfer.genome.wustl.edu/gxfer1/project/gms/setup/archive-files
 # when tarballs of software and data are updated they are given new names
 APPS_DUMP_VERSION=2015-03-31
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=2015.03.23
+APT_DUMP_VERSION=2015.03.30
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -641,6 +641,7 @@ done-host/exim-config: done-host/pkgs
 	sudo invoke-rc.d exim4 stop
 	sudo cp setup/etc/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf
 	sudo setup/bin/findreplace HOST_NAME $(HOSTNAME) /etc/exim4/update-exim4.conf.conf
+	rm -f /var/log/exim4/paniclog
 	sudo invoke-rc.d exim4 start
 	sudo update-exim4.conf
 	touch $@
