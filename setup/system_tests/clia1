@@ -49,6 +49,11 @@ sudo /etc/init.d/puppet status
 sudo rm -f /etc/apt/sources.list.d/*
 sudo cp -f setup/system_tests/sources.list /etc/apt/
 
+#remove password prompts
+#open the sudoers file
+sudo visudo -f /etc/sudoers
+#change the line which reads '%sudo  ALL=(ALL:ALL) ALL' to '%sudo  ALL=(ALL:ALL) NOPASSWD:ALL'
+
 #run the gms install
 cd ~/gms
 make
