@@ -29,7 +29,7 @@ mkmirror-$(TIMESTAMP): apt-mirror-min-ubuntu-12.04-$(TIMESTAMP)/var apt-mirror-m
 
 stage-tgi-$(TIMESTAMP): mkmirror-$(TIMESTAMP)
 	rsync -avP ../archive-files/ $(TGI_STAGING_DIR) 
-	touch /gscmnt/sata102/info/ftp-staging/pub/software/gms/syncme
+	touch $(TGI_STAGING_DIR)/../../syncme
 	touch $@
 
 stage-s3-$(TIMESTAMP): mkmirror-$(TIMESTAMP)
