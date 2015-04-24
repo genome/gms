@@ -40,6 +40,7 @@ sudo rm -f /opt/gms/primed
 cd ~
 git clone https://github.com/genome/gms.git
 cd gms
+git checkout ubuntu-12.04-2015.02.22
 
 #tweaks to the apt repo setup
 sudo /etc/init.d/puppet status
