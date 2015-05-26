@@ -1,0 +1,81 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+require 'pathname'
+
+instance_type = ENV['AWS_INSTANCE_TYPE'] || 't2.micro'
+
+# Parse the intended hostname from the path.
+# Presumes this is symlinked into a server directory
+# as $HOST/{reimage,test}/Vagrantfile.
+basedir = Pathname(Pathname(__FILE__).dirname())
+
+facts_path = Pathname(basedir.to_s + "/facts.json")
+if facts_path.exist? 
+    facts_json = facts_path.read()
+    facts = JSON.parse(facts_json)
+else
+    facts = {}
+end
+
+devices_path = Pathname(basedir.to_s + "/devices.json")
+if devices_path.exist?
+    devices_json = devices_path.read()
+    devices = JSON.parse(devices_json)
+else
+    devices = nil
+end
+
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    config.vm.box = "dummy"
+    config.vm.hostname = 'sstest' # ENV['USER'] + '-gms'
+
+    config.vm.provider :aws do |aws, override|
+        # set these values in your bashrc:
+        aws.access_key_id = ENV['AWS_ACCESS_KEY']
+        aws.secret_access_key = ENV['AWS_SECRET_KEY']
+      
+        aws.region = 'us-east-1'
+
+        if aws.region == 'us-east-1'
+            aws.ami = 'ami-3edd0256'
+            aws.subnet_id = 'subnet-b000f49b'
+            aws.security_groups = ['sg-1ada487e', 'sg-1da02d79']
+        elsif aws.region == 'us-west-2'
+            aws.ami = 'ami-a90b4e99'
+            aws.subnet_id =  'subnet-f5e92f82'
+            aws.security_groups = ['sg-64d8be01']
+        end
+
+        aws.instance_type = instance_type 
+
+        aws.associate_public_ip = true
+        aws.tags = { 'Name' => config.vm.hostname }
+
+        override.ssh.username = "ubuntu"
+        override.ssh.private_key_path = ENV['AWS_PEM_PATH']
+        aws.keypair_name = ENV['AWS_KEYPAIR_NAME']
+
+        if devices
+            aws.block_device_mapping = devices
+            #[{ 'DeviceName' => '/dev/sda1', 'Ebs.VolumeSize' => 50 }]
+        end
+
+        #config.vm.provision :shell, inline: "apt-get update"
+        #config.vm.provision :shell, inline: "DEBIAN_FRONTEND=noninteractive apt-get upgrade -y"
+        #config.vm.provision :shell, inline: "DEBIAN_FRONTEND=noninteractive apt-get install -y puppet"
+        #config.vm.provision :puppet do |puppet|
+        #    puppet.module_path = "../../../modules"
+        #    puppet.manifests_path = "."
+        #    puppet.manifest_file = "provision.pp"
+        #    puppet.facter = facts 
+        #end
+
+        #if Pathname(basedir + '/provision.sh').exist?
+        #    config.vm.provision :shell, "provision.sh"
+        #end
+    end
+end

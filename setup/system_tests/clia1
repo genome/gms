@@ -34,11 +34,13 @@ sudo rm -fr /tmp/gms-install-done-local/
 #delete previous install from /opt/gms
 cd /opt/gms
 ls -1 | grep -v tmp | grep -v GMS1 | grep -v bams | perl -ne 'print "sudo rm -fr $_"' | sh
+sudo rm -f /opt/gms/primed
 
 #clone the gms repo
 cd ~
 git clone https://github.com/genome/gms.git
 cd gms
+git checkout ubuntu-12.04-2015.02.22
 
 #tweaks to the apt repo setup
 sudo /etc/init.d/puppet status

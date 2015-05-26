@@ -50,9 +50,9 @@ endif
 DATASERVER=https://xfer.genome.wustl.edu/gxfer1/project/gms/setup/archive-files
 
 # when tarballs of software and data are updated they are given new names
-APPS_DUMP_VERSION=2014-01-16
+APPS_DUMP_VERSION=2015-03-31
 JAVA_DUMP_VERSION=2013-08-27
-APT_DUMP_VERSION=2014.04.02
+APT_DUMP_VERSION=2015.04.09
 
 # other config info
 IP:=$(shell /sbin/ifconfig | grep 'inet addr' | perl -ne '/inet addr:(\S+)/ && print $$1,"\n"' | grep -v 127.0.0.1)
@@ -64,9 +64,9 @@ $(shell [ -e `readlink done-host` ] || mkdir -p `readlink done-host`)
 
 # control the git commit for each of the underlying repos.
 # git submodules would work for this but they do odd things with storing absolute paths.
-GIT_VERSION_UR:=gms-pub-tag-2
-GIT_VERSION_GENOME:=gms-pub
-GIT_VERSION_WORKFLOW:=gms-pub
+GIT_VERSION_UR:=gms-pub-2015.02.22
+GIT_VERSION_GENOME:=gms-pub-2015.03.04
+GIT_VERSION_WORKFLOW:=gms-pub-2015.02.22
 GIT_VERSION_RAILS:=gms-pub
 GIT_VERSION_OPENLAVA:=2.2
 
@@ -638,8 +638,11 @@ done-host/exim-config: done-host/pkgs
 	# $@
 	#
 	# Configure Exim to send LSF job reports when jobs complete.
+	sudo invoke-rc.d exim4 stop
 	sudo cp setup/etc/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf
 	sudo setup/bin/findreplace HOST_NAME $(HOSTNAME) /etc/exim4/update-exim4.conf.conf
+	rm -f /var/log/exim4/paniclog
+	sudo invoke-rc.d exim4 start
 	sudo update-exim4.conf
 	touch $@
 
