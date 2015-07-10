@@ -1,7 +1,7 @@
 The Genome Modeling System (GMS)
 ===
 
-A paper describing the GMS is currently under review.
+A paper describing the GMS has been published here: <a href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004274">Genome Modeling System: A Knowledge Management Platform for Genomics</a>.
 
 For a brief demonstration of the GMS please start with the: 
 <a href="https://github.com/genome/gms/wiki/Quick-VM-Tour">Quick Tour in a Pre-configured Virtual Machine</a>.
